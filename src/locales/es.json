@@ -121,19 +121,59 @@
     "comparisons": "Comparar",
     "reports": "Informes"
   },
-  "analysis": {
-    "quickAnalysis": "Análisis Rápido",
-    "subtitle": "Analizar datos pre-preparados",
+   "analysis": {
     "general": "Análisis General",
-    "trends": "Análisis de Tendencias",
     "anomaly": "Detección de Anomalías",
     "forecast": "Análisis de Pronóstico",
-    "starting": "Iniciando análisis...",
-    "error": "Error de Análisis",
-    "generalError": "Ocurrió un error al iniciar el análisis",
-    "startError": "No se pudo iniciar el análisis. Por favor intente nuevamente.",
-    "insufficientData": "Datos Insuficientes",
-    "minDataRequired": "Se requieren al menos 5 registros para el análisis."
+    "trends": "Análisis de Tendencias",
+    "dataAnalysis": "Análisis de Datos",
+    "results": "Resultados del Análisis",
+    "insight": "Perspectiva",
+    "recommendation": "Recomendación",
+    "recommendations": "Recomendaciones",
+    "result": "Resultado",
+    "checkStatus": "Verificar Estado",
+    "errorTitle": "Error de Análisis",
+    "noResultData": "No se encontraron datos de resultado",
+    "noResults": "No se encontraron resultados de análisis",
+    "noDescription": "Descripción no disponible",
+    "status": {
+      "starting": "Iniciando análisis...",
+      "processing": "Procesando datos...",
+      "analyzing": "Analizando datos...",
+      "preparing": "Preparando resultados...",
+      "finalizing": "Verificaciones finales...",
+      "completed": "Análisis completado",
+      "failed": "Análisis fallido",
+      "fromCache": "Cargado desde caché",
+      "timeout": "Tiempo agotado",
+      "label": "Estado",
+      "unknown": "Desconocido"
+    },
+    "statusBadge": {
+      "running": "Ejecutándose",
+      "completed": "Completado",
+      "failed": "Fallido",
+      "cached": "En caché",
+      "pending": "Pendiente"
+    },
+    "errors": {
+      "timeout": "Tiempo de análisis agotado",
+      "unknown": "Error desconocido",
+      "notFound": "Análisis no encontrado",
+      "statusCheck": "Error de verificación de estado: "
+    },
+    "hints": {
+      "inProgress": "El análisis continúa en segundo plano...",
+      "almostDone": "Análisis casi completo..."
+    },
+    "info": {
+      "title": "Información del Análisis",
+      "processingTime": "Tiempo de Procesamiento",
+      "cacheUsed": "Caché Utilizado",
+      "originalLanguage": "Idioma Original",
+      "notSpecified": "No especificado"
+    }
   },
   "language": {
     "selectTitle": "Seleccionar Idioma"

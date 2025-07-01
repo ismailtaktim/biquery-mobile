@@ -122,18 +122,58 @@
     "reports": "Berichte"
   },
   "analysis": {
-    "quickAnalysis": "Schnellanalyse",
-    "subtitle": "Analysieren Sie vorbereitete Daten",
     "general": "Allgemeine Analyse",
-    "trends": "Trendanalyse",
     "anomaly": "Anomalie-Erkennung",
-    "forecast": "Prognoseanalyse",
-    "starting": "Analyse wird gestartet...",
-    "error": "Analysefehler",
-    "generalError": "Fehler beim Starten der Analyse",
-    "startError": "Analyse konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
-    "insufficientData": "Unzureichende Daten",
-    "minDataRequired": "Mindestens 5 Datensätze für die Analyse erforderlich."
+    "forecast": "Prognose-Analyse",
+    "trends": "Trend-Analyse", 
+    "dataAnalysis": "Datenanalyse",
+    "results": "Analyseergebnisse",
+    "insight": "Erkenntnis",
+    "recommendation": "Empfehlung",
+    "recommendations": "Empfehlungen",
+    "result": "Ergebnis",
+    "checkStatus": "Status überprüfen",
+    "errorTitle": "Analysefehler",
+    "noResultData": "Keine Ergebnisdaten gefunden",
+    "noResults": "Keine Analyseergebnisse gefunden",
+    "noDescription": "Keine Beschreibung verfügbar",
+    "status": {
+      "starting": "Analyse wird gestartet...",
+      "processing": "Daten werden verarbeitet...",
+      "analyzing": "Daten werden analysiert...",
+      "preparing": "Ergebnisse werden vorbereitet...",
+      "finalizing": "Abschließende Prüfungen...",
+      "completed": "Analyse abgeschlossen",
+      "failed": "Analyse fehlgeschlagen",
+      "fromCache": "Aus Cache geladen",
+      "timeout": "Zeitüberschreitung",
+      "label": "Status",
+      "unknown": "Unbekannt"
+    },
+    "statusBadge": {
+      "running": "Läuft",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen",
+      "cached": "Zwischengespeichert",
+      "pending": "Ausstehend"
+    },
+    "errors": {
+      "timeout": "Analyse-Zeitüberschreitung",
+      "unknown": "Unbekannter Fehler",
+      "notFound": "Analyse nicht gefunden",
+      "statusCheck": "Statusprüfungsfehler: "
+    },
+    "hints": {
+      "inProgress": "Analyse läuft im Hintergrund weiter...",
+      "almostDone": "Analyse fast abgeschlossen..."
+    },
+    "info": {
+      "title": "Analyse-Informationen",
+      "processingTime": "Verarbeitungszeit",
+      "cacheUsed": "Cache verwendet",
+      "originalLanguage": "Originalsprache",
+      "notSpecified": "Nicht angegeben"
+    }
   },
   "language": {
     "selectTitle": "Sprache wählen"

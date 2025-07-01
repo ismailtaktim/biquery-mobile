@@ -122,18 +122,58 @@
     "reports": "Reports"
   },
   "analysis": {
-    "quickAnalysis": "Quick Analysis",
-    "subtitle": "Analyze pre-prepared data",
     "general": "General Analysis",
-    "trends": "Trend Analysis",
     "anomaly": "Anomaly Detection",
-    "forecast": "Forecast Analysis",
-    "starting": "Analysis starting...",
-    "error": "Analysis Error",
-    "generalError": "An error occurred while starting analysis",
-    "startError": "Analysis could not be started. Please try again.",
-    "insufficientData": "Insufficient Data",
-    "minDataRequired": "At least 5 records required for analysis."
+    "forecast": "Forecast Analysis", 
+    "trends": "Trend Analysis",
+    "dataAnalysis": "Data Analysis",
+    "results": "Analysis Results",
+    "insight": "Insight",
+    "recommendation": "Recommendation",
+    "recommendations": "Recommendations",
+    "result": "Result",
+    "checkStatus": "Check Status",
+    "errorTitle": "Analysis Error",
+    "noResultData": "No result data found",
+    "noResults": "No analysis results found",
+    "noDescription": "No description available",
+    "status": {
+      "starting": "Starting analysis...",
+      "processing": "Processing data...",
+      "analyzing": "Analyzing data...",
+      "preparing": "Preparing results...",
+      "finalizing": "Final checks...",
+      "completed": "Analysis completed",
+      "failed": "Analysis failed",
+      "fromCache": "Loaded from cache",
+      "timeout": "Timeout",
+      "label": "Status",
+      "unknown": "Unknown"
+    },
+    "statusBadge": {
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed", 
+      "cached": "Cached",
+      "pending": "Pending"
+    },
+    "errors": {
+      "timeout": "Analysis timed out",
+      "unknown": "Unknown error",
+      "notFound": "Analysis not found",
+      "statusCheck": "Status check error: "
+    },
+    "hints": {
+      "inProgress": "Analysis continues in background...",
+      "almostDone": "Analysis almost complete..."
+    },
+    "info": {
+      "title": "Analysis Information",
+      "processingTime": "Processing Time",
+      "cacheUsed": "Cache Used",
+      "originalLanguage": "Original Language",
+      "notSpecified": "Not specified"
+    }
   },
   "language": {
     "selectTitle": "Select Language"

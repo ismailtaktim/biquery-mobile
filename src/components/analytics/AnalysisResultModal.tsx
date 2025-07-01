@@ -1,4 +1,4 @@
-// src/components/analytics/AnalysisResultModal.tsx
+// src/components/analytics/AnalysisResultModal.tsx - TypeScript hataları düzeltildi
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Modal,
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiService from '../../services/apiService';
+import { useLanguage } from '../../context/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -64,11 +65,13 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
   onClose,
   onComplete
 }) => {
+  const { t } = useLanguage();
+  
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<AnalysisResult | null>(null);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState('Analiz başlatılıyor...');
+  const [statusMessage, setStatusMessage] = useState('');
 
   // Animation values
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -82,34 +85,35 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
 
   const maxAttempts = 30;
 
-  // Analysis type titles
+  // Analysis type titles - Dil bazlı
   const getAnalysisTitle = () => {
     switch (analysisType) {
-      case 'general': return 'Genel Analiz';
-      case 'anomaly': return 'Anomali Analizi';
-      case 'forecast': return 'Tahmin Analizi';
-      case 'trends': return 'Trend Analizi';
-      default: return 'Veri Analizi';
+      case 'general': return t('analysis.general') || 'Genel Analiz';
+      case 'anomaly': return t('analysis.anomaly') || 'Anomali Analizi';
+      case 'forecast': return t('analysis.forecast') || 'Tahmin Analizi';
+      case 'trends': return t('analysis.trends') || 'Trend Analizi';
+      default: return t('analysis.dataAnalysis') || 'Veri Analizi';
     }
   };
 
-  // Status messages
+  // Status messages - Dil bazlı
   const getStatusMessage = (progressValue: number) => {
-    if (progressValue < 20) return 'Analiz başlatılıyor...';
-    if (progressValue < 40) return 'Veriler işleniyor...';
-    if (progressValue < 70) return 'Veriler analiz ediliyor...';
-    if (progressValue < 90) return 'Sonuçlar hazırlanıyor...';
-    return 'Son kontroller yapılıyor...';
+    if (progressValue < 20) return t('analysis.status.starting') || 'Analiz başlatılıyor...';
+    if (progressValue < 40) return t('analysis.status.processing') || 'Veriler işleniyor...';
+    if (progressValue < 70) return t('analysis.status.analyzing') || 'Veriler analiz ediliyor...';
+    if (progressValue < 90) return t('analysis.status.preparing') || 'Sonuçlar hazırlanıyor...';
+    return t('analysis.status.finalizing') || 'Son kontroller yapılıyor...';
   };
 
   // Component lifecycle
   useEffect(() => {
     isMountedRef.current = true;
+    setStatusMessage(t('analysis.status.starting') || 'Analiz başlatılıyor...');
     return () => {
       isMountedRef.current = false;
       clearAllPolling();
     };
-  }, []);
+  }, [t]);
 
   // Start analysis when modal opens
   useEffect(() => {
@@ -222,10 +226,10 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
       if (attemptCountRef.current >= maxAttempts) {
         clearAllPolling();
         if (isMountedRef.current) {
-          setError('Analiz zaman aşımına uğradı');
+          setError(t('analysis.errors.timeout') || 'Analiz zaman aşımına uğradı');
           setLoading(false);
           setProgress(0);
-          setStatusMessage('Zaman aşımı');
+          setStatusMessage(t('analysis.status.timeout') || 'Zaman aşımı');
         }
       } else {
         checkStatus();
@@ -262,7 +266,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
       if (response.status === 'completed') {
         handleAnalysisCompleted();
       } else if (response.status === 'failed') {
-        handleAnalysisFailed(response.error || response.message || 'Bilinmeyen hata');
+        handleAnalysisFailed(response.error || response.message || (t('analysis.errors.unknown') || 'Bilinmeyen hata'));
       } else if (response.status === 'pending' && response.result) {
         handleCachedResult();
       }
@@ -271,9 +275,9 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
       if (!isMountedRef.current) return;
 
       if (error.message?.includes('not found')) {
-        handleAnalysisFailed('Analiz bulunamadı');
+        handleAnalysisFailed(t('analysis.errors.notFound') || 'Analiz bulunamadı');
       } else {
-        handleAnalysisFailed('Durum kontrolü hatası: ' + error.message);
+        handleAnalysisFailed((t('analysis.errors.statusCheck') || 'Durum kontrolü hatası: ') + error.message);
       }
     }
   };
@@ -284,7 +288,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
     if (!isMountedRef.current) return;
 
     setProgress(100);
-    setStatusMessage('Analiz tamamlandı');
+    setStatusMessage(t('analysis.status.completed') || 'Analiz tamamlandı');
     setLoading(false);
 
     Animated.timing(progressAnim, {
@@ -306,7 +310,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
     setLoading(false);
     setError(message);
     setProgress(0);
-    setStatusMessage('Analiz başarısız');
+    setStatusMessage(t('analysis.status.failed') || 'Analiz başarısız');
 
     if (onComplete) {
       onComplete();
@@ -320,7 +324,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
 
     setLoading(false);
     setProgress(100);
-    setStatusMessage('Önbellekten yüklendi');
+    setStatusMessage(t('analysis.status.fromCache') || 'Önbellekten yüklendi');
 
     if (onComplete) {
       onComplete();
@@ -335,7 +339,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
           const parsedInsights = JSON.parse(data.insights);
           return Array.isArray(parsedInsights) ? parsedInsights : [];
         } catch {
-          return [{ title: 'Sonuç', description: data.insights }];
+          return [{ title: t('analysis.result') || 'Sonuç', description: data.insights }];
         }
       }
 
@@ -392,13 +396,13 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
         onPress={checkStatus}
       >
         <Ionicons name="refresh" size={16} color="#3b82f6" />
-        <Text style={styles.refreshText}>Durumu Kontrol Et</Text>
+        <Text style={styles.refreshText}>{t('analysis.checkStatus') || 'Durumu Kontrol Et'}</Text>
       </TouchableOpacity>
 
       <Text style={styles.hintText}>
         {progress < 50 
-          ? 'Analiz arka planda devam ediyor...'
-          : 'Analiz neredeyse tamamlanıyor...'
+          ? (t('analysis.hints.inProgress') || 'Analiz arka planda devam ediyor...')
+          : (t('analysis.hints.almostDone') || 'Analiz neredeyse tamamlanıyor...')
         }
       </Text>
     </View>
@@ -413,7 +417,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
       return (
         <View style={styles.warningContainer}>
           <Ionicons name="warning" size={24} color="#f59e0b" />
-          <Text style={styles.warningText}>Sonuç verisi bulunamadı</Text>
+          <Text style={styles.warningText}>{t('analysis.noResultData') || 'Sonuç verisi bulunamadı'}</Text>
         </View>
       );
     }
@@ -424,7 +428,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
       <ScrollView style={styles.resultContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.resultHeader}>
           <Ionicons name="bulb" size={24} color="#3b82f6" />
-          <Text style={styles.resultTitle}>Analiz Sonuçları</Text>
+          <Text style={styles.resultTitle}>{t('analysis.results') || 'Analiz Sonuçları'}</Text>
         </View>
 
         {insights.length > 0 ? (
@@ -434,11 +438,11 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
                 <View style={styles.insightHeader}>
                   <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
                   <Text style={styles.insightTitle}>
-                    {insight.title || `Insight ${index + 1}`}
+                    {insight.title || ((t('analysis.insight') || 'Insight') + ` ${index + 1}`)}
                   </Text>
                 </View>
                 <Text style={styles.insightDescription}>
-                  {insight.description || 'Açıklama bulunamadı'}
+                  {insight.description || (t('analysis.noDescription') || 'Açıklama bulunamadı')}
                 </Text>
               </View>
             ))}
@@ -446,7 +450,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
         ) : (
           <View style={styles.noInsightsContainer}>
             <Ionicons name="information-circle" size={24} color="#6b7280" />
-            <Text style={styles.noInsightsText}>Analiz sonucu bulunamadı</Text>
+            <Text style={styles.noInsightsText}>{t('analysis.noResults') || 'Analiz sonucu bulunamadı'}</Text>
           </View>
         )}
 
@@ -455,12 +459,12 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
           <View style={styles.recommendationsContainer}>
             <View style={styles.sectionHeader}>
               <Ionicons name="checkmark-circle" size={20} color="#10b981" />
-              <Text style={styles.sectionTitle}>Öneriler</Text>
+              <Text style={styles.sectionTitle}>{t('analysis.recommendations') || 'Öneriler'}</Text>
             </View>
             {resultData.recommendations.map((rec: Recommendation, index: number) => (
               <View key={index} style={styles.recommendationCard}>
                 <Text style={styles.recommendationText}>
-                  {typeof rec === 'string' ? rec : rec.description || rec.title || 'Öneri'}
+                  {typeof rec === 'string' ? rec : rec.description || rec.title || (t('analysis.recommendation') || 'Öneri')}
                 </Text>
               </View>
             ))}
@@ -469,22 +473,22 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
 
         {/* Analysis Info */}
         <View style={styles.infoContainer}>
-          <Text style={styles.infoTitle}>Analiz Bilgileri</Text>
+          <Text style={styles.infoTitle}>{t('analysis.info.title') || 'Analiz Bilgileri'}</Text>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>İşlem Süresi:</Text>
+            <Text style={styles.infoLabel}>{(t('analysis.info.processingTime') || 'İşlem Süresi') + ':'}</Text>
             <Text style={styles.infoValue}>
-              {results.elapsed_time ? `${(results.elapsed_time * 1000).toFixed(0)} ms` : 'Belirtilmemiş'}
+              {results.elapsed_time ? `${(results.elapsed_time * 1000).toFixed(0)} ms` : (t('analysis.info.notSpecified') || 'Belirtilmemiş')}
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Önbellek Kullanıldı:</Text>
+            <Text style={styles.infoLabel}>{(t('analysis.info.cacheUsed') || 'Önbellek Kullanıldı') + ':'}</Text>
             <Text style={styles.infoValue}>
-              {results.from_cache ? 'Evet' : 'Hayır'}
+              {results.from_cache ? (t('common.yes') || 'Evet') : (t('common.no') || 'Hayır')}
             </Text>
           </View>
           {results.original_language && (
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Orijinal Dil:</Text>
+              <Text style={styles.infoLabel}>{(t('analysis.info.originalLanguage') || 'Orijinal Dil') + ':'}</Text>
               <Text style={styles.infoValue}>{results.original_language}</Text>
             </View>
           )}
@@ -497,7 +501,7 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
   const renderErrorContent = () => (
     <View style={styles.errorContainer}>
       <Ionicons name="alert-circle" size={48} color="#ef4444" />
-      <Text style={styles.errorTitle}>Analiz Hatası</Text>
+      <Text style={styles.errorTitle}>{t('analysis.errorTitle') || 'Analiz Hatası'}</Text>
       <Text style={styles.errorText}>{error}</Text>
     </View>
   );
@@ -529,7 +533,9 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
     // Unknown status
     return (
       <View style={styles.unknownContainer}>
-        <Text style={styles.unknownText}>Durum: {results?.status || 'Bilinmiyor'}</Text>
+        <Text style={styles.unknownText}>
+          {(t('analysis.status.label') || 'Durum') + ': ' + (results?.status || (t('analysis.status.unknown') || 'Bilinmiyor'))}
+        </Text>
         {results?.message && <Text style={styles.unknownMessage}>{results.message}</Text>}
       </View>
     );
@@ -565,11 +571,11 @@ const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
               (results.status === 'pending' && results.result) && styles.statusCached,
             ]}>
               <Text style={styles.statusBadgeText}>
-                {results.status === 'running' && 'İşleniyor'}
-                {results.status === 'completed' && 'Tamamlandı'}
-                {results.status === 'failed' && 'Başarısız'}
-                {(results.status === 'pending' && results.result) && 'Önbellekten'}
-                {(results.status === 'pending' && !results.result) && 'Bekliyor'}
+                {results.status === 'running' && (t('analysis.statusBadge.running') || 'İşleniyor')}
+                {results.status === 'completed' && (t('analysis.statusBadge.completed') || 'Tamamlandı')}
+                {results.status === 'failed' && (t('analysis.statusBadge.failed') || 'Başarısız')}
+                {(results.status === 'pending' && results.result) && (t('analysis.statusBadge.cached') || 'Önbellekten')}
+                {(results.status === 'pending' && !results.result) && (t('analysis.statusBadge.pending') || 'Bekliyor')}
               </Text>
             </View>
           </View>
@@ -870,5 +876,4 @@ const styles = StyleSheet.create({
 
 export default AnalysisResultModal;
 
-// Type export for external usage
 export type { AnalysisResultModalProps, AnalysisResult, Insight, Recommendation };

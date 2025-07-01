@@ -122,18 +122,58 @@
     "reports": "Raporlar"
   },
   "analysis": {
-    "quickAnalysis": "Hızlı Analiz",
-    "subtitle": "Önceden hazırlanmış veriler üzerinde analiz yapın",
     "general": "Genel Analiz",
-    "trends": "Trend Analizi",
-    "anomaly": "Anomali Tespiti",
+    "anomaly": "Anomali Analizi", 
     "forecast": "Tahmin Analizi",
-    "starting": "Analiz başlatılıyor...",
-    "error": "Analiz Hatası",
-    "generalError": "Analiz başlatılırken bir hata oluştu",
-    "startError": "Analiz başlatılamadı. Lütfen tekrar deneyin.",
-    "insufficientData": "Yetersiz Veri",
-    "minDataRequired": "Analiz için en az 5 kayıt gereklidir."
+    "trends": "Trend Analizi",
+    "dataAnalysis": "Veri Analizi",
+    "results": "Analiz Sonuçları",
+    "insight": "Çıkarım",
+    "recommendation": "Öneri",
+    "recommendations": "Öneriler",
+    "result": "Sonuç",
+    "checkStatus": "Durumu Kontrol Et",
+    "errorTitle": "Analiz Hatası",
+    "noResultData": "Sonuç verisi bulunamadı",
+    "noResults": "Analiz sonucu bulunamadı",
+    "noDescription": "Açıklama bulunamadı",
+    "status": {
+      "starting": "Analiz başlatılıyor...",
+      "processing": "Veriler işleniyor...",
+      "analyzing": "Veriler analiz ediliyor...",
+      "preparing": "Sonuçlar hazırlanıyor...",
+      "finalizing": "Son kontroller yapılıyor...",
+      "completed": "Analiz tamamlandı",
+      "failed": "Analiz başarısız",
+      "fromCache": "Önbellekten yüklendi",
+      "timeout": "Zaman aşımı",
+      "label": "Durum",
+      "unknown": "Bilinmiyor"
+    },
+    "statusBadge": {
+      "running": "İşleniyor",
+      "completed": "Tamamlandı", 
+      "failed": "Başarısız",
+      "cached": "Önbellekten",
+      "pending": "Bekliyor"
+    },
+    "errors": {
+      "timeout": "Analiz zaman aşımına uğradı",
+      "unknown": "Bilinmeyen hata",
+      "notFound": "Analiz bulunamadı",
+      "statusCheck": "Durum kontrolü hatası: "
+    },
+    "hints": {
+      "inProgress": "Analiz arka planda devam ediyor...",
+      "almostDone": "Analiz neredeyse tamamlanıyor..."
+    },
+    "info": {
+      "title": "Analiz Bilgileri",
+      "processingTime": "İşlem Süresi",
+      "cacheUsed": "Önbellek Kullanıldı",
+      "originalLanguage": "Orijinal Dil",
+      "notSpecified": "Belirtilmemiş"
+    }
   },
   "language": {
     "selectTitle": "Dil Seçin"
