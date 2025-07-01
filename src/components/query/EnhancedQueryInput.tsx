@@ -1,3 +1,4 @@
+// src/components/query/EnhancedQueryInput.tsx - TypeScript hataları ve dil desteği düzeltildi
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -8,14 +9,12 @@ import {
   Dimensions,
   ScrollView,
   ActivityIndicator,
-  Animated
+  Animated,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiService from '../../services/apiService';
-import { speechToTextService } from '../../utils/speechToText';
-import { showSuccessToast, showErrorToast, showWarningToast, showInfoToast } from '../../utils/toastUtils';
-import { i18n } from '../../utils/i18n';
-import { queryHistoryService } from '../../utils/queryHistory';
+import { useLanguage } from '../../context/LanguageContext'; // ✅ Proper language hook
 
 const { width } = Dimensions.get('window');
 
@@ -26,36 +25,27 @@ interface QueryInputProps {
 
 interface Suggestion {
   text: string;
-  type: 'history' | 'suggestion' | 'example' | 'smart';
+  type: 'suggestion' | 'example' | 'smart';
   confidence?: number;
 }
 
-// Desteklenen dil tipleri
-type SupportedLanguage = 'tr' | 'en' | 'de' | 'es';
-
-// Type guard fonksiyonu
-const isSupportedLanguage = (lang: string): lang is SupportedLanguage => {
-  return ['tr', 'en', 'de', 'es'].includes(lang);
-};
-
 const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
+  const { t, currentLanguage } = useLanguage(); // ✅ Use proper language hook
+  
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [isListening, setIsListening] = useState(false);
   const [spellingSuggestion, setSpellingSuggestion] = useState<string>('');
-  const [queryHistory, setQueryHistory] = useState<string[]>([]);
   
   const inputRef = useRef<TextInput>(null);
   const suggestionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
-  // Örnek sorgular dil bazlı - Type-safe
+  // ✅ Örnek sorgular dil bazlı - Type-safe
   const getExampleQueries = (): string[] => {
-    const currentLang = i18n.getLanguage();
-    
-    const examples: Record<SupportedLanguage, string[]> = {
+    const examples: Record<string, string[]> = {
       tr: [
         "2024 yılında en çok prim üreten 5 acente",
         "Son 6 ayda Kasko ürünü için aylık prim trendi çiz",
@@ -86,30 +76,13 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
       ]
     };
     
-    // Type-safe language access
-    if (isSupportedLanguage(currentLang)) {
-      return examples[currentLang];
-    }
-    
-    // Fallback to Turkish
-    return examples.tr;
+    return examples[currentLanguage] || examples.tr;
   };
 
   // Component mount
   useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  // Dil değişimi
-  useEffect(() => {
     loadExampleQueries();
-  }, [i18n.getLanguage()]);
-
-  const loadInitialData = async () => {
-    await i18n.init();
-    loadExampleQueries();
-    loadQueryHistory();
-  };
+  }, [currentLanguage]);
 
   const loadExampleQueries = () => {
     const examples = getExampleQueries();
@@ -118,11 +91,6 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
       type: 'example'
     }));
     setSuggestions(exampleSuggestions);
-  };
-
-  const loadQueryHistory = async () => {
-    const history = await queryHistoryService.getRecentQueries(10);
-    setQueryHistory(history);
   };
 
   const handleQueryChange = (text: string) => {
@@ -147,21 +115,12 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
 
   const fetchSuggestions = async (searchText: string) => {
     try {
-      // Geçmiş sorgulardan filtrele
-      const historySuggestions: Suggestion[] = queryHistory
-        .filter((h: string) => h.toLowerCase().includes(searchText.toLowerCase()))
-        .slice(0, 3)
-        .map((query: string) => ({
-          text: query,
-          type: 'history'
-        }));
-
-      // API'den akıllı öneriler al
+      // ✅ API'den akıllı öneriler al (Backend history yönetiyor)
       const suggestionResponse = await apiService.getSuggestions(
         searchText, 
         true, 
-        queryHistory,
-        i18n.getLanguage()
+        [], // History backend'de yönetiliyor
+        currentLanguage
       );
       
       const smartSuggestions: Suggestion[] = (suggestionResponse?.suggestions || [])
@@ -182,24 +141,21 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
         }));
 
       // Tüm önerileri birleştir
-      const allSuggestions = [
-        ...historySuggestions,
-        ...smartSuggestions,
-        ...exampleSuggestions
-      ];
+      const allSuggestions = [...smartSuggestions, ...exampleSuggestions];
 
       setSuggestions(allSuggestions);
       setShowSuggestions(true);
       
     } catch (error) {
       console.warn('Öneri alma hatası:', error);
-      // Hata durumunda sadece geçmiş ve örnekleri göster
-      const fallbackSuggestions: Suggestion[] = queryHistory
-        .filter((h: string) => h.toLowerCase().includes(searchText.toLowerCase()))
+      // Hata durumunda sadece örnekleri göster
+      const examples = getExampleQueries();
+      const fallbackSuggestions: Suggestion[] = examples
+        .filter((example: string) => example.toLowerCase().includes(searchText.toLowerCase()))
         .slice(0, 5)
         .map((query: string) => ({
           text: query,
-          type: 'history'
+          type: 'example'
         }));
       setSuggestions(fallbackSuggestions);
     }
@@ -207,7 +163,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
 
   const checkSpelling = async (text: string) => {
     try {
-      const spellCheck = await apiService.checkSpelling(text, i18n.getLanguage());
+      const spellCheck = await apiService.checkSpelling(text, currentLanguage);
       if (spellCheck.correction && spellCheck.confidence > 0.7) {
         setSpellingSuggestion(spellCheck.correction);
       }
@@ -229,9 +185,10 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
     inputRef.current?.focus();
   };
 
+  // ✅ Query History kaldırıldı - Backend yönetiyor
   const handleSubmit = async () => {
     if (!query.trim()) {
-      showWarningToast(i18n.t('queryInput.emptyQuery', { defaultValue: 'Lütfen bir sorgu girin.' }));
+      Alert.alert(t('common.warning') || 'Uyarı', t('queryInput.emptyQuery') || 'Lütfen bir sorgu girin.');
       return;
     }
 
@@ -240,58 +197,30 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
     setSpellingSuggestion('');
 
     try {
-      const results = await apiService.executeQuery(query);
+      const results = await apiService.executeQuery(query, currentLanguage);
       
-      // Geçmişi güncelle
-      loadQueryHistory();
+      // ✅ History Backend'de yönetiliyor, local storage kullanmıyoruz
       
       onQuerySubmit(query, results);
-      showSuccessToast(i18n.t('queryInput.querySuccess', { defaultValue: 'Sorgu başarılı!' }));
+      Alert.alert(t('common.success') || 'Başarılı', t('queryInput.querySuccess') || 'Sorgu başarılı!');
       
     } catch (error: any) {
-      let errorMessage = error.message || i18n.t('queryInput.queryError', { defaultValue: 'Sorgu çalıştırılırken bir hata oluştu' });
+      let errorMessage = error.message || (t('queryInput.queryError') || 'Sorgu çalıştırılırken bir hata oluştu');
       
       if (error.code === 'TOKEN_EXPIRED') {
-        errorMessage = i18n.t('queryInput.tokenExpired', { defaultValue: 'Oturum süresi doldu. Lütfen tekrar giriş yapın.' });
+        errorMessage = t('queryInput.tokenExpired') || 'Oturum süresi doldu. Lütfen tekrar giriş yapın.';
       }
       
       onError(errorMessage);
-      showErrorToast(errorMessage);
+      Alert.alert(t('common.error') || 'Hata', errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Sesli arama
-  const handleVoiceSearch = async () => {
-    if (isListening) {
-      // Durdur
-      await speechToTextService.stopListening();
-      setIsListening(false);
-      stopPulseAnimation();
-    } else {
-      // Başlat
-      setIsListening(true);
-      startPulseAnimation();
-      
-      speechToTextService.startListening({
-        language: i18n.getLanguage(),
-        onResult: (text: string) => {
-          setQuery(text);
-          setIsListening(false);
-          stopPulseAnimation();
-          showSuccessToast(i18n.t('speechToText.recognized', { defaultValue: 'Konuşma tanındı!' }));
-        },
-        onError: (error: string) => {
-          setIsListening(false);
-          stopPulseAnimation();
-          showErrorToast(i18n.t('speechToText.error', { defaultValue: 'Ses tanıma hatası: ' + error }));
-        },
-        onStart: () => {
-          showInfoToast(i18n.t('speechToText.listening'));
-        }
-      });
-    }
+  // ✅ Sesli arama - basitleştirilmiş
+  const handleVoiceSearch = () => {
+    Alert.alert(t('common.info') || 'Bilgi', t('speechToText.notImplemented') || 'Sesli arama özelliği geliştirilme aşamasında.');
   };
 
   const startPulseAnimation = () => {
@@ -330,7 +259,6 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
 
   const getSuggestionIcon = (type: string): keyof typeof Ionicons.glyphMap => {
     switch (type) {
-      case 'history': return 'time-outline';
       case 'smart': return 'bulb-outline'; 
       case 'example': return 'help-circle-outline';
       default: return 'chevron-forward-outline';
@@ -339,7 +267,6 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
 
   const getSuggestionColor = (type: string): string => {
     switch (type) {
-      case 'history': return '#6B7280';
       case 'smart': return '#3B82F6';
       case 'example': return '#F59E0B';
       default: return '#9CA3AF';
@@ -350,9 +277,9 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
     <View style={styles.container}>
       {/* Hero Section */}
       <View style={styles.heroSection}>
-        <Text style={styles.heroTitle}>{i18n.t('queryInput.title', { defaultValue: 'Verilerinizi Keşfedin' })}</Text>
+        <Text style={styles.heroTitle}>{t('queryInput.title') || 'Verilerinizi Keşfedin'}</Text>
         <Text style={styles.heroSubtitle}>
-          {i18n.t('queryInput.subtitle', { defaultValue: 'Doğal dilde sorun, anında analiz alın' })}
+          {t('queryInput.subtitle') || 'Doğal dilde sorun, anında analiz alın'}
         </Text>
       </View>
 
@@ -363,11 +290,11 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
           {spellingSuggestion && (
             <View style={styles.spellingSuggestion}>
               <Text style={styles.spellingSuggestionText}>
-                {i18n.t('queryInput.didYouMean')} "{spellingSuggestion}"
+                {(t('queryInput.didYouMean') || 'Bunu mu demek istediniz') + `: "${spellingSuggestion}"`}
               </Text>
               <TouchableOpacity onPress={handleSpellingSuggestionAccept}>
                 <Text style={styles.spellingSuggestionButton}>
-                  {i18n.t('queryInput.yesCorrect', { defaultValue: 'Evet, düzelt' })}
+                  {t('queryInput.yesCorrect') || 'Evet, düzelt'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -378,7 +305,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
             <TextInput
               ref={inputRef}
               style={styles.textInput}
-              placeholder={i18n.t('queryInput.placeholder')}
+              placeholder={t('queryInput.placeholder') || 'Örn: 2024 yılında en çok prim üreten acenteler'}
               placeholderTextColor="#9CA3AF"
               value={query}
               onChangeText={handleQueryChange}
@@ -414,7 +341,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
               <View style={styles.listeningIndicator}>
                 <Ionicons name="radio-button-on" size={12} color="#EF4444" />
                 <Text style={styles.listeningText}>
-                  {i18n.t('speechToText.listening')}
+                  {t('speechToText.listening') || 'Dinleniyor...'}
                 </Text>
               </View>
             </View>
@@ -428,13 +355,13 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
             {isLoading ? (
               <View style={styles.loadingContent}>
                 <ActivityIndicator color="#FFFFFF" size="small" />
-                <Text style={styles.searchButtonText}>{i18n.t('common.loading')}</Text>
+                <Text style={styles.searchButtonText}>{t('common.loading') || 'Yükleniyor...'}</Text>
               </View>
             ) : (
               <View style={styles.searchButtonContent}>
                 <Ionicons name="sparkles" size={18} color="#FFFFFF" />
                 <Text style={styles.searchButtonText}>
-                  {i18n.t('queryInput.analyzeButton', { defaultValue: 'Analiz Et' })}
+                  {t('queryInput.analyzeButton') || 'Analiz Et'}
                 </Text>
               </View>
             )}
@@ -448,7 +375,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
               <View style={styles.progressIndicator} />
             </View>
             <Text style={styles.loadingText}>
-              {i18n.t('queryInput.processingQuery', { defaultValue: 'AI sorgunuzu analiz ediyor...' })}
+              {t('queryInput.processingQuery') || 'AI sorgunuzu analiz ediyor ve SQL oluşturuyor...'}
             </Text>
           </View>
         )}
@@ -458,7 +385,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
       {!isLoading && showSuggestions && suggestions.length > 0 && (
         <View style={styles.suggestionsSection}>
           <Text style={styles.suggestionsTitle}>
-            {query.trim() ? i18n.t('queryInput.suggestions') : i18n.t('queryInput.examples', { defaultValue: 'Örnek Sorgular' })}
+            {query.trim() ? (t('queryInput.suggestions') || 'Öneriler') : (t('queryInput.examples') || 'Örnek Sorgular')}
           </Text>
           
           <ScrollView style={styles.suggestionsList} showsVerticalScrollIndicator={false}>
@@ -483,7 +410,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
                   <Text style={styles.suggestionText} numberOfLines={2}>
                     {suggestion.text}
                   </Text>
-                  {suggestion.type === 'smart' && suggestion.confidence && (
+                  {suggestion.type === 'smart' && (
                     <View style={styles.confidenceBadge}>
                       <Text style={styles.confidenceText}>AI</Text>
                     </View>
