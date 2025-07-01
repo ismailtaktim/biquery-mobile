@@ -21,18 +21,21 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": ["RECORD_AUDIO"]
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    }
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Bu uygulama sesli arama özelliği için mikrofon izni gerektirir."
+        }
+      ]
+    ]
   }
 }

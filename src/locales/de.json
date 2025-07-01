@@ -1,0 +1,150 @@
+{
+  "common": {
+    "loading": "Wird geladen...",
+    "search": "Suchen",
+    "clear": "Löschen",
+    "submit": "Senden",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "view": "Anzeigen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "close": "Schließen",
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nein",
+    "warning": "Warnung",
+    "error": "Fehler",
+    "success": "Erfolgreich",
+    "info": "Info"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "loginButton": "Einloggen",
+    "loginError": "Anmeldung fehlgeschlagen",
+    "loginSuccess": "Anmeldung erfolgreich",
+    "welcome": "Willkommen"
+  },
+  "login": {
+    "title": "Willkommen bei BiQuery",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "loginButton": "Anmelden",
+    "info": {
+      "titleLine2": "Datenanalyse in natürlicher Sprache"
+    },
+    "demo": {
+      "title": "Demo-Konto"
+    },
+    "examples": {
+      "query1": "Verkaufsbericht der letzten 3 Monate",
+      "query2": "Erfolgreichste Agenturen",
+      "query3": "Regionale Leistungsanalyse"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen",
+    "summary": "Zusammenfassung",
+    "analytics": "Analytik",
+    "reports": "Berichte",
+    "examples": {
+      "title": "Beispielabfragen"
+    },
+    "stats": {
+      "totalAgents": "Agenturen Gesamt",
+      "totalProducts": "Produkte Gesamt",
+      "totalPremium": "Prämie Gesamt",
+      "lossRatio": "Schadenquote"
+    },
+    "exampleQueries": {
+      "query1": "Top 5 Agenturen mit höchster Prämie in 2024",
+      "query2": "Zeichne monatlichen Prämientrend für Kasko-Produkt in den letzten 6 Monaten",
+      "query3": "Zeige Gesamtpolicen in Istanbul"
+    },
+    "examplePlaceholder": "Top 5 Agenturen mit höchster Prämie in 2024...",
+    "tips": {
+      "title": "Leistungstipps",
+      "narrowDateRange": "Zeitraum eingrenzen (z.B. letzte 3 Monate)",
+      "fewerEntities": "Weniger Agenturen/Produkte abfragen",
+      "limitResults": "Ergebnisse begrenzen (z.B. Top 10 Agenturen)"
+    }
+  },
+  "queryInput": {
+    "title": "Abfrage-Eingabe",
+    "subtitle": "Schreiben Sie Ihre Abfrage in natürlicher Sprache",
+    "placeholder": "Stellen Sie Ihre Frage in natürlicher Sprache... (z.B. 'Verkaufsbericht der letzten 3 Monate')",
+    "queryButton": "Abfragen",
+    "analyzeButton": "Analysieren",
+    "clearButton": "Löschen",
+    "clearCacheButton": "Cache löschen",
+    "loadingText": "Abfrage wird verarbeitet...",
+    "voiceSearch": "Sprachsuche",
+    "aiSettings": "KI-Einstellungen",
+    "showTips": "Tipps anzeigen",
+    "smartSuggestions": "Intelligente Vorschläge",
+    "rememberHistory": "Verlauf merken",
+    "didYouMean": "Meinten Sie:",
+    "yesCorrect": "Ja, korrigieren",
+    "timeoutWarning": "Diese Abfrage kann eine Weile dauern. Bitte warten...",
+    "aiEnabled": "KI-Vorschläge aktiviert",
+    "aiDisabled": "KI-Vorschläge deaktiviert",
+    "emptyQuery": "Bitte geben Sie eine Abfrage ein.",
+    "querySuccess": "Abfrage erfolgreich!",
+    "queryError": "Fehler beim Ausführen der Abfrage",
+    "tokenExpired": "Sitzung abgelaufen. Bitte erneut anmelden.",
+    "processingQuery": "KI analysiert Ihre Abfrage...",
+    "suggestions": "Vorschläge",
+    "examples": "Beispielabfragen"
+  },
+  "speechToText": {
+    "start": "Sprechen beginnen",
+    "stop": "Sprechen beenden",
+    "listening": "Hört zu...",
+    "processing": "Verarbeitung...",
+    "error": "Spracherkennungsfehler",
+    "noSupport": "Ihr Browser unterstützt keine Spracherkennung",
+    "recognized": "Sprache erkannt!"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "query": "Abfragen",
+    "agents": "Agenturen",
+    "products": "Produkte",
+    "regional": "Regional",
+    "comparisons": "Vergleichen",
+    "reports": "Berichte"
+  },
+  "analysis": {
+    "quickAnalysis": "Schnellanalyse",
+    "subtitle": "Analysieren Sie vorbereitete Daten",
+    "general": "Allgemeine Analyse",
+    "trends": "Trendanalyse",
+    "anomaly": "Anomalie-Erkennung",
+    "forecast": "Prognoseanalyse",
+    "starting": "Analyse wird gestartet...",
+    "error": "Analysefehler",
+    "generalError": "Fehler beim Starten der Analyse",
+    "startError": "Analyse konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
+    "insufficientData": "Unzureichende Daten",
+    "minDataRequired": "Mindestens 5 Datensätze für die Analyse erforderlich."
+  },
+  "language": {
+    "selectTitle": "Sprache wählen"
+  },
+  "tips": {
+    "maximumMinimum": "Verwenden Sie 'höchste' oder 'niedrigste' für Maximum-/Minimum-Werte",
+    "timeRange": "Verwenden Sie Ausdrücke wie 'letzte 3 Monate' oder 'Jahr 2023' für bestimmte Zeiträume",
+    "comparison": "Verwenden Sie 'vergleichen' oder 'versus' für Vergleiche",
+    "grouping": "Verwenden Sie 'nach Kategorie' oder 'nach Region' für Gruppierungen",
+    "detailedAnalysis": "Fügen Sie 'detailliert' oder 'umfassend' für eingehende Analysen hinzu",
+    "trendAnalysis": "Verwenden Sie 'Trend' oder 'Änderung' für Trendanalysen",
+    "voiceQuery": "Drücken Sie die Mikrofon-Taste und sprechen Sie für Sprachsuche"
+  }
+}

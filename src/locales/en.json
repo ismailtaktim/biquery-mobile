@@ -1,0 +1,150 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "search": "Search",
+    "clear": "Clear",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "warning": "Warning",
+    "error": "Error",
+    "success": "Success",
+    "info": "Info"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Sign In",
+    "loginError": "Login failed",
+    "loginSuccess": "Login successful",
+    "welcome": "Welcome"
+  },
+  "login": {
+    "title": "Welcome to BiQuery",
+    "username": "Username",
+    "password": "Password",
+    "loginButton": "Sign In",
+    "info": {
+      "titleLine2": "Natural Language Data Analysis"
+    },
+    "demo": {
+      "title": "Demo Account"
+    },
+    "examples": {
+      "query1": "Sales report for the last 3 months",
+      "query2": "Top performing agents",
+      "query3": "Regional performance analysis"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "summary": "Summary",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "examples": {
+      "title": "Example Queries"
+    },
+    "stats": {
+      "totalAgents": "Total Agents",
+      "totalProducts": "Total Products",
+      "totalPremium": "Total Premium",
+      "lossRatio": "Loss Ratio"
+    },
+    "exampleQueries": {
+      "query1": "Top 5 agents with highest premium in 2024",
+      "query2": "Draw monthly premium trend for Comprehensive product for the last 6 months",
+      "query3": "Show total policies in Istanbul"
+    },
+    "examplePlaceholder": "Top 5 agents with highest premium in 2024...",
+    "tips": {
+      "title": "Performance Tips",
+      "narrowDateRange": "Narrow date range (e.g. last 3 months)",
+      "fewerEntities": "Try querying fewer agents/products",
+      "limitResults": "Limit results (e.g. top 10 agents)"
+    }
+  },
+  "queryInput": {
+    "title": "Query Input",
+    "subtitle": "Write your query in natural language",
+    "placeholder": "Ask your question in natural language... (e.g. 'Sales report for the last 3 months')",
+    "queryButton": "Query",
+    "analyzeButton": "Analyze",
+    "clearButton": "Clear",
+    "clearCacheButton": "Clear Cache",
+    "loadingText": "Processing query...",
+    "voiceSearch": "Voice Search",
+    "aiSettings": "AI Settings",
+    "showTips": "Show Tips",
+    "smartSuggestions": "Smart Suggestions",
+    "rememberHistory": "Remember History",
+    "didYouMean": "Did you mean:",
+    "yesCorrect": "Yes, Correct",
+    "timeoutWarning": "This query may take a while. Please wait...",
+    "aiEnabled": "AI suggestions enabled",
+    "aiDisabled": "AI suggestions disabled",
+    "emptyQuery": "Please enter a query.",
+    "querySuccess": "Query successful!",
+    "queryError": "An error occurred while executing the query",
+    "tokenExpired": "Session expired. Please login again.",
+    "processingQuery": "AI is analyzing your query...",
+    "suggestions": "Suggestions",
+    "examples": "Example Queries"
+  },
+  "speechToText": {
+    "start": "Start Speaking",
+    "stop": "Stop Speaking",
+    "listening": "Listening...",
+    "processing": "Processing...",
+    "error": "Speech recognition error",
+    "noSupport": "Your browser doesn't support speech recognition",
+    "recognized": "Speech recognized!"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "query": "Query",
+    "agents": "Agents",
+    "products": "Products",
+    "regional": "Regional",
+    "comparisons": "Compare",
+    "reports": "Reports"
+  },
+  "analysis": {
+    "quickAnalysis": "Quick Analysis",
+    "subtitle": "Analyze pre-prepared data",
+    "general": "General Analysis",
+    "trends": "Trend Analysis",
+    "anomaly": "Anomaly Detection",
+    "forecast": "Forecast Analysis",
+    "starting": "Analysis starting...",
+    "error": "Analysis Error",
+    "generalError": "An error occurred while starting analysis",
+    "startError": "Analysis could not be started. Please try again.",
+    "insufficientData": "Insufficient Data",
+    "minDataRequired": "At least 5 records required for analysis."
+  },
+  "language": {
+    "selectTitle": "Select Language"
+  },
+  "tips": {
+    "maximumMinimum": "Use 'highest' or 'lowest' to find maximum/minimum values",
+    "timeRange": "Use phrases like 'last 3 months' or 'year 2023' for specific time ranges",
+    "comparison": "Use 'compare' or 'versus' for comparisons",
+    "grouping": "Use 'by category' or 'by region' for grouping",
+    "detailedAnalysis": "Add 'detailed' or 'comprehensive' for in-depth analysis",
+    "trendAnalysis": "Use 'trend' or 'change' for trend analysis",
+    "voiceQuery": "Press the microphone button and speak for voice query"
+  }
+}

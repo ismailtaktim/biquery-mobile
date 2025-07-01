@@ -1,0 +1,150 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "search": "Buscar",
+    "clear": "Limpiar",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "ok": "OK",
+    "yes": "Sí",
+    "no": "No",
+    "warning": "Advertencia",
+    "error": "Error",
+    "success": "Exitoso",
+    "info": "Información"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "username": "Nombre de Usuario",
+    "password": "Contraseña",
+    "loginButton": "Acceder",
+    "loginError": "Error de inicio de sesión",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "welcome": "Bienvenido"
+  },
+  "login": {
+    "title": "Bienvenido a BiQuery",
+    "username": "Nombre de Usuario",
+    "password": "Contraseña",
+    "loginButton": "Iniciar Sesión",
+    "info": {
+      "titleLine2": "Análisis de Datos en Lenguaje Natural"
+    },
+    "demo": {
+      "title": "Cuenta Demo"
+    },
+    "examples": {
+      "query1": "Informe de ventas de los últimos 3 meses",
+      "query2": "Agentes con mejor rendimiento",
+      "query3": "Análisis de rendimiento regional"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bienvenido",
+    "summary": "Resumen",
+    "analytics": "Analítica",
+    "reports": "Informes",
+    "examples": {
+      "title": "Consultas de Ejemplo"
+    },
+    "stats": {
+      "totalAgents": "Agentes Totales",
+      "totalProducts": "Productos Totales",
+      "totalPremium": "Prima Total",
+      "lossRatio": "Ratio de Siniestralidad"
+    },
+    "exampleQueries": {
+      "query1": "Los 5 agentes que más prima generaron en 2024",
+      "query2": "Dibuja la tendencia mensual de prima para producto Casco en los últimos 6 meses",
+      "query3": "Mostrar el total de pólizas en Estambul"
+    },
+    "examplePlaceholder": "Los 5 agentes que más prima generaron en 2024...",
+    "tips": {
+      "title": "Consejos de Rendimiento",
+      "narrowDateRange": "Acortar rango de fechas (ej. últimos 3 meses)",
+      "fewerEntities": "Intentar consultar menos agentes/productos",
+      "limitResults": "Limitar resultados (ej. top 10 agentes)"
+    }
+  },
+  "queryInput": {
+    "title": "Entrada de Consulta",
+    "subtitle": "Escriba su consulta en lenguaje natural",
+    "placeholder": "Haga su pregunta en lenguaje natural... (ej. 'Informe de ventas de los últimos 3 meses')",
+    "queryButton": "Consultar",
+    "analyzeButton": "Analizar",
+    "clearButton": "Limpiar",
+    "clearCacheButton": "Limpiar Caché",
+    "loadingText": "Procesando consulta...",
+    "voiceSearch": "Búsqueda por Voz",
+    "aiSettings": "Configuración IA",
+    "showTips": "Mostrar Consejos",
+    "smartSuggestions": "Sugerencias Inteligentes",
+    "rememberHistory": "Recordar Historial",
+    "didYouMean": "¿Quiso decir:",
+    "yesCorrect": "Sí, Corregir",
+    "timeoutWarning": "Esta consulta puede tomar un tiempo. Por favor espere...",
+    "aiEnabled": "Sugerencias IA habilitadas",
+    "aiDisabled": "Sugerencias IA deshabilitadas",
+    "emptyQuery": "Por favor ingrese una consulta.",
+    "querySuccess": "¡Consulta exitosa!",
+    "queryError": "Ocurrió un error al ejecutar la consulta",
+    "tokenExpired": "Sesión expirada. Por favor inicie sesión nuevamente.",
+    "processingQuery": "IA está analizando su consulta...",
+    "suggestions": "Sugerencias",
+    "examples": "Consultas de Ejemplo"
+  },
+  "speechToText": {
+    "start": "Comenzar a Hablar",
+    "stop": "Dejar de Hablar",
+    "listening": "Escuchando...",
+    "processing": "Procesando...",
+    "error": "Error de reconocimiento de voz",
+    "noSupport": "Su navegador no admite reconocimiento de voz",
+    "recognized": "¡Voz reconocida!"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "query": "Consultar",
+    "agents": "Agentes",
+    "products": "Productos",
+    "regional": "Regional",
+    "comparisons": "Comparar",
+    "reports": "Informes"
+  },
+  "analysis": {
+    "quickAnalysis": "Análisis Rápido",
+    "subtitle": "Analizar datos pre-preparados",
+    "general": "Análisis General",
+    "trends": "Análisis de Tendencias",
+    "anomaly": "Detección de Anomalías",
+    "forecast": "Análisis de Pronóstico",
+    "starting": "Iniciando análisis...",
+    "error": "Error de Análisis",
+    "generalError": "Ocurrió un error al iniciar el análisis",
+    "startError": "No se pudo iniciar el análisis. Por favor intente nuevamente.",
+    "insufficientData": "Datos Insuficientes",
+    "minDataRequired": "Se requieren al menos 5 registros para el análisis."
+  },
+  "language": {
+    "selectTitle": "Seleccionar Idioma"
+  },
+  "tips": {
+    "maximumMinimum": "Use 'más alto' o 'más bajo' para encontrar valores máximos/mínimos",
+    "timeRange": "Use frases como 'últimos 3 meses' o 'año 2023' para rangos de tiempo específicos",
+    "comparison": "Use 'comparar' o 'versus' para comparaciones",
+    "grouping": "Use 'por categoría' o 'por región' para agrupaciones",
+    "detailedAnalysis": "Agregue 'detallado' o 'completo' para análisis en profundidad",
+    "trendAnalysis": "Use 'tendencia' o 'cambio' para análisis de tendencias",
+    "voiceQuery": "Presione el botón del micrófono y hable para búsqueda por voz"
+  }
+}

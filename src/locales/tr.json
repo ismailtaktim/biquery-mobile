@@ -1,0 +1,150 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "search": "Ara",
+    "clear": "Temizle",
+    "submit": "Gönder",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "view": "Görüntüle",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "close": "Kapat",
+    "ok": "Tamam",
+    "yes": "Evet",
+    "no": "Hayır",
+    "warning": "Uyarı",
+    "error": "Hata",
+    "success": "Başarılı",
+    "info": "Bilgi"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "loginButton": "Giriş Yap",
+    "loginError": "Giriş başarısız",
+    "loginSuccess": "Giriş başarılı",
+    "welcome": "Hoş Geldiniz"
+  },
+  "login": {
+    "title": "BiQuery'e Hoş Geldiniz",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "loginButton": "Giriş Yap",
+    "info": {
+      "titleLine2": "Doğal Dil ile Veri Analizi"
+    },
+    "demo": {
+      "title": "Demo Hesabı"
+    },
+    "examples": {
+      "query1": "Son 3 aydaki satış raporu",
+      "query2": "En başarılı acenteler",
+      "query3": "Bölgesel performans analizi"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Hoş Geldiniz",
+    "summary": "Özet",
+    "analytics": "Analitik",
+    "reports": "Raporlar",
+    "examples": {
+      "title": "Örnek Sorgular"
+    },
+    "stats": {
+      "totalAgents": "Toplam Acente",
+      "totalProducts": "Toplam Ürün",
+      "totalPremium": "Toplam Prim",
+      "lossRatio": "Hasar Oranı"
+    },
+    "exampleQueries": {
+      "query1": "2024 yılında en çok prim üreten 5 acente",
+      "query2": "Son 6 ayda Kasko ürünü için aylık prim trendi çiz",
+      "query3": "İstanbul'daki toplam poliçeleri göster"
+    },
+    "examplePlaceholder": "2024 yılında en çok prim üreten 5 acente...",
+    "tips": {
+      "title": "Performans İpuçları",
+      "narrowDateRange": "Tarih aralığını daraltın (ör: son 3 ay)",
+      "fewerEntities": "Az sayıda acente/ürün sorgulamayı deneyin",
+      "limitResults": "Sonuçları sınırlandırın (ör: ilk 10 acente)"
+    }
+  },
+  "queryInput": {
+    "title": "Sorgu Girişi",
+    "subtitle": "Sorgunuzu doğal dilde yazın",
+    "placeholder": "Doğal dilde sorunuzu yazın... (örn: 'Son 3 aydaki satış raporu')",
+    "queryButton": "Sorgula",
+    "analyzeButton": "Analiz Et",
+    "clearButton": "Temizle",
+    "clearCacheButton": "Önbelleği Temizle",
+    "loadingText": "Sorgu işleniyor...",
+    "voiceSearch": "Sesli Arama",
+    "aiSettings": "AI Ayarları",
+    "showTips": "İpuçlarını Göster",
+    "smartSuggestions": "Akıllı Öneriler",
+    "rememberHistory": "Geçmişi Hatırla",
+    "didYouMean": "Şunu mu demek istediniz:",
+    "yesCorrect": "Evet, Düzelt",
+    "timeoutWarning": "Bu sorgu uzun sürebilir. Lütfen bekleyin...",
+    "aiEnabled": "AI önerileri aktif",
+    "aiDisabled": "AI önerileri kapalı",
+    "emptyQuery": "Lütfen bir sorgu girin.",
+    "querySuccess": "Sorgu başarılı!",
+    "queryError": "Sorgu çalıştırılırken bir hata oluştu",
+    "tokenExpired": "Oturum süresi doldu. Lütfen tekrar giriş yapın.",
+    "processingQuery": "AI sorgunuzu analiz ediyor...",
+    "suggestions": "Öneriler",
+    "examples": "Örnek Sorgular"
+  },
+  "speechToText": {
+    "start": "Konuşmaya Başla",
+    "stop": "Konuşmayı Durdur",
+    "listening": "Dinleniyor...",
+    "processing": "İşleniyor...",
+    "error": "Ses tanıma hatası",
+    "noSupport": "Tarayıcınız ses tanımayı desteklemiyor",
+    "recognized": "Konuşma tanındı!"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "query": "Sorgula",
+    "agents": "Acenteler",
+    "products": "Ürünler",
+    "regional": "Bölgesel",
+    "comparisons": "Karşılaştır",
+    "reports": "Raporlar"
+  },
+  "analysis": {
+    "quickAnalysis": "Hızlı Analiz",
+    "subtitle": "Önceden hazırlanmış veriler üzerinde analiz yapın",
+    "general": "Genel Analiz",
+    "trends": "Trend Analizi",
+    "anomaly": "Anomali Tespiti",
+    "forecast": "Tahmin Analizi",
+    "starting": "Analiz başlatılıyor...",
+    "error": "Analiz Hatası",
+    "generalError": "Analiz başlatılırken bir hata oluştu",
+    "startError": "Analiz başlatılamadı. Lütfen tekrar deneyin.",
+    "insufficientData": "Yetersiz Veri",
+    "minDataRequired": "Analiz için en az 5 kayıt gereklidir."
+  },
+  "language": {
+    "selectTitle": "Dil Seçin"
+  },
+  "tips": {
+    "maximumMinimum": "En yüksek/en düşük değerleri bulmak için 'en yüksek' veya 'en düşük' kelimelerini kullanın",
+    "timeRange": "Belirli bir zaman aralığı için 'son 3 ay' veya '2023 yılı' gibi ifadeler kullanın",
+    "comparison": "Karşılaştırma yapmak için 'karşılaştır' veya 'kıyasla' kelimelerini kullanın",
+    "grouping": "Gruplama için 'kategoriye göre' veya 'bölgeye göre' ifadelerini kullanın",
+    "detailedAnalysis": "Detaylı analiz için 'ayrıntılı' veya 'kapsamlı' kelimelerini ekleyin",
+    "trendAnalysis": "Trend analizi için 'trend' veya 'değişim' kelimelerini kullanın",
+    "voiceQuery": "Sesli sorgu için mikrofon butonuna basın ve konuşun"
+  }
+}
