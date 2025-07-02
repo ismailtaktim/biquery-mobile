@@ -1,3 +1,4 @@
+// src/components/query/QueryInput.tsx - Enhanced with comprehensive language support
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -13,6 +14,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation, useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 import apiService from '../../services/apiService';
 
 const { width } = Dimensions.get('window');
@@ -28,6 +31,8 @@ interface Suggestion {
 }
 
 const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
+  const { t, currentLanguage } = useLanguage();
+  const { logout } = useAuth();
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -36,22 +41,62 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
   const inputRef = useRef<TextInput>(null);
   const suggestionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Örnek sorgular
-  const exampleQueries = [
-    "2024 yılında en çok prim üreten 5 acente",
-    "Son 6 ayda Kasko ürünü için aylık prim trendi çiz",
-    "İstanbul'daki toplam poliçeleri göster",
-    "Hangi ürünlerin hasar/prim oranı %50'nin altında?",
-    "Acentelerin yıllık üretim karşılaştırması"
-  ];
+  // Language-specific example queries
+  const getExampleQueries = () => {
+    const examples = {
+      tr: [
+        "2024 yılında en çok prim üreten 5 acente",
+        "Son 6 ayda Kasko ürünü için aylık prim trendi çiz",
+        "İstanbul'daki toplam poliçeleri göster",
+        "Hangi ürünlerin hasar/prim oranı %50'nin altında?",
+        "Acentelerin yıllık üretim karşılaştırması",
+        "En çok hasarlı poliçe türü hangisi?",
+        "Bölgelere göre prim dağılımını göster",
+        "2023-2024 karşılaştırmalı satış analizi"
+      ],
+      en: [
+        "Top 5 agents with highest premium in 2024",
+        "Draw monthly premium trend for Comprehensive product for the last 6 months",
+        "Show total policies in Istanbul",
+        "Which products have loss/premium ratio below 50%?",
+        "Annual production comparison of agents",
+        "Which policy type has the most claims?",
+        "Show premium distribution by regions",
+        "2023-2024 comparative sales analysis"
+      ],
+      de: [
+        "Top 5 Agenturen mit höchster Prämie in 2024",
+        "Zeichne monatlichen Prämientrend für Kaskoversicherung der letzten 6 Monate",
+        "Zeige Gesamtpolicen in Istanbul",
+        "Welche Produkte haben Schaden/Prämien-Verhältnis unter 50%?",
+        "Jährlicher Produktionsvergleich der Agenturen",
+        "Welche Policenart hat die meisten Schäden?",
+        "Zeige Prämienverteilung nach Regionen",
+        "2023-2024 vergleichende Verkaufsanalyse"
+      ],
+      es: [
+        "Top 5 agentes con mayor prima en 2024",
+        "Dibuja tendencia mensual de primas para producto Integral en los últimos 6 meses",
+        "Mostrar total de pólizas en Estambul",
+        "¿Qué productos tienen ratio siniestro/prima por debajo del 50%?",
+        "Comparación anual de producción de agentes",
+        "¿Qué tipo de póliza tiene más siniestros?",
+        "Mostrar distribución de primas por regiones",
+        "Análisis comparativo de ventas 2023-2024"
+      ]
+    };
+    
+    return examples[currentLanguage as keyof typeof examples] || examples.tr;
+  };
 
-  // Component mount olduğunda örnek sorguları yükle
+  // Component mount - load examples
   useEffect(() => {
     loadExampleQueries();
-  }, []);
+  }, [currentLanguage]); // Reload when language changes
 
   const loadExampleQueries = async () => {
     try {
+      // Try to get examples from API first
       const response = await apiService.getExamples();
       const examples = response?.examples || [];
       
@@ -62,14 +107,18 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
         }));
         setSuggestions(exampleSuggestions);
       } else {
-        const fallbackSuggestions: Suggestion[] = exampleQueries.map(query => ({
+        // Use local examples if API fails
+        const localExamples = getExampleQueries();
+        const fallbackSuggestions: Suggestion[] = localExamples.map(query => ({
           text: query,
           type: 'example' as const
         }));
         setSuggestions(fallbackSuggestions);
       }
     } catch (error) {
-      const fallbackSuggestions: Suggestion[] = exampleQueries.map(query => ({
+      console.warn('Failed to load examples from API, using local examples');
+      const localExamples = getExampleQueries();
+      const fallbackSuggestions: Suggestion[] = localExamples.map(query => ({
         text: query,
         type: 'example' as const
       }));
@@ -95,7 +144,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
 
     suggestionTimeoutRef.current = setTimeout(async () => {
       try {
-        const suggestionResponse = await apiService.getSuggestions(searchText);
+        const suggestionResponse = await apiService.getSuggestions(searchText, true, [], currentLanguage);
         const suggestionResults = suggestionResponse?.suggestions || [];
         
         if (suggestionResults && suggestionResults.length > 0) {
@@ -105,16 +154,21 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
           }));
           setSuggestions(newSuggestions);
         } else {
-          const exampleSuggestions: Suggestion[] = exampleQueries
-            .filter(example => example.toLowerCase().includes(searchText.toLowerCase()))
-            .map(query => ({
-              text: query,
-              type: 'example' as const
-            }));
+          // Filter local examples based on search
+          const localExamples = getExampleQueries();
+          const filteredExamples = localExamples.filter(example => 
+            example.toLowerCase().includes(searchText.toLowerCase())
+          );
+          
+          const exampleSuggestions: Suggestion[] = filteredExamples.map(query => ({
+            text: query,
+            type: 'example' as const
+          }));
           setSuggestions(exampleSuggestions);
         }
         setShowSuggestions(true);
       } catch (error) {
+        console.warn('Failed to fetch suggestions:', error);
         // Keep current suggestions on error
       }
     }, 300);
@@ -128,7 +182,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
 
   const handleSubmit = async () => {
     if (!query.trim()) {
-      Alert.alert('Uyarı', 'Lütfen bir sorgu girin.');
+      Alert.alert(t('common.warning'), t('queryInput.emptyQuery'));
       return;
     }
 
@@ -136,32 +190,49 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
     setShowSuggestions(false);
 
     try {
-      const results = await apiService.executeQuery(query);
-      // Web versiyonunda history yok, sadece results göster
-      onQuerySubmit(query, results);
-    } catch (error: any) {
-      let errorMessage = error.message || 'Sorgu çalıştırılırken bir hata oluştu';
+      console.log('🔍 Executing query in language:', currentLanguage);
+      const results = await apiService.executeQuery(query.trim(), currentLanguage);
       
-      // Token expired özel mesajı
-      if (error.code === 'TOKEN_EXPIRED' || error.message.includes('Oturum süresi doldu')) {
-        errorMessage = 'Oturum süresi doldu. Sayfayı yenileyin ve tekrar giriş yapın.';
+      // Check if results are valid
+      if (results && results.success !== false) {
+        onQuerySubmit(query.trim(), results);
         
-        // 2 saniye sonra logout'a yönlendir
+        // Show success message
+        Alert.alert(
+          t('common.success'),
+          t('queryInput.querySuccess'),
+          [{ text: t('common.ok') }]
+        );
+      } else {
+        throw new Error(results?.message || t('queryInput.queryError'));
+      }
+      
+    } catch (error: any) {
+      console.error('Query execution error:', error);
+      
+      let errorMessage = error.message || t('queryInput.queryError');
+      
+      // Handle specific error types with localized messages
+      if (error.code === 'TOKEN_EXPIRED' || error.message?.includes('token') || error.message?.includes('401')) {
+        errorMessage = t('queryInput.tokenExpired');
+        
+        // Auto-logout after 2 seconds
         setTimeout(() => {
           Alert.alert(
-            'Oturum Süresi Doldu',
-            'Güvenlik nedeniyle oturumunuz sonlandırıldı. Tekrar giriş yapmanız gerekiyor.',
+            t('auth.sessionExpired'),
+            t('auth.loginRequired'),
             [
               {
-                text: 'Tekrar Giriş Yap',
-                onPress: () => {
-                  // AuthContext'ten logout çağır - implement edilecek
-                  console.log('🔐 Redirecting to login...');
-                }
+                text: t('auth.login'),
+                onPress: logout
               }
             ]
           );
         }, 2000);
+      } else if (error.code === 'NETWORK_ERROR') {
+        errorMessage = t('errors.network');
+      } else if (error.code === 'TIMEOUT') {
+        errorMessage = t('errors.timeout');
       }
       
       onError(errorMessage);
@@ -177,14 +248,29 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
     inputRef.current?.focus();
   };
 
+  const getLoadingMessage = () => {
+    const messages = {
+      tr: 'AI sorgunuzu analiz ediyor ve SQL oluşturuyor...',
+      en: 'AI is analyzing your query and generating SQL...',
+      de: 'KI analysiert Ihre Anfrage und generiert SQL...',
+      es: 'La IA está analizando su consulta y generando SQL...'
+    };
+    
+    return messages[currentLanguage as keyof typeof messages] || messages.tr;
+  };
+
+  const getSuggestionsTitle = () => {
+    return query.trim() ? t('queryInput.suggestions') : t('queryInput.examples');
+  };
+
   return (
     <View style={styles.container}>
       {/* Hero Section */}
       <View style={styles.heroSection}>
         <View style={styles.heroContent}>
-          <Text style={styles.heroTitle}>Verilerinizi Keşfedin</Text>
+          <Text style={styles.heroTitle}>{t('dashboard.title')}</Text>
           <Text style={styles.heroSubtitle}>
-            Doğal dilde sorun, anında analiz alın
+            {t('queryInput.subtitle')}
           </Text>
         </View>
       </View>
@@ -197,7 +283,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
             <TextInput
               ref={inputRef}
               style={styles.textInput}
-              placeholder="Örn: 2024 yılında en çok prim üreten acenteler"
+              placeholder={t('queryInput.placeholder')}
               placeholderTextColor="#9CA3AF"
               value={query}
               onChangeText={handleQueryChange}
@@ -220,12 +306,12 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
             {isLoading ? (
               <View style={styles.loadingContent}>
                 <ActivityIndicator color="#FFFFFF" size="small" />
-                <Text style={styles.searchButtonText}>Analiz Ediliyor...</Text>
+                <Text style={styles.searchButtonText}>{t('queryInput.analyzeButton')}...</Text>
               </View>
             ) : (
               <View style={styles.searchButtonContent}>
                 <Ionicons name="sparkles" size={18} color="#FFFFFF" />
-                <Text style={styles.searchButtonText}>Analiz Et</Text>
+                <Text style={styles.searchButtonText}>{t('queryInput.analyzeButton')}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -238,7 +324,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
               <View style={styles.progressIndicator} />
             </View>
             <Text style={styles.loadingText}>
-              AI sorgunuzu analiz ediyor ve SQL oluşturuyor...
+              {getLoadingMessage()}
             </Text>
           </View>
         )}
@@ -248,7 +334,7 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
       {!isLoading && showSuggestions && suggestions.length > 0 && (
         <View style={styles.suggestionsSection}>
           <Text style={styles.suggestionsTitle}>
-            {query.trim() ? 'Öneriler' : 'Örnek Sorgular'}
+            {getSuggestionsTitle()}
           </Text>
           
           <ScrollView style={styles.suggestionsList} showsVerticalScrollIndicator={false}>
@@ -278,6 +364,21 @@ const QueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError }) => {
               </TouchableOpacity>
             ))}
           </ScrollView>
+        </View>
+      )}
+
+      {/* Tips Section */}
+      {!isLoading && !query.trim() && (
+        <View style={styles.tipsSection}>
+          <View style={styles.tipsHeader}>
+            <Ionicons name="bulb-outline" size={20} color="#F59E0B" />
+            <Text style={styles.tipsTitle}>{t('dashboard.tips.title')}</Text>
+          </View>
+          
+          <Text style={styles.tipText}>• {t('tips.maximumMinimum')}</Text>
+          <Text style={styles.tipText}>• {t('tips.timeRange')}</Text>
+          <Text style={styles.tipText}>• {t('tips.comparison')}</Text>
+          <Text style={styles.tipText}>• {t('tips.grouping')}</Text>
         </View>
       )}
     </View>
@@ -462,6 +563,32 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#374151',
     lineHeight: 20,
+  },
+  tipsSection: {
+    backgroundColor: '#FFFBEB',
+    marginHorizontal: 20,
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#F59E0B',
+    marginTop: 20,
+  },
+  tipsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  tipsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#92400E',
+    marginLeft: 8,
+  },
+  tipText: {
+    fontSize: 14,
+    color: '#92400E',
+    lineHeight: 20,
+    marginBottom: 4,
   },
 });
 

@@ -1,3 +1,4 @@
+// src/screens/MainScreens/DashboardScreen.tsx - Enhanced with comprehensive language support
 import React, { useState } from 'react';
 import {
   View,
@@ -6,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +15,9 @@ import EnhancedQueryInput from '../../components/query/EnhancedQueryInput';
 import QueryResults from '../../components/query/QueryResults';
 import AnalysisResultModal from '../../components/analytics/AnalysisResultModal';
 import LanguageButton from '../../components/common/LanguageButton';
-import { useLanguage } from '../../context/LanguageContext';
+import { useLanguage, useTranslation } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
+import { withLanguage } from '../../hoc/withLanguage';
 import apiService from '../../services/apiService';
 
 interface QueryData {
@@ -23,6 +27,7 @@ interface QueryData {
 
 const DashboardScreen: React.FC = () => {
   const { t, currentLanguage } = useLanguage();
+  const { user, logout } = useAuth();
   const [currentQuery, setCurrentQuery] = useState<QueryData | null>(null);
   const [showQueryInput, setShowQueryInput] = useState(false);
   
@@ -37,6 +42,74 @@ const DashboardScreen: React.FC = () => {
     showQueryInput,
     language: currentLanguage
   });
+
+  // Language-aware content
+  const getLocalizedContent = () => {
+    const content = {
+      tr: {
+        welcomeMessage: `Hoş geldiniz, ${user?.username || 'Kullanıcı'}!`,
+        analysisExamples: [
+          '2024 yılında en çok prim üreten 10 acente',
+          'Son 12 ayda aylık prim üretimi trendi',
+          'Acentelerin hasar oranları ve prim üretimleri',
+          'Gelecek 6 ay prim üretimi tahmini'
+        ],
+        quickTips: [
+          'Tarih aralığını daraltın (ör: son 3 ay)',
+          'Az sayıda acente/ürün sorgulamayı deneyin',
+          'Sonuçları sınırlandırın (ör: ilk 10 acente)',
+          'Spesifik bölge veya ürün belirtin'
+        ]
+      },
+      en: {
+        welcomeMessage: `Welcome, ${user?.username || 'User'}!`,
+        analysisExamples: [
+          'Top 10 agents with highest premium in 2024',
+          'Monthly premium production trend in last 12 months',
+          'Agent loss ratios and premium productions',
+          'Next 6 months premium production forecast'
+        ],
+        quickTips: [
+          'Narrow date range (e.g. last 3 months)',
+          'Try querying fewer agents/products',
+          'Limit results (e.g. top 10 agents)',
+          'Specify region or product type'
+        ]
+      },
+      de: {
+        welcomeMessage: `Willkommen, ${user?.username || 'Benutzer'}!`,
+        analysisExamples: [
+          'Top 10 Agenturen mit höchster Prämie in 2024',
+          'Monatlicher Prämienproduktionstrend in den letzten 12 Monaten',
+          'Agenten-Schadenquoten und Prämienproduktionen',
+          'Prämienproduktionsprognose für die nächsten 6 Monate'
+        ],
+        quickTips: [
+          'Zeitraum eingrenzen (z.B. letzte 3 Monate)',
+          'Weniger Agenten/Produkte abfragen',
+          'Ergebnisse begrenzen (z.B. Top 10 Agenten)',
+          'Region oder Produkttyp spezifizieren'
+        ]
+      },
+      es: {
+        welcomeMessage: `Bienvenido, ${user?.username || 'Usuario'}!`,
+        analysisExamples: [
+          'Top 10 agentes con mayor prima en 2024',
+          'Tendencia de producción mensual de primas en los últimos 12 meses',
+          'Ratios de siniestralidad de agentes y producciones de primas',
+          'Pronóstico de producción de primas para los próximos 6 meses'
+        ],
+        quickTips: [
+          'Acotar rango de fechas (ej: últimos 3 meses)',
+          'Intentar consultar menos agentes/productos',
+          'Limitar resultados (ej: top 10 agentes)',
+          'Especificar región o tipo de producto'
+        ]
+      }
+    };
+    
+    return content[currentLanguage as keyof typeof content] || content.tr;
+  };
 
   const handleQuerySubmit = (query: string, results: any) => {
     console.log('📊 Dashboard - Query results received:', {
@@ -68,6 +141,21 @@ const DashboardScreen: React.FC = () => {
     setShowQueryInput(true);
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      t('auth.logout'),
+      t('auth.loginRequired'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        { 
+          text: t('auth.logout'), 
+          style: 'destructive',
+          onPress: logout 
+        }
+      ]
+    );
+  };
+
   // Analysis functions with language support
   const startQuickAnalysis = async (analysisType: 'general' | 'anomaly' | 'forecast' | 'trends', sampleQuery: string) => {
     if (isStartingAnalysis) return;
@@ -75,38 +163,21 @@ const DashboardScreen: React.FC = () => {
     setIsStartingAnalysis(true);
 
     try {
-      // Dil bazlı örnek sorgular
-      const localizedSampleQueries = {
-        tr: {
-          general: '2024 yılında en çok prim üreten 10 acente',
-          trends: 'Son 12 ayda aylık prim üretimi trendi',
-          anomaly: 'Acentelerin hasar oranları ve prim üretimleri',
-          forecast: 'Gelecek 6 ay prim üretimi tahmini'
-        },
-        en: {
-          general: 'Top 10 agents with highest premium in 2024',
-          trends: 'Monthly premium production trend in last 12 months',
-          anomaly: 'Agent loss ratios and premium productions',
-          forecast: 'Next 6 months premium production forecast'
-        },
-        de: {
-          general: 'Top 10 Agenturen mit höchster Prämie in 2024',
-          trends: 'Monatlicher Prämienproduktionstrend in den letzten 12 Monaten',
-          anomaly: 'Agenten-Schadenquoten und Prämienproduktionen',
-          forecast: 'Prämienproduktionsprognose für die nächsten 6 Monate'
-        },
-        es: {
-          general: 'Top 10 agentes con mayor prima en 2024',
-          trends: 'Tendencia de producción mensual de primas en los últimos 12 meses',
-          anomaly: 'Ratios de siniestralidad de agentes y producciones de primas',
-          forecast: 'Pronóstico de producción de primas para los próximos 6 meses'
-        }
-      };
-
-      const currentLangQueries = localizedSampleQueries[currentLanguage as keyof typeof localizedSampleQueries] || localizedSampleQueries.tr;
-      const queryToUse = currentLangQueries[analysisType];
+      const localizedContent = getLocalizedContent();
+      const queryToUse = localizedContent.analysisExamples[
+        analysisType === 'general' ? 0 :
+        analysisType === 'trends' ? 1 :
+        analysisType === 'anomaly' ? 2 : 3
+      ];
       
-      // Önce veri sorgusu çalıştır
+      // Show loading message in current language
+      Alert.alert(
+        t('analysis.starting'),
+        `${getAnalysisTypeTitle(analysisType)} ${t('analysis.starting').toLowerCase()}...`,
+        [{ text: t('common.ok') }]
+      );
+      
+      // Execute query first
       const queryResults = await apiService.executeQuery(queryToUse, currentLanguage);
       
       if (!queryResults.data || queryResults.data.length < 5) {
@@ -118,7 +189,7 @@ const DashboardScreen: React.FC = () => {
         return;
       }
 
-      // Analizi başlat (dil parametresi ile)
+      // Start analysis with language parameter
       const response = await apiService.startAnalysis(queryResults.data, analysisType, currentLanguage);
       
       if (response.job_id) {
@@ -133,12 +204,22 @@ const DashboardScreen: React.FC = () => {
     } catch (error: any) {
       console.error('❌ Quick analysis error:', error);
       Alert.alert(
-        t('analysis.error'),
+        t('analysis.errorTitle'),
         error.message || t('analysis.generalError')
       );
     } finally {
       setIsStartingAnalysis(false);
     }
+  };
+
+  const getAnalysisTypeTitle = (type: string) => {
+    const titles = {
+      general: t('analysis.general'),
+      trends: t('analysis.trends'),
+      anomaly: t('analysis.anomaly'),
+      forecast: t('analysis.forecast')
+    };
+    return titles[type as keyof typeof titles] || t('analysis.dataAnalysis');
   };
 
   const handleAnalysisComplete = () => {
@@ -150,7 +231,7 @@ const DashboardScreen: React.FC = () => {
     setCurrentAnalysisJobId(null);
   };
 
-  // Eğer query sonucu varsa, sonuçları göster
+  // If query result exists, show results
   if (currentQuery) {
     return (
       <QueryResults
@@ -164,7 +245,7 @@ const DashboardScreen: React.FC = () => {
     );
   }
 
-  // Eğer query input açıksa, EnhancedQueryInput'u göster
+  // If query input is open, show EnhancedQueryInput
   if (showQueryInput) {
     return (
       <View style={styles.container}>
@@ -177,7 +258,7 @@ const DashboardScreen: React.FC = () => {
             <Ionicons name="arrow-back" size={24} color="#3b82f6" />
           </TouchableOpacity>
           <Text style={styles.queryHeaderTitle}>{t('queryInput.title')}</Text>
-          <LanguageButton />
+          <LanguageButton variant="compact" />
         </View>
 
         <EnhancedQueryInput 
@@ -188,7 +269,9 @@ const DashboardScreen: React.FC = () => {
     );
   }
 
-  // Normal Dashboard görünümü
+  const localizedContent = getLocalizedContent();
+
+  // Normal Dashboard view
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
@@ -197,17 +280,17 @@ const DashboardScreen: React.FC = () => {
       <View style={styles.header}>
         <View>
           <Text style={styles.headerTitle}>BiQuery</Text>
-          <Text style={styles.headerSubtitle}>{t('dashboard.title')}</Text>
+          <Text style={styles.headerSubtitle}>{localizedContent.welcomeMessage}</Text>
         </View>
         <View style={styles.headerActions}>
-          <LanguageButton />
-          <TouchableOpacity style={styles.profileButton}>
+          <LanguageButton variant="compact" />
+          <TouchableOpacity style={styles.profileButton} onPress={handleLogout}>
             <Ionicons name="person-circle-outline" size={32} color="#3b82f6" />
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Stats Cards */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
@@ -297,6 +380,7 @@ const DashboardScreen: React.FC = () => {
 
           {isStartingAnalysis && (
             <View style={styles.analysisLoading}>
+              <ActivityIndicator size="small" color="#8B5CF6" />
               <Text style={styles.analysisLoadingText}>{t('analysis.starting')}</Text>
             </View>
           )}
@@ -310,7 +394,7 @@ const DashboardScreen: React.FC = () => {
           </Text>
           <TouchableOpacity style={styles.queryInput} onPress={openQueryInput}>
             <Text style={styles.queryPlaceholder}>
-              {t('dashboard.examplePlaceholder')}
+              {localizedContent.analysisExamples[0]}...
             </Text>
             <Ionicons name="search-outline" size={20} color="#64748b" />
           </TouchableOpacity>
@@ -320,35 +404,16 @@ const DashboardScreen: React.FC = () => {
         <View style={styles.examplesCard}>
           <Text style={styles.examplesTitle}>{t('dashboard.examples.title')}</Text>
           
-          <TouchableOpacity 
-            style={styles.exampleItem}
-            onPress={openQueryInput}
-          >
-            <Ionicons name="chevron-forward-outline" size={16} color="#3b82f6" />
-            <Text style={styles.exampleText}>
-              {t('dashboard.exampleQueries.query1')}
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.exampleItem}
-            onPress={openQueryInput}
-          >
-            <Ionicons name="chevron-forward-outline" size={16} color="#3b82f6" />
-            <Text style={styles.exampleText}>
-              {t('dashboard.exampleQueries.query2')}
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.exampleItem}
-            onPress={openQueryInput}
-          >
-            <Ionicons name="chevron-forward-outline" size={16} color="#3b82f6" />
-            <Text style={styles.exampleText}>
-              {t('dashboard.exampleQueries.query3')}
-            </Text>
-          </TouchableOpacity>
+          {localizedContent.analysisExamples.slice(0, 3).map((query, index) => (
+            <TouchableOpacity 
+              key={index}
+              style={styles.exampleItem}
+              onPress={openQueryInput}
+            >
+              <Ionicons name="chevron-forward-outline" size={16} color="#3b82f6" />
+              <Text style={styles.exampleText}>{query}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Performance Tips */}
@@ -358,9 +423,9 @@ const DashboardScreen: React.FC = () => {
             <Text style={styles.tipsTitle}>{t('dashboard.tips.title')}</Text>
           </View>
           
-          <Text style={styles.tipText}>• {t('dashboard.tips.narrowDateRange')}</Text>
-          <Text style={styles.tipText}>• {t('dashboard.tips.fewerEntities')}</Text>
-          <Text style={styles.tipText}>• {t('dashboard.tips.limitResults')}</Text>
+          {localizedContent.quickTips.map((tip, index) => (
+            <Text key={index} style={styles.tipText}>• {tip}</Text>
+          ))}
         </View>
       </ScrollView>
 
@@ -525,8 +590,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   analysisLoading: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 12,
+    gap: 8,
   },
   analysisLoadingText: {
     fontSize: 14,
@@ -607,6 +675,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderLeftWidth: 4,
     borderLeftColor: '#f59e0b',
+    marginBottom: 20,
   },
   tipsHeader: {
     flexDirection: 'row',
@@ -627,4 +696,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DashboardScreen;
+export default withLanguage(DashboardScreen);

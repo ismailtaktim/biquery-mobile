@@ -1,5 +1,5 @@
 {
-  "common": {
+ "common": {
     "loading": "Yükleniyor...",
     "search": "Ara",
     "clear": "Temizle",
@@ -19,7 +19,10 @@
     "warning": "Uyarı",
     "error": "Hata",
     "success": "Başarılı",
-    "info": "Bilgi"
+    "info": "Bilgi",
+    "apply": "Uygula",
+    "retry": "Tekrar Dene",
+    "refresh": "Yenile"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -29,7 +32,9 @@
     "loginButton": "Giriş Yap",
     "loginError": "Giriş başarısız",
     "loginSuccess": "Giriş başarılı",
-    "welcome": "Hoş Geldiniz"
+    "welcome": "Hoş Geldiniz",
+    "sessionExpired": "Oturum süresi doldu",
+    "loginRequired": "Lütfen tekrar giriş yapın"
   },
   "login": {
     "title": "BiQuery'e Hoş Geldiniz",
@@ -49,7 +54,7 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Kontrol Paneli",
     "welcome": "Hoş Geldiniz",
     "summary": "Özet",
     "analytics": "Analitik",
@@ -101,7 +106,8 @@
     "tokenExpired": "Oturum süresi doldu. Lütfen tekrar giriş yapın.",
     "processingQuery": "AI sorgunuzu analiz ediyor...",
     "suggestions": "Öneriler",
-    "examples": "Örnek Sorgular"
+    "examples": "Örnek Sorgular",
+    "results": "Sorgu Sonuçları"
   },
   "speechToText": {
     "start": "Konuşmaya Başla",
@@ -109,17 +115,21 @@
     "listening": "Dinleniyor...",
     "processing": "İşleniyor...",
     "error": "Ses tanıma hatası",
-    "noSupport": "Tarayıcınız ses tanımayı desteklemiyor",
-    "recognized": "Konuşma tanındı!"
+    "noSupport": "Cihazınız ses tanımayı desteklemiyor",
+    "recognized": "Konuşma tanındı!",
+    "permission": "Mikrofon izni gerekli",
+    "permissionDenied": "Mikrofon izni reddedildi"
   },
   "navigation": {
-    "dashboard": "Dashboard",
+    "dashboard": "Kontrol Paneli",
     "query": "Sorgula",
     "agents": "Acenteler",
     "products": "Ürünler",
     "regional": "Bölgesel",
     "comparisons": "Karşılaştır",
-    "reports": "Raporlar"
+    "reports": "Raporlar",
+    "settings": "Ayarlar",
+    "profile": "Profil"
   },
   "analysis": {
     "general": "Genel Analiz",
@@ -137,6 +147,13 @@
     "noResultData": "Sonuç verisi bulunamadı",
     "noResults": "Analiz sonucu bulunamadı",
     "noDescription": "Açıklama bulunamadı",
+    "quickAnalysis": "Hızlı Analiz",
+    "subtitle": "Verilerinizi otomatik olarak analiz edin",
+    "starting": "Analiz başlatılıyor...",
+    "startError": "Analiz başlatılamadı",
+    "generalError": "Analiz sırasında hata oluştu",
+    "insufficientData": "Yetersiz Veri",
+    "minDataRequired": "Analiz için minimum 5 kayıt gerekli",
     "status": {
       "starting": "Analiz başlatılıyor...",
       "processing": "Veriler işleniyor...",
@@ -176,7 +193,37 @@
     }
   },
   "language": {
-    "selectTitle": "Dil Seçin"
+    "selectTitle": "Dil Seçin",
+    "current": "Mevcut",
+    "changeSuccess": "Dil başarıyla değiştirildi",
+    "changeError": "Dil değiştirme hatası",
+    "changeInProgress": "Dil değişimi devam ediyor",
+    "changing": "Değiştiriliyor...",
+    "applying": "Uygulanıyor...",
+    "restartInfo": "Bazı değişiklikler için uygulamayı yeniden başlatmanız gerekebilir",
+    "systemLanguage": "Sistem Dili",
+    "autoDetected": "Otomatik tespit edildi",
+    "manualSelection": "Manuel seçim"
+  },
+  "errors": {
+    "network": "Ağ bağlantısı hatası",
+    "server": "Sunucu hatası",
+    "timeout": "Zaman aşımı",
+    "unauthorized": "Yetkisiz erişim",
+    "forbidden": "Yasak erişim",
+    "notFound": "Bulunamadı",
+    "validation": "Doğrulama hatası",
+    "unknown": "Bilinmeyen hata",
+    "retry": "Tekrar denemek için dokunun"
+  },
+  "loading": {
+    "initializing": "Başlatılıyor...",
+    "authenticating": "Kimlik doğrulanıyor...",
+    "loadingData": "Veriler yükleniyor...",
+    "processing": "İşleniyor...",
+    "saving": "Kaydediliyor...",
+    "connecting": "Bağlanıyor...",
+    "pleaseWait": "Lütfen bekleyin..."
   },
   "tips": {
     "maximumMinimum": "En yüksek/en düşük değerleri bulmak için 'en yüksek' veya 'en düşük' kelimelerini kullanın",
@@ -186,5 +233,27 @@
     "detailedAnalysis": "Detaylı analiz için 'ayrıntılı' veya 'kapsamlı' kelimelerini ekleyin",
     "trendAnalysis": "Trend analizi için 'trend' veya 'değişim' kelimelerini kullanın",
     "voiceQuery": "Sesli sorgu için mikrofon butonuna basın ve konuşun"
+  },
+  "charts": {
+    "title": "Grafik",
+    "bar": "Çubuk Grafik",
+    "line": "Çizgi Grafik",
+    "pie": "Pasta Grafik",
+    "list": "Liste Görünümü",
+    "noData": "Görselleştirmek için veri yok",
+    "selectData": "Veri seçimi yapınız",
+    "xAxis": "X Ekseni",
+    "yAxis": "Y Ekseni",
+    "dataLimit": "Veri Sayısı Sınırı",
+    "settings": "Grafik Ayarları"
+  },
+  "dataTable": {
+    "title": "Veri Tablosu",
+    "noResults": "Sonuç bulunamadı",
+    "records": "kayıt",
+    "columns": "kolon",
+    "page": "Sayfa",
+    "of": "/",
+    "rowsPerPage": "Sayfa başına satır"
   }
 }

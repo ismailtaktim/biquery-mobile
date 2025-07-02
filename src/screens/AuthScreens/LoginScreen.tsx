@@ -1,3 +1,4 @@
+// src/screens/AuthScreens/LoginScreen.tsx - Enhanced with language support
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -7,163 +8,247 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Dimensions,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../context/AuthContext';
-import { useLanguage } from '../../context/LanguageContext';
+import { useTranslation } from '../../context/LanguageContext';
+import { withLanguage } from '../../hoc/withLanguage';
+import LanguageButton from '../../components/common/LanguageButton';
 
 const { width, height } = Dimensions.get('window');
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginScreen: React.FC = () => {
   const { login, isLoading } = useAuth();
-  const { t, currentLanguage } = useLanguage();
-  const [isLanguageReady, setIsLanguageReady] = useState(false);
+  const { t, language } = useTranslation();
+  
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Component mount olduğunda dil yüklenmesini bekle
-  useEffect(() => {
-    const checkLanguageReady = () => {
-      // Dil servisinin hazır olduğunu kontrol et
-      if (currentLanguage) {
-        setIsLanguageReady(true);
-        console.log('🗣️ Login screen language ready:', currentLanguage);
-      }
+  // Demo credentials based on language
+  const getDemoCredentials = () => {
+    const demoData = {
+      tr: { username: 'demo', password: 'demo123', title: 'Demo Hesabı' },
+      en: { username: 'demo', password: 'demo123', title: 'Demo Account' },
+      de: { username: 'demo', password: 'demo123', title: 'Demo-Konto' },
+      es: { username: 'demo', password: 'demo123', title: 'Cuenta Demo' }
     };
-
-    checkLanguageReady();
-
-    // Küçük bir delay ile tekrar kontrol et (race condition için)
-    const timer = setTimeout(checkLanguageReady, 100);
-    
-    return () => clearTimeout(timer);
-  }, [currentLanguage]);
+    return demoData[language as keyof typeof demoData] || demoData.tr;
+  };
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert(t('common.error'), t('login.validation.required'));
+    if (!username.trim() || !password.trim()) {
+      Alert.alert(
+        t('common.warning'),
+        t('auth.loginError'),
+        [{ text: t('common.ok') }]
+      );
       return;
     }
 
-    const success = await login(email, password);
-    
-    if (!success) {
-      Alert.alert(t('common.error'), t('login.errors.failed'));
+    try {
+      setIsSubmitting(true);
+      const success = await login(username.trim(), password);
+      
+      if (success) {
+        Alert.alert(
+          t('common.success'),
+          t('auth.loginSuccess'),
+          [{ text: t('common.ok') }]
+        );
+      } else {
+        Alert.alert(
+          t('common.error'),
+          t('auth.loginError'),
+          [{ text: t('common.ok') }]
+        );
+      }
+    } catch (error: any) {
+      Alert.alert(
+        t('common.error'),
+        error.message || t('auth.loginError'),
+        [{ text: t('common.ok') }]
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-    // Başarılı olursa AuthContext otomatik olarak Dashboard'a yönlendirecek
   };
 
-  // Dil hazır değilse loading göster
-  if (!isLanguageReady) {
-    return (
-      <LinearGradient
-        colors={['#667eea', '#764ba2', '#3b82f6']}
-        style={[styles.container, styles.centerContent]}
-      >
-        <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text style={styles.loadingText}>Loading...</Text>
-      </LinearGradient>
-    );
-  }
+  const fillDemoCredentials = () => {
+    const demo = getDemoCredentials();
+    setUsername(demo.username);
+    setPassword(demo.password);
+  };
+
+  const getExampleQueries = () => {
+    const examples = {
+      tr: [
+        'Son 3 aydaki satış raporu',
+        'En başarılı acenteler',
+        'Bölgesel performans analizi'
+      ],
+      en: [
+        'Sales report for the last 3 months',
+        'Top performing agents',
+        'Regional performance analysis'
+      ],
+      de: [
+        'Verkaufsbericht der letzten 3 Monate',
+        'Leistungsstärkste Vertreter',
+        'Regionale Leistungsanalyse'
+      ],
+      es: [
+        'Informe de ventas de los últimos 3 meses',
+        'Agentes con mejor rendimiento',
+        'Análisis de rendimiento regional'
+      ]
+    };
+    return examples[language as keyof typeof examples] || examples.tr;
+  };
 
   return (
-    <LinearGradient
-      colors={['#667eea', '#764ba2', '#3b82f6']}
-      style={styles.container}
-    >
-      {/* Background Animated Shapes */}
-      <View style={styles.backgroundShapes}>
-        <View style={[styles.shape, styles.shape1]} />
-        <View style={[styles.shape, styles.shape2]} />
-        <View style={[styles.shape, styles.shape3]} />
-      </View>
-
-      {/* Language Indicator - Sadece debug için, kaldırılabilir */}
-      {__DEV__ && (
-        <View style={styles.languageIndicator}>
-          <Text style={styles.languageIndicatorText}>
-            🗣️ {currentLanguage.toUpperCase()}
-          </Text>
-        </View>
-      )}
-
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      
+      <LinearGradient
+        colors={['#667eea', '#764ba2']}
+        style={styles.background}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {/* Logo Section */}
-          <View style={styles.logoSection}>
-            <Text style={styles.logoText}>BiQuery</Text>
-            <View style={styles.betaBadge}>
-              <Text style={styles.betaText}>BETA</Text>
-            </View>
-            <Text style={styles.subtitle}>{t('login.info.titleLine2')}</Text>
-          </View>
-
-          {/* Example Queries */}
-          <View style={styles.exampleSection}>
-            <Text style={styles.exampleTitle}>{t('dashboard.examples.title')}</Text>
-            <Text style={styles.exampleQuery}>• {t('login.examples.query1')}</Text>
-            <Text style={styles.exampleQuery}>• {t('login.examples.query2')}</Text>
-            <Text style={styles.exampleQuery}>• {t('login.examples.query3')}</Text>
-          </View>
-
-          {/* Login Form */}
-          <View style={styles.formContainer}>
-            <Text style={styles.formTitle}>{t('login.title')}</Text>
-            
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={t('login.username')}
-                placeholderTextColor="#94a3b8"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
+        <KeyboardAvoidingView 
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <ScrollView 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Language Selector */}
+            <View style={styles.languageContainer}>
+              <LanguageButton variant="compact" />
             </View>
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={t('login.password')}
-                placeholderTextColor="#94a3b8"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoComplete="password"
-              />
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={styles.logoContainer}>
+                <Ionicons name="analytics" size={60} color="#FFFFFF" />
+              </View>
+              <Text style={styles.title}>{t('login.title')}</Text>
+              <Text style={styles.subtitle}>{t('login.info.titleLine2')}</Text>
             </View>
 
-            <TouchableOpacity 
-              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
-              onPress={handleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#ffffff" size="small" />
-              ) : (
-                <Text style={styles.loginButtonText}>{t('login.loginButton')}</Text>
-              )}
-            </TouchableOpacity>
+            {/* Login Form */}
+            <View style={styles.formContainer}>
+              <View style={styles.card}>
+                {/* Username Input */}
+                <View style={styles.inputContainer}>
+                  <Ionicons name="person-outline" size={20} color="#6B7280" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder={t('login.username')}
+                    placeholderTextColor="#9CA3AF"
+                    value={username}
+                    onChangeText={setUsername}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!isSubmitting && !isLoading}
+                  />
+                </View>
 
-            {/* Demo Credentials */}
-            <View style={styles.demoSection}>
-              <Text style={styles.demoTitle}>{t('login.demo.title')}</Text>
-              <Text style={styles.demoText}>Email: test@biquery.com</Text>
-              <Text style={styles.demoText}>{t('login.password')}: 123456</Text>
+                {/* Password Input */}
+                <View style={styles.inputContainer}>
+                  <Ionicons name="lock-closed-outline" size={20} color="#6B7280" />
+                  <TextInput
+                    style={styles.input}
+                    placeholder={t('login.password')}
+                    placeholderTextColor="#9CA3AF"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!isSubmitting && !isLoading}
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeButton}
+                  >
+                    <Ionicons 
+                      name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                      size={20} 
+                      color="#6B7280" 
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Demo Credentials */}
+                <TouchableOpacity 
+                  style={styles.demoButton}
+                  onPress={fillDemoCredentials}
+                  disabled={isSubmitting || isLoading}
+                >
+                  <Ionicons name="flash" size={16} color="#3B82F6" />
+                  <Text style={styles.demoButtonText}>
+                    {getDemoCredentials().title}
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Login Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.loginButton,
+                    (isSubmitting || isLoading) && styles.loginButtonDisabled
+                  ]}
+                  onPress={handleLogin}
+                  disabled={isSubmitting || isLoading}
+                >
+                  {(isSubmitting || isLoading) ? (
+                    <View style={styles.loadingContainer}>
+                      <ActivityIndicator color="#FFFFFF" size="small" />
+                      <Text style={styles.loginButtonText}>
+                        {t('common.loading')}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.loginButtonText}>
+                      {t('login.loginButton')}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+
+            {/* Example Queries */}
+            <View style={styles.examplesContainer}>
+              <Text style={styles.examplesTitle}>
+                {t('dashboard.examples.title')}
+              </Text>
+              
+              {getExampleQueries().map((query, index) => (
+                <View key={index} style={styles.exampleItem}>
+                  <Ionicons name="bulb-outline" size={16} color="#E2E8F0" />
+                  <Text style={styles.exampleText}>{query}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Footer Info */}
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>
+                {t('login.info.titleLine2')}
+              </Text>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </View>
   );
 };
 
@@ -171,195 +256,158 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  centerContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginTop: 12,
-  },
-  languageIndicator: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    zIndex: 10,
-  },
-  languageIndicatorText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  backgroundShapes: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  shape: {
-    position: 'absolute',
-    borderRadius: 20,
-    opacity: 0.1,
-  },
-  shape1: {
-    width: 200,
-    height: 200,
-    backgroundColor: '#ffffff',
-    top: '10%',
-    left: '-10%',
-    transform: [{ rotate: '45deg' }],
-  },
-  shape2: {
-    width: 150,
-    height: 150,
-    backgroundColor: '#ffffff',
-    top: '60%',
-    right: '-10%',
-    transform: [{ rotate: '30deg' }],
-  },
-  shape3: {
-    width: 100,
-    height: 100,
-    backgroundColor: '#ffffff',
-    top: '30%',
-    right: '20%',
-    transform: [{ rotate: '60deg' }],
+  background: {
+    flex: 1,
   },
   keyboardView: {
     flex: 1,
   },
-  scrollContainer: {
+  scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 40,
+    paddingTop: 50,
   },
-  logoSection: {
+  languageContainer: {
+    alignItems: 'flex-end',
+    marginBottom: 20,
+  },
+  header: {
     alignItems: 'center',
     marginBottom: 40,
   },
-  logoText: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+  logoContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
   },
-  betaBadge: {
-    backgroundColor: '#ef4444',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginTop: 8,
-  },
-  betaText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#e2e8f0',
-    marginTop: 12,
+    color: '#E2E8F0',
     textAlign: 'center',
-  },
-  exampleSection: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 30,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
-  },
-  exampleTitle: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  exampleQuery: {
-    color: '#e2e8f0',
-    fontSize: 14,
-    marginBottom: 8,
-    paddingLeft: 8,
+    opacity: 0.9,
   },
   formContainer: {
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    padding: 30,
+    marginBottom: 30,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    shadowColor: '#000000',
+    padding: 30,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
-    elevation: 15,
-  },
-  formTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1e293b',
-    textAlign: 'center',
-    marginBottom: 30,
+    elevation: 10,
   },
   inputContainer: {
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
-    color: '#1e293b',
+    color: '#1F2937',
+    marginLeft: 12,
+  },
+  eyeButton: {
+    padding: 4,
+  },
+  demoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EBF4FF',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 20,
+    gap: 8,
+  },
+  demoButtonText: {
+    color: '#3B82F6',
+    fontSize: 14,
+    fontWeight: '600',
   },
   loginButton: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    backgroundColor: '#3B82F6',
     borderRadius: 12,
-    marginTop: 16,
-    shadowColor: '#3b82f6',
+    paddingVertical: 16,
+    alignItems: 'center',
+    shadowColor: '#3B82F6',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 8,
+    elevation: 4,
   },
   loginButtonDisabled: {
-    backgroundColor: '#94a3b8',
-    shadowOpacity: 0.1,
+    backgroundColor: '#9CA3AF',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   loginButtonText: {
-    color: '#ffffff',
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  examplesContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+  },
+  examplesTitle: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    marginBottom: 16,
     textAlign: 'center',
   },
-  demoSection: {
-    marginTop: 24,
-    padding: 16,
-    backgroundColor: '#f1f5f9',
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
+  exampleItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 12,
   },
-  demoTitle: {
+  exampleText: {
+    color: '#E2E8F0',
     fontSize: 14,
-    fontWeight: '600',
-    color: '#475569',
-    marginBottom: 8,
+    flex: 1,
+    lineHeight: 20,
   },
-  demoText: {
-    fontSize: 13,
-    color: '#64748b',
-    marginBottom: 4,
-    fontFamily: 'monospace',
+  footer: {
+    alignItems: 'center',
+    paddingBottom: 30,
+  },
+  footerText: {
+    color: '#E2E8F0',
+    fontSize: 12,
+    textAlign: 'center',
+    opacity: 0.8,
   },
 });
 
-export default LoginScreen;
+// Export with language HOC for automatic language loading
+export default withLanguage(LoginScreen);

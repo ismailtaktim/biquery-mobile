@@ -1,4 +1,4 @@
-// src/screens/MainScreens/QueryScreen.tsx
+// src/screens/MainScreens/QueryScreen.tsx - Enhanced with language support
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import QueryInput from '../../components/query/QueryInput';
 import QueryResults from '../../components/query/QueryResults';
+import LanguageButton from '../../components/common/LanguageButton';
+import { useTranslation } from '../../context/LanguageContext';
+import { withLanguage } from '../../hoc/withLanguage';
 
 interface QueryData {
   query: string;
@@ -17,10 +20,11 @@ interface QueryData {
 }
 
 const QueryScreen: React.FC = () => {
+  const { t } = useTranslation();
   const [currentQuery, setCurrentQuery] = useState<QueryData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Debug: Component mount olduğunda log
+  // Debug: Component mount
   useEffect(() => {
     console.log('🔥 QueryScreen mounted');
     return () => {
@@ -28,7 +32,7 @@ const QueryScreen: React.FC = () => {
     };
   }, []);
 
-  // Debug: State değişikliklerini izle
+  // Debug: State changes
   useEffect(() => {
     console.log('🔥 QueryScreen state changed:', {
       hasCurrentQuery: !!currentQuery,
@@ -54,18 +58,19 @@ const QueryScreen: React.FC = () => {
     console.error('❌ QueryScreen - Query error:', error);
     
     Alert.alert(
-      'Sorgu Hatası',
+      t('common.error'),
       error,
       [
         {
-          text: 'Tamam',
+          text: t('common.ok'),
           style: 'default'
         },
         {
-          text: 'Yeniden Dene',
+          text: t('common.retry'),
           style: 'default',
           onPress: () => {
             // Optionally retry or clear current query
+            console.log('🔄 User requested retry');
           }
         }
       ]
@@ -86,19 +91,34 @@ const QueryScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
       
-      {/* Debug Info - sadece development'ta */}
+      {/* Header with Language Support */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Text style={styles.headerTitle}>{t('queryInput.title')}</Text>
+          <Text style={styles.headerSubtitle}>{t('queryInput.subtitle')}</Text>
+        </View>
+        <LanguageButton variant="compact" />
+      </View>
+      
+      {/* Debug Info - only in development */}
       {__DEV__ && (
         <View style={styles.debugContainer}>
           <Text style={styles.debugTitle}>🔥 QUERY SCREEN DEBUG</Text>
-          <Text style={styles.debugText}>Current Query: {currentQuery ? currentQuery.query : 'NULL'}</Text>
-          <Text style={styles.debugText}>Showing: {!currentQuery ? 'INPUT' : 'RESULTS'}</Text>
-          <Text style={styles.debugText}>Loading: {isLoading.toString()}</Text>
+          <Text style={styles.debugText}>
+            {t('common.info')}: {currentQuery ? currentQuery.query : t('common.loading')}
+          </Text>
+          <Text style={styles.debugText}>
+            {t('navigation.query')}: {!currentQuery ? t('queryInput.title') : t('queryInput.results')}
+          </Text>
+          <Text style={styles.debugText}>
+            {t('common.loading')}: {isLoading.toString()}
+          </Text>
         </View>
       )}
       
       {!currentQuery ? (
         <View style={styles.inputWrapper}>
-          <Text style={styles.sectionTitle}>📝 QUERY INPUT SECTION</Text>
+          <Text style={styles.sectionTitle}>📝 {t('queryInput.title').toUpperCase()}</Text>
           <QueryInput 
             onQuerySubmit={handleQuerySubmit}
             onError={handleQueryError}
@@ -106,7 +126,7 @@ const QueryScreen: React.FC = () => {
         </View>
       ) : (
         <View style={styles.resultsWrapper}>
-          <Text style={styles.sectionTitle}>📊 QUERY RESULTS SECTION</Text>
+          <Text style={styles.sectionTitle}>📊 {t('analysis.results').toUpperCase()}</Text>
           <QueryResults
             query={currentQuery.query}
             data={currentQuery.results.data || []}
@@ -125,6 +145,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 2,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
   },
   debugContainer: {
     backgroundColor: '#FEE2E2',
@@ -162,4 +210,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QueryScreen;
+export default withLanguage(QueryScreen);

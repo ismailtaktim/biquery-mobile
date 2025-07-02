@@ -1,6 +1,6 @@
 {
-  "common": {
-    "loading": "Wird geladen...",
+   "common": {
+    "loading": "Lädt...",
     "search": "Suchen",
     "clear": "Löschen",
     "submit": "Senden",
@@ -19,17 +19,22 @@
     "warning": "Warnung",
     "error": "Fehler",
     "success": "Erfolgreich",
-    "info": "Info"
+    "info": "Info",
+    "apply": "Anwenden",
+    "retry": "Wiederholen",
+    "refresh": "Aktualisieren"
   },
   "auth": {
     "login": "Anmelden",
     "logout": "Abmelden",
     "username": "Benutzername",
     "password": "Passwort",
-    "loginButton": "Einloggen",
+    "loginButton": "Anmelden",
     "loginError": "Anmeldung fehlgeschlagen",
     "loginSuccess": "Anmeldung erfolgreich",
-    "welcome": "Willkommen"
+    "welcome": "Willkommen",
+    "sessionExpired": "Sitzung abgelaufen",
+    "loginRequired": "Bitte melden Sie sich erneut an"
   },
   "login": {
     "title": "Willkommen bei BiQuery",
@@ -44,7 +49,7 @@
     },
     "examples": {
       "query1": "Verkaufsbericht der letzten 3 Monate",
-      "query2": "Erfolgreichste Agenturen",
+      "query2": "Leistungsstärkste Vertreter",
       "query3": "Regionale Leistungsanalyse"
     }
   },
@@ -58,33 +63,33 @@
       "title": "Beispielabfragen"
     },
     "stats": {
-      "totalAgents": "Agenturen Gesamt",
-      "totalProducts": "Produkte Gesamt",
-      "totalPremium": "Prämie Gesamt",
+      "totalAgents": "Gesamt Vertreter",
+      "totalProducts": "Gesamt Produkte",
+      "totalPremium": "Gesamt Prämie",
       "lossRatio": "Schadenquote"
     },
     "exampleQueries": {
       "query1": "Top 5 Agenturen mit höchster Prämie in 2024",
-      "query2": "Zeichne monatlichen Prämientrend für Kasko-Produkt in den letzten 6 Monaten",
+      "query2": "Zeichne monatlichen Prämientrend für Kfz-Versicherung der letzten 6 Monate",
       "query3": "Zeige Gesamtpolicen in Istanbul"
     },
     "examplePlaceholder": "Top 5 Agenturen mit höchster Prämie in 2024...",
     "tips": {
       "title": "Leistungstipps",
       "narrowDateRange": "Zeitraum eingrenzen (z.B. letzte 3 Monate)",
-      "fewerEntities": "Weniger Agenturen/Produkte abfragen",
-      "limitResults": "Ergebnisse begrenzen (z.B. Top 10 Agenturen)"
+      "fewerEntities": "Weniger Agenten/Produkte abfragen",
+      "limitResults": "Ergebnisse begrenzen (z.B. Top 10 Agenten)"
     }
   },
   "queryInput": {
-    "title": "Abfrage-Eingabe",
-    "subtitle": "Schreiben Sie Ihre Abfrage in natürlicher Sprache",
+    "title": "Anfrage-Eingabe",
+    "subtitle": "Schreiben Sie Ihre Anfrage in natürlicher Sprache",
     "placeholder": "Stellen Sie Ihre Frage in natürlicher Sprache... (z.B. 'Verkaufsbericht der letzten 3 Monate')",
     "queryButton": "Abfragen",
     "analyzeButton": "Analysieren",
     "clearButton": "Löschen",
     "clearCacheButton": "Cache löschen",
-    "loadingText": "Abfrage wird verarbeitet...",
+    "loadingText": "Anfrage wird verarbeitet...",
     "voiceSearch": "Sprachsuche",
     "aiSettings": "KI-Einstellungen",
     "showTips": "Tipps anzeigen",
@@ -92,51 +97,63 @@
     "rememberHistory": "Verlauf merken",
     "didYouMean": "Meinten Sie:",
     "yesCorrect": "Ja, korrigieren",
-    "timeoutWarning": "Diese Abfrage kann eine Weile dauern. Bitte warten...",
+    "timeoutWarning": "Diese Anfrage kann eine Weile dauern. Bitte warten...",
     "aiEnabled": "KI-Vorschläge aktiviert",
     "aiDisabled": "KI-Vorschläge deaktiviert",
-    "emptyQuery": "Bitte geben Sie eine Abfrage ein.",
-    "querySuccess": "Abfrage erfolgreich!",
-    "queryError": "Fehler beim Ausführen der Abfrage",
-    "tokenExpired": "Sitzung abgelaufen. Bitte erneut anmelden.",
-    "processingQuery": "KI analysiert Ihre Abfrage...",
+    "emptyQuery": "Bitte geben Sie eine Anfrage ein.",
+    "querySuccess": "Anfrage erfolgreich!",
+    "queryError": "Fehler beim Ausführen der Anfrage",
+    "tokenExpired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+    "processingQuery": "KI analysiert Ihre Anfrage...",
     "suggestions": "Vorschläge",
-    "examples": "Beispielabfragen"
+    "examples": "Beispielabfragen",
+    "results": "Anfrage-Ergebnisse"
   },
   "speechToText": {
     "start": "Sprechen beginnen",
     "stop": "Sprechen beenden",
     "listening": "Hört zu...",
     "processing": "Verarbeitung...",
-    "error": "Spracherkennungsfehler",
-    "noSupport": "Ihr Browser unterstützt keine Spracherkennung",
-    "recognized": "Sprache erkannt!"
+    "error": "Spracherkennung Fehler",
+    "noSupport": "Ihr Gerät unterstützt keine Spracherkennung",
+    "recognized": "Sprache erkannt!",
+    "permission": "Mikrofon-Berechtigung erforderlich",
+    "permissionDenied": "Mikrofon-Berechtigung verweigert"
   },
   "navigation": {
     "dashboard": "Dashboard",
-    "query": "Abfragen",
-    "agents": "Agenturen",
+    "query": "Abfrage",
+    "agents": "Vertreter",
     "products": "Produkte",
     "regional": "Regional",
     "comparisons": "Vergleichen",
-    "reports": "Berichte"
+    "reports": "Berichte",
+    "settings": "Einstellungen",
+    "profile": "Profil"
   },
   "analysis": {
     "general": "Allgemeine Analyse",
     "anomaly": "Anomalie-Erkennung",
     "forecast": "Prognose-Analyse",
-    "trends": "Trend-Analyse", 
+    "trends": "Trend-Analyse",
     "dataAnalysis": "Datenanalyse",
     "results": "Analyseergebnisse",
-    "insight": "Erkenntnis",
+    "insight": "Einsicht",
     "recommendation": "Empfehlung",
     "recommendations": "Empfehlungen",
     "result": "Ergebnis",
-    "checkStatus": "Status überprüfen",
+    "checkStatus": "Status prüfen",
     "errorTitle": "Analysefehler",
     "noResultData": "Keine Ergebnisdaten gefunden",
     "noResults": "Keine Analyseergebnisse gefunden",
     "noDescription": "Keine Beschreibung verfügbar",
+    "quickAnalysis": "Schnellanalyse",
+    "subtitle": "Analysieren Sie Ihre Daten automatisch",
+    "starting": "Analyse wird gestartet...",
+    "startError": "Analyse konnte nicht gestartet werden",
+    "generalError": "Fehler während der Analyse",
+    "insufficientData": "Unzureichende Daten",
+    "minDataRequired": "Minimum 5 Datensätze für Analyse erforderlich",
     "status": {
       "starting": "Analyse wird gestartet...",
       "processing": "Daten werden verarbeitet...",
@@ -155,20 +172,20 @@
       "completed": "Abgeschlossen",
       "failed": "Fehlgeschlagen",
       "cached": "Zwischengespeichert",
-      "pending": "Ausstehend"
+      "pending": "Wartend"
     },
     "errors": {
       "timeout": "Analyse-Zeitüberschreitung",
       "unknown": "Unbekannter Fehler",
       "notFound": "Analyse nicht gefunden",
-      "statusCheck": "Statusprüfungsfehler: "
+      "statusCheck": "Status-Prüfung Fehler: "
     },
     "hints": {
       "inProgress": "Analyse läuft im Hintergrund weiter...",
       "almostDone": "Analyse fast abgeschlossen..."
     },
     "info": {
-      "title": "Analyse-Informationen",
+      "title": "Analyseinformationen",
       "processingTime": "Verarbeitungszeit",
       "cacheUsed": "Cache verwendet",
       "originalLanguage": "Originalsprache",
@@ -176,15 +193,67 @@
     }
   },
   "language": {
-    "selectTitle": "Sprache wählen"
+    "selectTitle": "Sprache auswählen",
+    "current": "Aktuell",
+    "changeSuccess": "Sprache erfolgreich geändert",
+    "changeError": "Sprache konnte nicht geändert werden",
+    "changeInProgress": "Sprachwechsel läuft",
+    "changing": "Wird geändert...",
+    "applying": "Wird angewendet...",
+    "restartInfo": "Einige Änderungen erfordern möglicherweise einen Neustart der App",
+    "systemLanguage": "Systemsprache",
+    "autoDetected": "Automatisch erkannt",
+    "manualSelection": "Manuelle Auswahl"
+  },
+  "errors": {
+    "network": "Netzwerkverbindungsfehler",
+    "server": "Serverfehler",
+    "timeout": "Zeitüberschreitung",
+    "unauthorized": "Unbefugter Zugriff",
+    "forbidden": "Verbotener Zugriff",
+    "notFound": "Nicht gefunden",
+    "validation": "Validierungsfehler",
+    "unknown": "Unbekannter Fehler",
+    "retry": "Zum Wiederholen tippen"
+  },
+  "loading": {
+    "initializing": "Initialisierung...",
+    "authenticating": "Authentifizierung...",
+    "loadingData": "Daten werden geladen...",
+    "processing": "Verarbeitung...",
+    "saving": "Speichern...",
+    "connecting": "Verbindung...",
+    "pleaseWait": "Bitte warten..."
   },
   "tips": {
-    "maximumMinimum": "Verwenden Sie 'höchste' oder 'niedrigste' für Maximum-/Minimum-Werte",
-    "timeRange": "Verwenden Sie Ausdrücke wie 'letzte 3 Monate' oder 'Jahr 2023' für bestimmte Zeiträume",
+    "maximumMinimum": "Verwenden Sie 'höchste' oder 'niedrigste' um Maximum/Minimum-Werte zu finden",
+    "timeRange": "Verwenden Sie Phrasen wie 'letzte 3 Monate' oder 'Jahr 2023' für spezifische Zeiträume",
     "comparison": "Verwenden Sie 'vergleichen' oder 'versus' für Vergleiche",
     "grouping": "Verwenden Sie 'nach Kategorie' oder 'nach Region' für Gruppierungen",
-    "detailedAnalysis": "Fügen Sie 'detailliert' oder 'umfassend' für eingehende Analysen hinzu",
+    "detailedAnalysis": "Fügen Sie 'detailliert' oder 'umfassend' für tiefgreifende Analysen hinzu",
     "trendAnalysis": "Verwenden Sie 'Trend' oder 'Änderung' für Trendanalysen",
-    "voiceQuery": "Drücken Sie die Mikrofon-Taste und sprechen Sie für Sprachsuche"
+    "voiceQuery": "Drücken Sie die Mikrofon-Taste und sprechen Sie für Sprachabfrage"
+  },
+  "charts": {
+    "title": "Diagramm",
+    "bar": "Balkendiagramm",
+    "line": "Liniendiagramm",
+    "pie": "Kreisdiagramm",
+    "list": "Listenansicht",
+    "noData": "Keine Daten zur Visualisierung",
+    "selectData": "Daten auswählen",
+    "xAxis": "X-Achse",
+    "yAxis": "Y-Achse",
+    "dataLimit": "Datenlimit",
+    "settings": "Diagramm-Einstellungen"
+  },
+  "dataTable": {
+    "title": "Datentabelle",
+    "noResults": "Keine Ergebnisse gefunden",
+    "records": "Datensätze",
+    "columns": "Spalten",
+    "page": "Seite",
+    "of": "von",
+    "rowsPerPage": "Zeilen pro Seite"
   }
 }

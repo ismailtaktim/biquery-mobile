@@ -1,5 +1,5 @@
 {
-  "common": {
+   "common": {
     "loading": "Cargando...",
     "search": "Buscar",
     "clear": "Limpiar",
@@ -18,18 +18,23 @@
     "no": "No",
     "warning": "Advertencia",
     "error": "Error",
-    "success": "Exitoso",
-    "info": "Información"
+    "success": "Éxito",
+    "info": "Info",
+    "apply": "Aplicar",
+    "retry": "Reintentar",
+    "refresh": "Actualizar"
   },
   "auth": {
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión",
     "username": "Nombre de Usuario",
     "password": "Contraseña",
-    "loginButton": "Acceder",
+    "loginButton": "Iniciar Sesión",
     "loginError": "Error de inicio de sesión",
     "loginSuccess": "Inicio de sesión exitoso",
-    "welcome": "Bienvenido"
+    "welcome": "Bienvenido",
+    "sessionExpired": "Sesión expirada",
+    "loginRequired": "Por favor, inicie sesión nuevamente"
   },
   "login": {
     "title": "Bienvenido a BiQuery",
@@ -49,37 +54,37 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Panel de Control",
     "welcome": "Bienvenido",
     "summary": "Resumen",
-    "analytics": "Analítica",
+    "analytics": "Analíticas",
     "reports": "Informes",
     "examples": {
       "title": "Consultas de Ejemplo"
     },
     "stats": {
-      "totalAgents": "Agentes Totales",
-      "totalProducts": "Productos Totales",
+      "totalAgents": "Total Agentes",
+      "totalProducts": "Total Productos",
       "totalPremium": "Prima Total",
-      "lossRatio": "Ratio de Siniestralidad"
+      "lossRatio": "Ratio de Siniestros"
     },
     "exampleQueries": {
-      "query1": "Los 5 agentes que más prima generaron en 2024",
-      "query2": "Dibuja la tendencia mensual de prima para producto Casco en los últimos 6 meses",
-      "query3": "Mostrar el total de pólizas en Estambul"
+      "query1": "Top 5 agentes con mayor prima en 2024",
+      "query2": "Dibuja tendencia mensual de primas para producto Integral en los últimos 6 meses",
+      "query3": "Mostrar total de pólizas en Estambul"
     },
-    "examplePlaceholder": "Los 5 agentes que más prima generaron en 2024...",
+    "examplePlaceholder": "Top 5 agentes con mayor prima en 2024...",
     "tips": {
       "title": "Consejos de Rendimiento",
-      "narrowDateRange": "Acortar rango de fechas (ej. últimos 3 meses)",
+      "narrowDateRange": "Acotar rango de fechas (ej: últimos 3 meses)",
       "fewerEntities": "Intentar consultar menos agentes/productos",
-      "limitResults": "Limitar resultados (ej. top 10 agentes)"
+      "limitResults": "Limitar resultados (ej: top 10 agentes)"
     }
   },
   "queryInput": {
     "title": "Entrada de Consulta",
     "subtitle": "Escriba su consulta en lenguaje natural",
-    "placeholder": "Haga su pregunta en lenguaje natural... (ej. 'Informe de ventas de los últimos 3 meses')",
+    "placeholder": "Haga su pregunta en lenguaje natural... (ej: 'Informe de ventas de los últimos 3 meses')",
     "queryButton": "Consultar",
     "analyzeButton": "Analizar",
     "clearButton": "Limpiar",
@@ -92,7 +97,7 @@
     "rememberHistory": "Recordar Historial",
     "didYouMean": "¿Quiso decir:",
     "yesCorrect": "Sí, Corregir",
-    "timeoutWarning": "Esta consulta puede tomar un tiempo. Por favor espere...",
+    "timeoutWarning": "Esta consulta puede tardar un tiempo. Por favor espere...",
     "aiEnabled": "Sugerencias IA habilitadas",
     "aiDisabled": "Sugerencias IA deshabilitadas",
     "emptyQuery": "Por favor ingrese una consulta.",
@@ -101,7 +106,8 @@
     "tokenExpired": "Sesión expirada. Por favor inicie sesión nuevamente.",
     "processingQuery": "IA está analizando su consulta...",
     "suggestions": "Sugerencias",
-    "examples": "Consultas de Ejemplo"
+    "examples": "Consultas de Ejemplo",
+    "results": "Resultados de Consulta"
   },
   "speechToText": {
     "start": "Comenzar a Hablar",
@@ -109,25 +115,29 @@
     "listening": "Escuchando...",
     "processing": "Procesando...",
     "error": "Error de reconocimiento de voz",
-    "noSupport": "Su navegador no admite reconocimiento de voz",
-    "recognized": "¡Voz reconocida!"
+    "noSupport": "Su dispositivo no admite reconocimiento de voz",
+    "recognized": "¡Voz reconocida!",
+    "permission": "Permiso de micrófono requerido",
+    "permissionDenied": "Permiso de micrófono denegado"
   },
   "navigation": {
-    "dashboard": "Dashboard",
-    "query": "Consultar",
+    "dashboard": "Panel de Control",
+    "query": "Consulta",
     "agents": "Agentes",
     "products": "Productos",
     "regional": "Regional",
     "comparisons": "Comparar",
-    "reports": "Informes"
+    "reports": "Informes",
+    "settings": "Configuración",
+    "profile": "Perfil"
   },
-   "analysis": {
+  "analysis": {
     "general": "Análisis General",
     "anomaly": "Detección de Anomalías",
     "forecast": "Análisis de Pronóstico",
     "trends": "Análisis de Tendencias",
     "dataAnalysis": "Análisis de Datos",
-    "results": "Resultados del Análisis",
+    "results": "Resultados de Análisis",
     "insight": "Perspectiva",
     "recommendation": "Recomendación",
     "recommendations": "Recomendaciones",
@@ -136,7 +146,14 @@
     "errorTitle": "Error de Análisis",
     "noResultData": "No se encontraron datos de resultado",
     "noResults": "No se encontraron resultados de análisis",
-    "noDescription": "Descripción no disponible",
+    "noDescription": "No hay descripción disponible",
+    "quickAnalysis": "Análisis Rápido",
+    "subtitle": "Analice sus datos automáticamente",
+    "starting": "Iniciando análisis...",
+    "startError": "No se pudo iniciar el análisis",
+    "generalError": "Error durante el análisis",
+    "insufficientData": "Datos Insuficientes",
+    "minDataRequired": "Se requieren mínimo 5 registros para análisis",
     "status": {
       "starting": "Iniciando análisis...",
       "processing": "Procesando datos...",
@@ -154,7 +171,7 @@
       "running": "Ejecutándose",
       "completed": "Completado",
       "failed": "Fallido",
-      "cached": "En caché",
+      "cached": "En Caché",
       "pending": "Pendiente"
     },
     "errors": {
@@ -168,7 +185,7 @@
       "almostDone": "Análisis casi completo..."
     },
     "info": {
-      "title": "Información del Análisis",
+      "title": "Información de Análisis",
       "processingTime": "Tiempo de Procesamiento",
       "cacheUsed": "Caché Utilizado",
       "originalLanguage": "Idioma Original",
@@ -176,15 +193,67 @@
     }
   },
   "language": {
-    "selectTitle": "Seleccionar Idioma"
+    "selectTitle": "Seleccionar Idioma",
+    "current": "Actual",
+    "changeSuccess": "Idioma cambiado exitosamente",
+    "changeError": "Error al cambiar idioma",
+    "changeInProgress": "Cambio de idioma en progreso",
+    "changing": "Cambiando...",
+    "applying": "Aplicando...",
+    "restartInfo": "Algunos cambios pueden requerir reiniciar la aplicación",
+    "systemLanguage": "Idioma del Sistema",
+    "autoDetected": "Detectado automáticamente",
+    "manualSelection": "Selección manual"
+  },
+  "errors": {
+    "network": "Error de conexión de red",
+    "server": "Error del servidor",
+    "timeout": "Tiempo agotado",
+    "unauthorized": "Acceso no autorizado",
+    "forbidden": "Acceso prohibido",
+    "notFound": "No encontrado",
+    "validation": "Error de validación",
+    "unknown": "Error desconocido",
+    "retry": "Toque para reintentar"
+  },
+  "loading": {
+    "initializing": "Inicializando...",
+    "authenticating": "Autenticando...",
+    "loadingData": "Cargando datos...",
+    "processing": "Procesando...",
+    "saving": "Guardando...",
+    "connecting": "Conectando...",
+    "pleaseWait": "Por favor espere..."
   },
   "tips": {
-    "maximumMinimum": "Use 'más alto' o 'más bajo' para encontrar valores máximos/mínimos",
-    "timeRange": "Use frases como 'últimos 3 meses' o 'año 2023' para rangos de tiempo específicos",
+    "maximumMinimum": "Use 'mayor' o 'menor' para encontrar valores máximos/mínimos",
+    "timeRange": "Use frases como 'últimos 3 meses' o 'año 2023' para rangos específicos",
     "comparison": "Use 'comparar' o 'versus' para comparaciones",
-    "grouping": "Use 'por categoría' o 'por región' para agrupaciones",
-    "detailedAnalysis": "Agregue 'detallado' o 'completo' para análisis en profundidad",
+    "grouping": "Use 'por categoría' o 'por región' para agrupar",
+    "detailedAnalysis": "Agregue 'detallado' o 'completo' para análisis profundo",
     "trendAnalysis": "Use 'tendencia' o 'cambio' para análisis de tendencias",
-    "voiceQuery": "Presione el botón del micrófono y hable para búsqueda por voz"
+    "voiceQuery": "Presione el botón del micrófono y hable para consulta por voz"
+  },
+  "charts": {
+    "title": "Gráfico",
+    "bar": "Gráfico de Barras",
+    "line": "Gráfico de Líneas",
+    "pie": "Gráfico Circular",
+    "list": "Vista de Lista",
+    "noData": "No hay datos para visualizar",
+    "selectData": "Seleccionar datos",
+    "xAxis": "Eje X",
+    "yAxis": "Eje Y",
+    "dataLimit": "Límite de Datos",
+    "settings": "Configuración de Gráfico"
+  },
+  "dataTable": {
+    "title": "Tabla de Datos",
+    "noResults": "No se encontraron resultados",
+    "records": "registros",
+    "columns": "columnas",
+    "page": "Página",
+    "of": "de",
+    "rowsPerPage": "Filas por página"
   }
 }

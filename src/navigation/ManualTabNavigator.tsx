@@ -1,100 +1,115 @@
-// src/navigation/ManualTabNavigator.tsx
+// src/navigation/ManualTabNavigator.tsx - Fixed version with proper imports and error handling
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Platform
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from '../context/LanguageContext';
 import DashboardScreen from '../screens/MainScreens/DashboardScreen';
 import QueryScreen from '../screens/MainScreens/QueryScreen';
+import LanguageButton from '../components/common/LanguageButton';
+
+type TabName = 'Dashboard' | 'Query';
+
+interface TabConfig {
+  name: TabName;
+  icon: string; // Changed from keyof typeof Ionicons.glyphMap to string for better compatibility
+  component: React.ComponentType;
+  labelKey: string;
+}
 
 const ManualTabNavigator: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'Dashboard' | 'Agents' | 'Products' | 'Regional' | 'Comparisons' | 'Reports'>('Dashboard');
+  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<TabName>('Dashboard');
 
-  console.log('🔥 ManualTabNavigator rendering, activeTab:', activeTab);
-
-  const tabs = [
-    { key: 'Dashboard', label: 'Dashboard', icon: 'home' },
-    { key: 'Agents', label: 'Acenteler', icon: 'people' },
-    { key: 'Products', label: 'Ürünler', icon: 'cube' },
-    { key: 'Regional', label: 'Bölgesel', icon: 'map' },
-    { key: 'Comparisons', label: 'Karşılaştır', icon: 'analytics' },
-    { key: 'Reports', label: 'Raporlar', icon: 'document-text' },
-  ] as const;
-
-  const renderScreen = () => {
-    console.log('🔥 Rendering screen for:', activeTab);
-    
-    switch (activeTab) {
-      case 'Dashboard':
-        return <DashboardScreen />;
-      case 'Agents':
-        return (
-          <View style={styles.placeholderScreen}>
-            <Text style={styles.placeholderText}>Acenteler Screen</Text>
-          </View>
-        );
-      case 'Products':
-        return (
-          <View style={styles.placeholderScreen}>
-            <Text style={styles.placeholderText}>Ürünler Screen</Text>
-          </View>
-        );
-      case 'Regional':
-        return (
-          <View style={styles.placeholderScreen}>
-            <Text style={styles.placeholderText}>Bölgesel Screen</Text>
-          </View>
-        );
-      case 'Comparisons':
-        return (
-          <View style={styles.placeholderScreen}>
-            <Text style={styles.placeholderText}>Karşılaştır Screen</Text>
-          </View>
-        );
-      case 'Reports':
-        return (
-          <View style={styles.placeholderScreen}>
-            <Text style={styles.placeholderText}>Raporlar Screen</Text>
-          </View>
-        );
-      default:
-        return <DashboardScreen />;
+  const tabs: TabConfig[] = [
+    {
+      name: 'Dashboard',
+      icon: 'home-outline',
+      component: DashboardScreen,
+      labelKey: 'navigation.dashboard'
+    },
+    {
+      name: 'Query',
+      icon: 'search-outline',
+      component: QueryScreen,
+      labelKey: 'navigation.query'
     }
+  ];
+
+  const renderContent = () => {
+    const activeTabConfig = tabs.find(tab => tab.name === activeTab);
+    if (!activeTabConfig) {
+      // Fallback to Dashboard if active tab not found
+      console.warn('Active tab not found, falling back to Dashboard');
+      const Component = DashboardScreen;
+      return <Component />;
+    }
+
+    const Component = activeTabConfig.component;
+    return <Component />;
+  };
+
+  const getActiveIcon = (tabIcon: string): string => {
+    // Convert outline icons to filled versions when active
+    if (tabIcon.includes('-outline')) {
+      return tabIcon.replace('-outline', '');
+    }
+    return tabIcon;
+  };
+
+  const renderTab = (tab: TabConfig) => {
+    const isActive = activeTab === tab.name;
+    const iconName = isActive ? getActiveIcon(tab.icon) : tab.icon;
+    
+    return (
+      <TouchableOpacity
+        key={tab.name}
+        style={[styles.tab, isActive && styles.activeTab]}
+        onPress={() => setActiveTab(tab.name)}
+        activeOpacity={0.7}
+        accessibilityRole="tab"
+        accessibilityState={{ selected: isActive }}
+        accessibilityLabel={t(tab.labelKey)}
+      >
+        <Ionicons
+          name={iconName as any} // Type assertion for icon compatibility
+          size={24}
+          color={isActive ? '#3B82F6' : '#6B7280'}
+        />
+        <Text style={[styles.tabLabel, isActive && styles.activeTabLabel]}>
+          {t(tab.labelKey)}
+        </Text>
+        {isActive && <View style={styles.activeIndicator} />}
+      </TouchableOpacity>
+    );
   };
 
   return (
     <View style={styles.container}>
-      {/* Screen Content */}
-      <View style={styles.screenContainer}>
-        {renderScreen()}
+      {/* Main Content */}
+      <View style={styles.content}>
+        {renderContent()}
       </View>
 
-      {/* Custom Tab Bar */}
-      <View style={styles.tabBar}>
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.key;
-          return (
-            <TouchableOpacity
-              key={tab.key}
-              style={styles.tabItem}
-              onPress={() => {
-                console.log('🔥 Tab pressed:', tab.key);
-                setActiveTab(tab.key as any);
-              }}
-            >
-              <Ionicons 
-                name={isActive ? tab.icon : `${tab.icon}-outline`} 
-                size={24} 
-                color={isActive ? '#3b82f6' : '#64748b'} 
-              />
-              <Text style={[
-                styles.tabLabel,
-                { color: isActive ? '#3b82f6' : '#64748b' }
-              ]}>
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+      {/* Bottom Tab Bar */}
+      <SafeAreaView style={styles.tabBarContainer}>
+        <View style={styles.tabBar}>
+          <View style={styles.tabsContainer}>
+            {tabs.map(renderTab)}
+          </View>
+          
+          {/* Language Button in Tab Bar */}
+          <View style={styles.languageContainer}>
+            <LanguageButton variant="icon-only" />
+          </View>
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -102,38 +117,68 @@ const ManualTabNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F8FAFC',
   },
-  screenContainer: {
+  content: {
     flex: 1,
+  },
+  tabBarContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
-    paddingTop: 8,
-    paddingBottom: 8,
-    height: 60,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    minHeight: 60,
   },
-  tabItem: {
+  tabsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    position: 'relative',
+    borderRadius: 12,
+  },
+  activeTab: {
+    backgroundColor: '#EBF4FF',
   },
   tabLabel: {
     fontSize: 12,
     fontWeight: '500',
-    marginTop: 2,
+    color: '#6B7280',
+    marginTop: 4,
+    textAlign: 'center',
   },
-  placeholderScreen: {
-    flex: 1,
+  activeTabLabel: {
+    color: '#3B82F6',
+    fontWeight: '600',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: -8,
+    width: 20,
+    height: 3,
+    backgroundColor: '#3B82F6',
+    borderRadius: 2,
+  },
+  languageContainer: {
+    marginLeft: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-  },
-  placeholderText: {
-    fontSize: 18,
-    color: '#6B7280',
   },
 });
 
