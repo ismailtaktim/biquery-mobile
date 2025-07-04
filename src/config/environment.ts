@@ -33,7 +33,7 @@ export const detectNetworkEnvironment = async (): Promise<'corporate' | 'externa
 
   try {
     // Local development ağını test et
-    const localResponse = await fetch('http://192.168.1.101:5001/health', { 
+    const localResponse = await fetch('http://192.168.1.7:5001/health', { 
       method: 'GET',
       signal: AbortSignal.timeout(3000)
     });
@@ -53,7 +53,7 @@ export const detectNetworkEnvironment = async (): Promise<'corporate' | 'externa
 const ENVIRONMENTS: Record<string, EnvironmentConfig> = {
   development: {
     api: {
-      baseURL: 'http://192.168.1.101:5001',  // Local development
+      baseURL: 'http://192.168.1.7:5001',  // Local development
       timeout: 30000,
       requiresVPN: false,
       description: 'Local Development Server'

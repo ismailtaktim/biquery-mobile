@@ -1,4 +1,4 @@
-// src/navigation/types.ts
+// src/navigation/types.ts - Fixed version
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
@@ -18,7 +18,9 @@ export type MainTabParamList = {
   Reports: undefined;
 };
 
+// Fixed: MainStackParamList now includes "Tabs" which is used in MainNavigator
 export type MainStackParamList = {
+  Tabs: undefined; // Added this line to fix the error
   MainTabs: undefined;
   QueryResults: {
     data: any[];

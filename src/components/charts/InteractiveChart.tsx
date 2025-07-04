@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, useLayoutEffect } from 'react';
+import { useTranslation, useLanguage } from '../../context/LanguageContext';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,8 +9,8 @@ import {
   Dimensions,
   Alert
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import Svg, { Rect, Line, Circle, Text as SvgText, Path } from 'react-native-svg';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,13 +21,24 @@ interface InteractiveChartProps {
 }
 
 const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, columns }) => {
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  
+  // Simple locale mapping
+  const getLocale = () => {
+    switch (currentLanguage) {
+      case 'en': return 'en-US';
+      case 'de': return 'de-DE';
+      case 'es': return 'es-ES';
+      default: return 'tr-TR';
+    }
+  };
   const [chartType, setChartType] = useState<'bar' | 'line' | 'pie' | 'list'>('bar');
   const [xAxisKey, setXAxisKey] = useState('');
   const [yAxisKey, setYAxisKey] = useState('');
   const [dataLimit, setDataLimit] = useState(10);
   const [showSettings, setShowSettings] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [maintainScrollPosition, setMaintainScrollPosition] = useState(true);
 
   const itemsPerPage = 6;
   const scrollViewRef = useRef<ScrollView>(null);
@@ -68,9 +80,9 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
 
     if (query) {
       const lowerQuery = query.toLowerCase();
-      if (lowerQuery.includes('trend') || lowerQuery.includes('çizgi') || lowerQuery.includes('zaman')) {
+      if (lowerQuery.includes('trend') || lowerQuery.includes('çizgi') || lowerQuery.includes('zaman') || lowerQuery.includes('line')) {
         setChartType('line');
-      } else if (lowerQuery.includes('dağılım') || lowerQuery.includes('oran') || lowerQuery.includes('pasta')) {
+      } else if (lowerQuery.includes('dağılım') || lowerQuery.includes('oran') || lowerQuery.includes('pasta') || lowerQuery.includes('pie')) {
         setChartType('pie');
       } else if (lowerQuery.includes('liste') || lowerQuery.includes('list')) {
         setChartType('list');
@@ -114,13 +126,13 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
   // Dinamik boyutlar - ekrana daha iyi sığdırmak için
   const containerHeight = Math.min(height * 0.8, 700);
   const chartWidth = width - 40;
-  const chartHeight = Math.min(containerHeight * 0.4, 300); // Daha kompakt
+  const chartHeight = Math.min(containerHeight * 0.4, 300);
 
   const handleDataPointPress = (item: any) => {
     Alert.alert(
       item.fullLabel,
-      `Değer: ${item.value.toLocaleString('tr-TR')}`,
-      [{ text: 'Tamam' }]
+      `${t('chart.value')}: ${item.value.toLocaleString(getLocale())}`,
+      [{ text: t('common.ok') }]
     );
   };
 
@@ -138,9 +150,9 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
     return (
       <View style={styles.chartWrapper}>
         <View style={styles.chartHeader}>
-          <Text style={styles.chartTitle}>Bar Chart</Text>
+          <Text style={styles.chartTitle}>{t('chart.barChart')}</Text>
           <Text style={styles.chartInfoHint}>
-            {processedData.length > 8 ? '← Kaydırarak tüm verileri görün' : `${processedData.length} kayıt`}
+            {processedData.length > 8 ? `← ${t('chart.scrollToSeeAll')}` : `${processedData.length} ${t('chart.records')}`}
           </Text>
         </View>
         
@@ -226,7 +238,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
                     fill="#555"
                     fontWeight="bold"
                   >
-                    {item.value.toLocaleString('tr-TR')}
+                    {item.value.toLocaleString(getLocale())}
                   </SvgText>
                   
                   {/* Label at bottom */}
@@ -272,9 +284,9 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
     return (
       <View style={styles.chartWrapper}>
         <View style={styles.chartHeader}>
-          <Text style={styles.chartTitle}>Line Chart</Text>
+          <Text style={styles.chartTitle}>{t('chart.lineChart')}</Text>
           <Text style={styles.chartInfoHint}>
-            {processedData.length > 6 ? '← Kaydırarak tüm trend\'i görün' : `${processedData.length} nokta`}
+            {processedData.length > 6 ? `← ${t('chart.scrollToSeeTrend')}` : `${processedData.length} ${t('chart.points')}`}
           </Text>
         </View>
         
@@ -356,7 +368,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
                   fill="#555"
                   fontWeight="bold"
                 >
-                  {point.value.toLocaleString('tr-TR')}
+                  {point.value.toLocaleString(getLocale())}
                 </SvgText>
                 
                 {/* Label */}
@@ -392,9 +404,9 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
     return (
       <View style={styles.chartWrapper}>
         <View style={styles.chartHeader}>
-          <Text style={styles.chartTitle}>Pie Chart</Text>
+          <Text style={styles.chartTitle}>{t('chart.pieChart')}</Text>
           <Text style={styles.chartInfoHint}>
-            {processedData.length > 5 ? 'Detayları scroll ile görün ↓' : `${processedData.length} kategori`}
+            {processedData.length > 5 ? `${t('chart.scrollForDetails')} ↓` : `${processedData.length} ${t('chart.categories')}`}
           </Text>
         </View>
         
@@ -470,7 +482,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
               fill="#666"
               fontWeight="bold"
             >
-              Toplam
+              {t('chart.total')}
             </SvgText>
             
             <SvgText
@@ -480,7 +492,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
               fontSize="11"
               fill="#888"
             >
-              {total.toLocaleString('tr-TR')}
+              {total.toLocaleString(getLocale())}
             </SvgText>
           </Svg>
           
@@ -502,7 +514,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
                   { backgroundColor: getItemColor(index) }
                 ]} />
                 <Text style={styles.legendText} numberOfLines={1}>
-                  {item.label}: {item.value.toLocaleString('tr-TR')} ({((item.value / total) * 100).toFixed(1)}%)
+                  {item.label}: {item.value.toLocaleString(getLocale())} ({((item.value / total) * 100).toFixed(1)}%)
                 </Text>
               </TouchableOpacity>
             ))}
@@ -524,9 +536,9 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
     return (
       <View style={styles.listWrapper}>
         <View style={styles.chartHeader}>
-          <Text style={styles.chartTitle}>List View</Text>
+          <Text style={styles.chartTitle}>{t('chart.listView')}</Text>
           <Text style={styles.chartInfoHint}>
-            Sayfa {currentPage + 1} / {totalPages} • {startIndex + 1}-{Math.min(endIndex, processedData.length)} / {processedData.length} kayıt
+            {t('chart.page')} {currentPage + 1} / {totalPages} • {startIndex + 1}-{Math.min(endIndex, processedData.length)} / {processedData.length} {t('chart.records')}
           </Text>
         </View>
         
@@ -555,7 +567,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
                     {item.fullLabel}
                   </Text>
                   <Text style={styles.listValue}>
-                    {item.value.toLocaleString('tr-TR')}
+                    {item.value.toLocaleString(getLocale())}
                   </Text>
                 </View>
                 <View style={[styles.listBadge, { backgroundColor: getItemColor(globalIndex) }]}>
@@ -586,10 +598,10 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
             
             <View style={styles.paginationInfo}>
               <Text style={styles.paginationText}>
-                Sayfa {currentPage + 1} / {totalPages}
+                {t('chart.page')} {currentPage + 1} / {totalPages}
               </Text>
               <Text style={styles.paginationSubText}>
-                {startIndex + 1}-{Math.min(endIndex, processedData.length)} / {processedData.length} kayıt
+                {startIndex + 1}-{Math.min(endIndex, processedData.length)} / {processedData.length} {t('chart.records')}
               </Text>
             </View>
             
@@ -613,7 +625,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
         {/* Kayıt bilgisi */}
         <View style={styles.listSummary}>
           <Text style={styles.listSummaryText}>
-            Toplam {processedData.length} kayıt gösteriliyor
+            {t('chart.totalRecordsShowing', { count: processedData.length })}
           </Text>
         </View>
       </View>
@@ -625,8 +637,8 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
       return (
         <View style={styles.noDataContainer}>
           <Ionicons name="bar-chart-outline" size={48} color="#BA68C8" />
-          <Text style={styles.noDataText}>Veri seçimi yapınız</Text>
-          <Text style={styles.noDataSubText}>X ve Y ekseni ayarlarından kolonları seçin</Text>
+          <Text style={styles.noDataText}>{t('chart.selectData')}</Text>
+          <Text style={styles.noDataSubText}>{t('chart.selectAxisSettings')}</Text>
         </View>
       );
     }
@@ -656,7 +668,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
       >
         {/* X Axis */}
         <View style={styles.settingSection}>
-          <Text style={styles.settingLabel}>X Ekseni (Etiket)</Text>
+          <Text style={styles.settingLabel}>{t('chart.xAxis')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.columnButtons}>
               {columns.map(column => (
@@ -683,7 +695,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
 
         {/* Y Axis */}
         <View style={styles.settingSection}>
-          <Text style={styles.settingLabel}>Y Ekseni (Değer)</Text>
+          <Text style={styles.settingLabel}>{t('chart.yAxis')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.columnButtons}>
               {getNumericColumns().map(column => (
@@ -710,7 +722,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
 
         {/* Data Limit */}
         <View style={[styles.settingSection, { marginBottom: 24 }]}>
-          <Text style={styles.settingLabel}>Gösterilecek Veri Sayısı</Text>
+          <Text style={styles.settingLabel}>{t('chart.dataLimit')}</Text>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
@@ -747,11 +759,11 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
       <View style={[styles.container, { height: containerHeight }]}>
         <View style={styles.header}>
           <Ionicons name="analytics-outline" size={20} color="#64B5F6" />
-          <Text style={styles.headerTitle}>Veri Grafiği</Text>
+          <Text style={styles.headerTitle}>{t('chart.title')}</Text>
         </View>
         <View style={styles.noDataContainer}>
           <Ionicons name="bar-chart-outline" size={48} color="#BA68C8" />
-          <Text style={styles.noDataText}>Görselleştirmek için veri yok</Text>
+          <Text style={styles.noDataText}>{t('chart.noDataToVisualize')}</Text>
         </View>
       </View>
     );
@@ -763,7 +775,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Ionicons name="analytics-outline" size={20} color="#64B5F6" />
-          <Text style={styles.headerTitle}>Veri Grafiği</Text>
+          <Text style={styles.headerTitle}>{t('chart.title')}</Text>
         </View>
         <View style={styles.headerRight}>
           {/* Chart Type Buttons */}
@@ -813,7 +825,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
       {processedData.length > 0 && (
         <View style={styles.chartInfoContainer}>
           <Text style={styles.chartInfoText}>
-            {processedData.length} kayıt • {xAxisKey} × {yAxisKey}
+            {processedData.length} {t('chart.records')} • {xAxisKey} × {yAxisKey}
           </Text>
         </View>
       )}
@@ -832,7 +844,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
         {/* Color Legend - Chart'ın altında */}
         {processedData.length > 0 && chartType !== 'pie' && (
           <View style={styles.colorLegendContainer}>
-            <Text style={styles.colorLegendTitle}>Renk Anahtarı</Text>
+            <Text style={styles.colorLegendTitle}>{t('chart.colorKey')}</Text>
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false}
@@ -854,6 +866,7 @@ const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, query, column
   );
 };
 
+// Styles remain the same as before
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FEFEFE',
@@ -1052,7 +1065,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   listScrollView: {
-    maxHeight: 300, // Kompakt liste
+    maxHeight: 300,
   },
   listItem: {
     flexDirection: 'row',
@@ -1214,7 +1227,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'center',
   },
-  // Color Legend Styles
   colorLegendContainer: {
     backgroundColor: '#F8F9FA',
     borderRadius: 12,

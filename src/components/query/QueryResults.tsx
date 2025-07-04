@@ -1,4 +1,4 @@
-// src/components/query/QueryResults.tsx - Enhanced with comprehensive language support
+// src/components/query/QueryResults.tsx - Analysis Integration with Fixed Header
 import React, { useState } from 'react';
 import {
   View,
@@ -13,9 +13,9 @@ import {
   AlertButton
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from '../../context/LanguageContext';
 import InteractiveChart from '../charts/InteractiveChart';
 import AnalysisResultModal from '../analytics/AnalysisResultModal';
-import { useTranslation, useLanguage } from '../../context/LanguageContext';
 import apiService from '../../services/apiService';
 
 const { width } = Dimensions.get('window');
@@ -37,7 +37,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   executionTime,
   onNewQuery
 }) => {
-  const { t, currentLanguage } = useLanguage();
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(0);
   const [showSQL, setShowSQL] = useState(false);
   const [showChart, setShowChart] = useState(false);
@@ -74,16 +74,8 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   };
 
   const shouldShowChart = () => {
-    // Language-aware chart keywords
-    const chartKeywords = {
-      tr: ['grafik', 'çiz', 'trend', 'chart', 'draw', 'görselleştir'],
-      en: ['chart', 'draw', 'trend', 'graph', 'visualize', 'plot'],
-      de: ['diagramm', 'zeichne', 'trend', 'grafik', 'visualisieren'],
-      es: ['gráfico', 'dibuja', 'tendencia', 'visualizar']
-    };
-    
-    const keywords = chartKeywords[currentLanguage as keyof typeof chartKeywords] || chartKeywords.tr;
-    const hasChartKeyword = keywords.some(keyword => 
+    const chartKeywords = ['grafik', 'çiz', 'trend', 'chart', 'draw'];
+    const hasChartKeyword = chartKeywords.some(keyword => 
       query.toLowerCase().includes(keyword)
     );
     
@@ -98,7 +90,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   };
 
   const shouldShowAnalysis = () => {
-    // Analysis requires minimum 5 records and at least 1 numeric column
+    // Analysis için minimum 5 kayıt ve en az 1 numeric column gerekli
     return data.length >= 5 && columns.some(col => {
       return data.some(row => 
         typeof row[col] === 'number' || 
@@ -116,14 +108,14 @@ const QueryResults: React.FC<QueryResultsProps> = ({
 
   const handleShare = async () => {
     try {
-      const shareText = `${t('navigation.query')}: ${query}\n${t('analysis.result')}: ${data.length} ${t('dataTable.records')}\n\nBiQuery Mobile`;
+      const shareText = `${t('query.shareText')}: ${query}\n${t('query.result')}: ${data.length} ${t('query.records')}\n\nBiQuery Mobile`;
       await Share.share({ message: shareText });
     } catch (error) {
       console.error('Share error:', error);
     }
   };
 
-  // Analysis functions with language support
+  // Analysis functions
   const startAnalysis = async (analysisType: 'general' | 'anomaly' | 'forecast' | 'trends') => {
     if (isStartingAnalysis) return;
 
@@ -132,14 +124,14 @@ const QueryResults: React.FC<QueryResultsProps> = ({
     try {
       console.log('🔬 Starting analysis:', { type: analysisType, dataLength: data.length });
       
-      // Show loading with localized message
+      // Show loading
       Alert.alert(
         t('analysis.starting'),
-        `${getAnalysisTypeTitle(analysisType)} ${t('analysis.starting').toLowerCase()}...`,
+        `${getAnalysisTypeTitle(analysisType)} ${t('analysis.isStarting')}...`,
         [{ text: t('common.ok') }]
       );
 
-      const response = await apiService.startAnalysis(data, analysisType, currentLanguage);
+      const response = await apiService.startAnalysis(data, analysisType);
       
       if (response.job_id) {
         setCurrentAnalysisJobId(response.job_id);
@@ -153,8 +145,8 @@ const QueryResults: React.FC<QueryResultsProps> = ({
     } catch (error: any) {
       console.error('❌ Analysis start error:', error);
       Alert.alert(
-        t('analysis.errorTitle'), 
-        error.message || t('analysis.generalError')
+        t('analysis.error'), 
+        error.message || t('analysis.startErrorMessage')
       );
     } finally {
       setIsStartingAnalysis(false);
@@ -162,18 +154,18 @@ const QueryResults: React.FC<QueryResultsProps> = ({
   };
 
   const getAnalysisTypeTitle = (type: string) => {
-    const titles = {
-      general: t('analysis.general'),
-      anomaly: t('analysis.anomaly'),
-      forecast: t('analysis.forecast'),
-      trends: t('analysis.trends')
-    };
-    return titles[type as keyof typeof titles] || t('analysis.dataAnalysis');
+    switch (type) {
+      case 'general': return t('analysis.types.general');
+      case 'anomaly': return t('analysis.types.anomaly');
+      case 'forecast': return t('analysis.types.forecast');
+      case 'trends': return t('analysis.types.trends');
+      default: return t('analysis.dataAnalysis');
+    }
   };
 
   const handleAnalysisComplete = () => {
     console.log('📊 Analysis completed');
-    // Modal stays open for user to see results
+    // Modal açık kalır, kullanıcı sonuçları görebilir
   };
 
   const handleAnalysisModalClose = () => {
@@ -188,38 +180,32 @@ const QueryResults: React.FC<QueryResultsProps> = ({
         style: 'cancel' 
       },
       { 
-        text: t('analysis.general'), 
+        text: t('analysis.types.general'), 
         onPress: () => startAnalysis('general'),
         style: 'default'
       },
       { 
-        text: t('analysis.trends'), 
+        text: t('analysis.types.trends'), 
         onPress: () => startAnalysis('trends'),
         style: 'default'
       },
       { 
-        text: t('analysis.anomaly'), 
+        text: t('analysis.types.anomaly'), 
         onPress: () => startAnalysis('anomaly'),
         style: 'default'
       },
       { 
-        text: t('analysis.forecast'), 
+        text: t('analysis.types.forecast'), 
         onPress: () => startAnalysis('forecast'),
         style: 'default'
       },
     ];
 
     Alert.alert(
-      t('language.selectTitle'),
-      t('analysis.subtitle'),
+      t('analysis.selectType'),
+      t('analysis.selectTypeMessage'),
       options
     );
-  };
-
-  const getPaginationText = () => {
-    const start = currentPage * itemsPerPage + 1;
-    const end = Math.min((currentPage + 1) * itemsPerPage, data.length);
-    return `${start}-${end} ${t('dataTable.of')} ${data.length} ${t('dataTable.records')}`;
   };
 
   if (!data || data.length === 0) {
@@ -229,18 +215,18 @@ const QueryResults: React.FC<QueryResultsProps> = ({
           <TouchableOpacity style={styles.backButton} onPress={onNewQuery}>
             <Ionicons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('analysis.results')}</Text>
+          <Text style={styles.headerTitle}>{t('query.results')}</Text>
           <View style={styles.headerSpacer} />
         </View>
         
         <View style={styles.emptyContainer}>
           <Ionicons name="search-outline" size={64} color="#999" />
-          <Text style={styles.emptyTitle}>{t('dataTable.noResults')}</Text>
+          <Text style={styles.emptyTitle}>{t('query.noDataFound')}</Text>
           <Text style={styles.emptyText}>
-            {t('queryInput.queryError')}
+            {t('query.queryExecutedNoResults')}
           </Text>
           <TouchableOpacity style={styles.newQueryButton} onPress={onNewQuery}>
-            <Text style={styles.newQueryButtonText}>{t('queryInput.title')}</Text>
+            <Text style={styles.newQueryButtonText}>{t('query.newQuery')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -249,16 +235,21 @@ const QueryResults: React.FC<QueryResultsProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Header - Fixed layout to prevent text cutoff */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={onNewQuery}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t('analysis.results')}</Text>
+        
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>{t('query.results')}</Text>
+        </View>
+        
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
             <Ionicons name="share-outline" size={20} color="#666" />
           </TouchableOpacity>
+          
           {shouldShowChart() && (
             <TouchableOpacity 
               style={styles.chartToggle} 
@@ -266,14 +257,15 @@ const QueryResults: React.FC<QueryResultsProps> = ({
             >
               <Ionicons 
                 name={showChart ? "list-outline" : "stats-chart-outline"} 
-                size={20} 
+                size={18} 
                 color="#007AFF" 
               />
-              <Text style={styles.chartToggleText}>
-                {showChart ? t('charts.list') : t('charts.title')}
+              <Text style={styles.chartToggleText} numberOfLines={1}>
+                {showChart ? t('query.table') : t('query.chart')}
               </Text>
             </TouchableOpacity>
           )}
+          
           {shouldShowAnalysis() && (
             <TouchableOpacity 
               style={styles.analysisButton} 
@@ -282,10 +274,12 @@ const QueryResults: React.FC<QueryResultsProps> = ({
             >
               <Ionicons 
                 name="analytics-outline" 
-                size={20} 
+                size={18} 
                 color="#8B5CF6" 
               />
-              <Text style={styles.analysisButtonText}>{t('analysis.dataAnalysis')}</Text>
+              <Text style={styles.analysisButtonText} numberOfLines={1}>
+                {t('analysis.analyze')}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -295,8 +289,8 @@ const QueryResults: React.FC<QueryResultsProps> = ({
       <View style={styles.queryInfo}>
         <Text style={styles.queryText} numberOfLines={2}>{query}</Text>
         <View style={styles.statsRow}>
-          <Text style={styles.statText}>{data.length} {t('dataTable.records')}</Text>
-          <Text style={styles.statText}>{columns.length} {t('dataTable.columns')}</Text>
+          <Text style={styles.statText}>{data.length} {t('query.records')}</Text>
+          <Text style={styles.statText}>{columns.length} {t('query.columns')}</Text>
           {executionTime && (
             <Text style={styles.statText}>{executionTime.toFixed(2)}s</Text>
           )}
@@ -315,7 +309,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
                 color="#007AFF" 
               />
               <Text style={styles.sqlToggleText}>
-                {showSQL ? t('queryInput.clearButton') + ' SQL' : 'SQL ' + t('common.view')}
+                {showSQL ? t('query.hideSqlQuery') : t('query.showSqlQuery')}
               </Text>
             </View>
             <View style={[styles.sqlToggleIcon, showSQL && styles.sqlToggleIconRotated]}>
@@ -332,7 +326,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
           <View style={styles.sqlContainer}>
             <View style={styles.sqlHeader}>
               <Ionicons name="terminal-outline" size={16} color="#007AFF" />
-              <Text style={styles.sqlHeaderText}>SQL {t('navigation.query')}</Text>
+              <Text style={styles.sqlHeaderText}>{t('query.sqlQuery')}</Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={true}>
               <Text style={styles.sqlText}>{sql}</Text>
@@ -355,7 +349,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
         <View style={styles.tableSection}>
           <View style={styles.tableSectionHeader}>
             <Ionicons name="grid-outline" size={20} color="#007AFF" />
-            <Text style={styles.tableSectionTitle}>{t('dataTable.title')}</Text>
+            <Text style={styles.tableSectionTitle}>{t('query.dataTable')}</Text>
           </View>
           
           <View style={styles.tableContainer}>
@@ -414,7 +408,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
             </TouchableOpacity>
             
             <Text style={styles.pageText}>
-              {t('dataTable.page')} {currentPage + 1} {t('dataTable.of')} {totalPages} ({getPaginationText()})
+              {currentPage + 1} / {totalPages} ({data.length} {t('query.records')})
             </Text>
             
             <TouchableOpacity 
@@ -430,7 +424,7 @@ const QueryResults: React.FC<QueryResultsProps> = ({
         {/* New Query Button */}
         <TouchableOpacity style={styles.newQueryButton} onPress={onNewQuery}>
           <Ionicons name="add" size={20} color="#fff" />
-          <Text style={styles.newQueryButtonText}>{t('queryInput.title')}</Text>
+          <Text style={styles.newQueryButtonText}>{t('query.newQuery')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -456,13 +450,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
     paddingBottom: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    minHeight: 80,
   },
   backButton: {
     width: 40,
@@ -471,21 +465,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
+    textAlign: 'center',
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
+    marginLeft: 12,
+    minWidth: 120, // Ensure minimum width for buttons
   },
   shareButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
     justifyContent: 'center',
@@ -494,29 +497,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#e3f2fd',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 4,
+    maxWidth: 60, // Prevent text overflow
   },
   chartToggleText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#007AFF',
+    flexShrink: 1, // Allow text to shrink if needed
   },
   analysisButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F3E8FF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 4,
+    maxWidth: 60, // Prevent text overflow
   },
   analysisButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#8B5CF6',
+    flexShrink: 1, // Allow text to shrink if needed
   },
   headerSpacer: {
     width: 40,
