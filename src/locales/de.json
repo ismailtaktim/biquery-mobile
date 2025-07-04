@@ -118,7 +118,12 @@
     "hideSqlQuery": "SQL-Abfrage ausblenden",
     "showSqlQuery": "SQL-Abfrage anzeigen",
     "sqlQuery": "SQL-Abfrage",
-    "dataTable": "Datentabelle"
+    "dataTable": "Datentabelle",
+    "backToQuery": "Zurück zur Abfrage",
+  "queryResults": "Abfrageergebnisse",
+  "executionTime": "Ausführungszeit", 
+  "toggleChart": "Diagramm",
+  "dataAnalyze": "Analysieren"
   },
   "chart": {
     "title": "Datendiagramm",
@@ -142,7 +147,10 @@
     "scrollToSeeAll": "Scrollen, um alle Daten zu sehen",
     "scrollToSeeTrend": "Scrollen, um den vollständigen Trend zu sehen",
     "scrollForDetails": "Scrollen für Details",
-    "totalRecordsShowing": "Zeige insgesamt {{count}} Datensätze"
+    "totalRecordsShowing": "Zeige insgesamt {{count}} Datensätze",
+      "of": "/",
+  "selectChart": "Diagrammtyp auswählen",
+  "viewData": "Daten anzeigen"
   },
   "analysis": {
     "general": "Allgemeine Analyse",
@@ -168,6 +176,11 @@
     "startErrorMessage": "Fehler beim Starten der Analyse",
     "selectType": "Analysetyp auswählen",
     "selectTypeMessage": "Welche Art von Analyse möchten Sie durchführen?",
+      "quickAnalysis": "Schnelle Analyse",
+  "subtitle": "Wenden Sie schnelle und umfassende Analysen auf Ihre Daten an. Entdecken Sie Datenmuster mit KI-gestützten Analysen.",
+  "insufficientData": "Unzureichende Daten",
+  "minDataRequired": "Mindestens 5 Datenzeilen sind für diese Analyse erforderlich.",
+  "generalError": "Allgemeiner Analysefehler aufgetreten",
     "types": {
       "general": "Allgemeine Analyse",
       "anomaly": "Anomalie-Erkennung",
@@ -219,7 +232,11 @@
     "changing": "Ändern",
     "current": "Aktuell",
     "applying": "Anwenden",
-    "restartInfo": "Die App kann für Sprachänderung neu starten"
+    "restartInfo": "Die App kann für Sprachänderung neu starten",
+      "turkish": "Türkçe",
+  "english": "English",
+  "german": "Deutsch",
+  "spanish": "Español"
   },
   "speechToText": {
     "start": "Sprechen beginnen",
@@ -247,5 +264,70 @@
     "detailedAnalysis": "Fügen Sie 'detailliert' oder 'umfassend' für detaillierte Analysen hinzu",
     "trendAnalysis": "Verwenden Sie 'Trend' oder 'Änderung' für Trendanalysen",
     "voiceQuery": "Drücken Sie die Mikrofon-Taste und sprechen Sie für Sprachabfragen"
+  },
+   "toast": {
+    "success": {
+      "title": "Erfolgreich"
+    },
+    "error": {
+      "title": "Fehler"
+    },
+    "warning": {
+      "title": "Warnung"
+    },
+    "info": {
+      "title": "Info"
+    },
+    "api": {
+      "loading": "Wird geladen...",
+      "success": "Operation erfolgreich",
+      "error": "Ein Fehler ist aufgetreten",
+      "unauthorized": "Sitzung abgelaufen. Bitte melden Sie sich erneut an",
+      "forbidden": "Sie haben keine Berechtigung für diese Operation",
+      "notFound": "Ressource nicht gefunden",
+      "serverError": "Serverfehler. Bitte versuchen Sie es später erneut",
+      "networkError": "Keine Internetverbindung",
+      "timeout": "Verbindung wurde unterbrochen",
+      "initializationFailed": "API-Verbindung konnte nicht hergestellt werden",
+      "rateLimited": "Zu viele Anfragen gesendet. Bitte warten Sie einen Moment",
+      "systemBusy": "System ist ausgelastet. Bitte warten Sie 1-2 Minuten und versuchen Sie es erneut",
+      "cacheCleared": "Cache erfolgreich geleert"
+    },
+    "network": {
+      "offline": "Keine Internetverbindung",
+      "online": "Internetverbindung wiederhergestellt",
+      "slow": "Internetverbindung ist langsam"
+    },
+    "analysis": {
+      "starting": "{type} Analyse wird gestartet...",
+      "completed": "{type} Analyse abgeschlossen!",
+      "failed": "{type} Analyse fehlgeschlagen",
+      "insufficientData": "Unzureichende Daten für die Analyse",
+      "timeout": "Analyse-Zeitüberschreitung"
+    },
+    "query": {
+      "success": "{count} Ergebnisse gefunden",
+      "noResults": "Keine Ergebnisse gefunden",
+      "error": "Fehler beim Ausführen der Abfrage",
+      "executing": "Abfrage wird ausgeführt...",
+      "timeout": "Abfrage-Zeitüberschreitung"
+    },
+    "auth": {
+      "loginSuccess": "Willkommen, {username}!",
+      "loginError": "Anmeldung fehlgeschlagen",
+      "logoutSuccess": "Abmeldung erfolgreich",
+      "sessionExpired": "Sitzung abgelaufen",
+      "invalidCredentials": "Ungültiger Benutzername oder Passwort"
+    },
+    "speech": {
+      "listening": "Hört zu...",
+      "recognized": "Sprache erkannt!",
+      "error": "Spracherkennungsfehler",
+      "noSupport": "Ihr Browser unterstützt keine Spracherkennung"
+    },
+    "language": {
+      "changed": "Sprache zu {language} geändert",
+      "changing": "Sprache wird geändert..."
+    }
   }
 }

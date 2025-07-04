@@ -1,26 +1,17 @@
-// src/services/apiService.ts - Web versiyonu ile tam uyumlu
+// src/services/apiService.ts - Tam dil destekli toast entegrasyonu
 import axios, { AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import { Alert } from 'react-native';
 import { getEnvironmentConfig, getEnvironmentInfo } from '../config/environment';
-
-// Toast utilities for React Native (Alert-based)
-const showErrorToast = (message: string) => {
-  Alert.alert('Hata', message);
-};
-
-const showWarningToast = (message: string) => {
-  Alert.alert('Uyarı', message);
-};
-
-const showInfoToast = (message: string) => {
-  Alert.alert('Bilgi', message);
-};
-
-const showSuccessToast = (message: string) => {
-  Alert.alert('Başarılı', message);
-};
+import { 
+  showApiToast, 
+  showNetworkToast, 
+  showAuthToast,
+  showQueryToast,
+  showAnalysisToast,
+  showCustomToast,
+  showDirectToast
+} from '../utils/toastUtils';
 
 // Environment-based configuration
 let API_CONFIG: any = null;
@@ -63,7 +54,6 @@ class ApiService {
   public baseURL: string = '';
 
   constructor() {
-    // Placeholder config - gerçek config async olarak yüklenecek
     this.api = axios.create({
       timeout: 30000,
       headers: {
@@ -74,14 +64,12 @@ class ApiService {
     this.setupInterceptors();
   }
 
-  // Async initialization
   async initialize() {
     try {
       const config = await initializeApiConfig();
       
       this.baseURL = config.baseURL;
       
-      // Axios instance'ı yeniden yapılandır
       this.api = axios.create({
         baseURL: config.baseURL,
         timeout: config.timeout,
@@ -100,12 +88,13 @@ class ApiService {
       }
     } catch (error) {
       console.error('❌ API Service initialization failed:', error);
+      showApiToast.error('toast.api.initializationFailed');
       throw error;
     }
   }
 
   private setupInterceptors() {
-    // Request interceptor - token ekleme
+    // Request interceptor
     this.api.interceptors.request.use(
       async (config) => {
         try {
@@ -114,7 +103,6 @@ class ApiService {
             config.headers.Authorization = `Bearer ${token}`;
           }
           
-          // Dil bilgisini ekle
           const language = await this.getCurrentLanguage();
           config.headers['Accept-Language'] = language;
           config.headers['User-Agent'] = 'BiQuery-ReactNative/1.0.0 (Expo)';
@@ -126,19 +114,58 @@ class ApiService {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor - error handling
+    // Response interceptor - dil destekli toast'lar
     this.api.interceptors.response.use(
       (response) => response,
       async (error) => {
+        // Token süresi dolmuş
         if (error.response?.status === 401) {
+          console.log('🔒 Token expired, clearing auth data...');
           await this.clearAuthData();
+          
+          // CSRF hatası değilse toast göster
+          if (!error.response?.data?.message?.includes('CSRF')) {
+            showApiToast.unauthorized();
+          }
+          
+          return Promise.reject(error);
         }
+
+        // Network hatası
+        if (error.code === 'NETWORK_ERROR' || !error.response) {
+          showNetworkToast.offline();
+          return Promise.reject(error);
+        }
+
+        // Sunucu hatası
+        if (error.response?.status >= 500) {
+          showApiToast.serverError();
+          return Promise.reject(error);
+        }
+
+        // Rate limit
+        if (error.response?.status === 429) {
+          showCustomToast('toast.warning.title', 'toast.api.rateLimited', 'info');
+          return Promise.reject(error);
+        }
+
+        // Forbidden
+        if (error.response?.status === 403) {
+          showApiToast.forbidden();
+          return Promise.reject(error);
+        }
+
+        // Not found
+        if (error.response?.status === 404) {
+          showApiToast.notFound();
+          return Promise.reject(error);
+        }
+
         return Promise.reject(error);
       }
     );
   }
 
-  // JWT Token'ı SecureStore'dan al
   async getToken(): Promise<string | null> {
     try {
       return await SecureStore.getItemAsync('token');
@@ -148,20 +175,18 @@ class ApiService {
     }
   }
 
-  // Mevcut dili al - Web versiyonu ile aynı
   async getCurrentLanguage(): Promise<string> {
     try {
       const storedLang = await AsyncStorage.getItem('i18nextLng');
       if (storedLang && ['tr', 'en', 'de', 'es'].includes(storedLang)) {
         return storedLang;
       }
-      return 'tr'; // Default
+      return 'tr';
     } catch (error) {
       return 'tr';
     }
   }
 
-  // Headers oluştur - Web versiyonu ile aynı
   async getHeaders(): Promise<Record<string, string>> {
     const token = await this.getToken();
     const headers: Record<string, string> = {
@@ -173,7 +198,6 @@ class ApiService {
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    // Dil bilgisini ekle
     headers['Accept-Language'] = await this.getCurrentLanguage();
     
     return headers;
@@ -181,38 +205,42 @@ class ApiService {
 
   private async clearAuthData(): Promise<void> {
     try {
+      console.log('🧹 Clearing authentication data...');
+      
       await SecureStore.deleteItemAsync('token');
       await AsyncStorage.removeItem('userData');
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('role');
+      
+      console.log('✅ Authentication data cleared successfully');
     } catch (error) {
-      console.log('Clear auth data error:', error);
+      console.log('⚠️ Error clearing auth data:', error);
     }
   }
 
-  // Enhanced error handling - Web versiyonu ile birebir aynı
+  // Enhanced error handling - dil destekli
   handleEnhancedError(error: any, options: any = {}): Error {
-    // Backend'den gelen yapılandırılmış hataları işle
     if (error.response?.data?.error) {
       const errorData = error.response.data.error;
       
       // Backend'den gelen yapılandırılmış hata
       if (typeof errorData === 'object' && errorData.title && errorData.message) {
-        // Yapılandırılmış hata mesajını göster
         const errorMessage = `${errorData.title}: ${errorData.message}`;
         
-        // Hata tipine göre toast rengi - sessiz mod kontrolü
         if (!options.silent) {
           if (error.response.status >= 500) {
-            showErrorToast(errorMessage);
-          } else if (error.response.status >= 400) {
-            showWarningToast(errorMessage);
+            showApiToast.serverError();
+          } else if (error.response.status === 403) {
+            showApiToast.forbidden();
+          } else if (error.response.status === 404) {
+            showApiToast.notFound();
           } else {
-            showInfoToast(errorMessage);
+            // Backend'den gelen custom error - direct göster
+            showDirectToast(errorData.title, errorData.message, 'error');
           }
         }
         
-        // Çözüm önerilerini console'a logla (geliştirici için)
+        // Çözüm önerilerini console'a logla
         if (errorData.solutions && errorData.solutions.length > 0) {
           console.group('🔧 Çözüm Önerileri:');
           errorData.solutions.forEach((solution: string, index: number) => {
@@ -221,12 +249,6 @@ class ApiService {
           console.groupEnd();
         }
         
-        // Destek kodu varsa logla
-        if (errorData.support_code) {
-          console.log(`📞 Destek Kodu: ${errorData.support_code}`);
-        }
-        
-        // Enhanced error object döndür
         const enhancedError = new Error(errorMessage);
         (enhancedError as any).code = errorData.error_code;
         (enhancedError as any).supportCode = errorData.support_code;
@@ -240,33 +262,28 @@ class ApiService {
       // Eski format string hata
       if (typeof errorData === 'string') {
         if (!options.silent) {
-          showErrorToast(errorData);
+          showApiToast.error('toast.api.error');
         }
         return new Error(errorData);
       }
     }
     
-    // Network hataları
-    let message = 'Bilinmeyen bir hata oluştu';
-    if (error.code === 'ECONNABORTED') {
-      message = 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.';
-    } else if (error.message === 'Network Error') {
-      message = 'Ağ bağlantısı hatası. İnternet bağlantınızı kontrol edin.';
-    } else {
-      message = error.response?.data?.message || error.message || message;
-    }
-    
+    // Network hataları için dil destekli toast'lar
     if (!options.silent) {
-      showErrorToast(message);
+      if (error.code === 'ECONNABORTED') {
+        showApiToast.timeout();
+      } else if (error.message === 'Network Error') {
+        showApiToast.networkError();
+      } else {
+        showApiToast.error('toast.api.error');
+      }
     }
     
-    return new Error(message);
+    return new Error(error.response?.data?.message || error.message || 'Unknown error');
   }
 
-  // Generic API çağrısı - Web versiyonu ile aynı
   async makeRequest(method: string, endpoint: string, data: any = null, options: any = {}): Promise<any> {
     try {
-      // Initialize eğer henüz yapılmadıysa
       if (!this.baseURL) {
         await this.initialize();
       }
@@ -275,7 +292,7 @@ class ApiService {
         method,
         url: `${this.baseURL}${endpoint}`,
         headers: await this.getHeaders(),
-        timeout: API_CONFIG?.timeout || 300000, // 5 dakika
+        timeout: API_CONFIG?.timeout || 300000,
         ...options
       };
 
@@ -290,25 +307,24 @@ class ApiService {
       const response = await axios(config);
       return response.data;
     } catch (error: any) {
-      // Gelişmiş hata yönetimi
       const enhancedError = this.handleEnhancedError(error, options);
       
-      // Özel hata durumları
+      // Özel hata durumları - dil destekli toast'lar
       if ((enhancedError as any).code === 'SYS_001') {
-        // API yüklenme hatası - kullanıcıya özel mesaj
         const sysError = new Error('Sistem yoğun. Lütfen 1-2 dakika bekleyip tekrar deneyin.');
         (sysError as any).code = 'SYS_001';
         (sysError as any).retryAfter = (enhancedError as any).retryAfter || 120;
+        showCustomToast('toast.error.title', 'toast.api.systemBusy', 'error');
         throw sysError;
       } else if ((enhancedError as any).code === 'TIME_001') {
-        // Zaman aşımı hatası - kullanıcıya özel mesaj
         const timeError = new Error('Sorgu çok uzun sürdü. Daha spesifik bir sorgu deneyin.');
         (timeError as any).code = 'TIME_001';
+        showQueryToast.timeout();
         throw timeError;
       } else if ((enhancedError as any).code === 'NET_001') {
-        // Bağlantı hatası
         const netError = new Error('Bağlantı sorunu. İnternet bağlantınızı kontrol edin.');
         (netError as any).code = 'NET_001';
+        showNetworkToast.offline();
         throw netError;
       }
       
@@ -333,7 +349,7 @@ class ApiService {
     return this.makeRequest('DELETE', endpoint, null, options);
   }
 
-  // Query Execution - Web versiyonu ile birebir aynı
+  // Query Execution - dil destekli toast'lar
   async executeQuery(query: string, language?: string): Promise<QueryResponse> {
     const formData = new FormData();
     formData.append('query', query);
@@ -344,41 +360,49 @@ class ApiService {
     try {
       console.log('🔍 Executing query:', query);
       console.log('🗣️ Language:', currentLanguage);
-      console.log('📡 Full URL:', `${this.baseURL}/api/query/`);
+      
+      // Query başlatma bildirimi
+      showQueryToast.executing();
       
       const headers = await this.getHeaders();
       
-      // Web versiyonundaki gibi AYNI yapı - Backend redirect yapıyor, trailing slash ekleyelim
       const response = await this.api.post('/api/query/', formData, {
         headers: {
           ...headers,
           'Content-Type': 'multipart/form-data'
         },
-        timeout: 300000, // Web versiyonundaki gibi 5 dakika
-        maxRedirects: 5, // Redirect'leri takip et
+        timeout: 300000,
+        maxRedirects: 5,
         validateStatus: function (status) {
-          return status >= 200 && status < 400; // 308'i de kabul et
+          return status >= 200 && status < 400;
         }
       });
 
-      console.log('✅ Query response status:', response.status);
-      console.log('✅ Query response data:', response.data);
+      console.log('✅ Query executed successfully');
+      
+      // Sonuç toast'ı
+      if (response.data.data && response.data.data.length > 0) {
+        showQueryToast.success(response.data.data.length);
+      } else {
+        showQueryToast.noResults();
+      }
       
       return response.data;
     } catch (error: any) {
       console.error('❌ Query execution error:', error.message);
       
-      // Web versiyonundaki gelişmiş hata yönetimi
-      const enhancedError = this.handleEnhancedError(error, {
-        position: "top-center", 
-        autoClose: 6000
-      });
+      // Query hatası toast'ları
+      if (error.code === 'ECONNABORTED') {
+        showQueryToast.timeout();
+      } else {
+        showQueryToast.error();
+      }
       
-      throw enhancedError;
+      throw error;
     }
   }
 
-  // Query Suggestions - Web versiyonu ile birebir aynı
+  // Query Suggestions - dil destekli
   async getSuggestions(query: string, includeHistory: boolean = true, history: string[] = [], language?: string): Promise<any> {
     try {
       const currentLanguage = language || await this.getCurrentLanguage();
@@ -390,7 +414,7 @@ class ApiService {
         language: currentLanguage,
         maxSuggestions: 7
       }, {
-        silent: true, // Web versiyonundaki gibi sessiz mod
+        silent: true, // Öneri hatalarında toast gösterme
         autoClose: 3000
       });
       
@@ -401,7 +425,6 @@ class ApiService {
     } catch (error: any) {
       console.error('Öneri alma hatası:', error);
       
-      // Web versiyonundaki fallback sistemi
       return {
         suggestions: await this.generateFallbackSuggestions(query, language),
         success: false,
@@ -410,7 +433,7 @@ class ApiService {
     }
   }
 
-  // Spell Check - Web versiyonu ile birebir aynı
+  // Spell Check - dil destekli
   async checkSpelling(query: string, language?: string): Promise<any> {
     try {
       const currentLanguage = language || await this.getCurrentLanguage();
@@ -442,7 +465,7 @@ class ApiService {
     }
   }
 
-  // Fallback Suggestions Generator - Web versiyonu ile birebir aynı
+  // Fallback Suggestions Generator
   async generateFallbackSuggestions(query: string, language?: string): Promise<string[]> {
     const fallbackSuggestions = {
       'tr': [
@@ -479,6 +502,249 @@ class ApiService {
     return fallbackSuggestions[currentLang as keyof typeof fallbackSuggestions] || fallbackSuggestions['tr'];
   }
 
+  // Cache Clear - dil destekli
+  async clearCache(): Promise<any> {
+    try {
+      const response = await this.post('/api/query/clear-cache');
+      showApiToast.success('toast.api.cacheCleared');
+      return response;
+    } catch (error: any) {
+      console.error('Cache temizleme hatası:', error);
+      throw error;
+    }
+  }
+
+  // AUTH API'leri - dil destekli toast'lar
+  async login(username: string, password: string): Promise<ApiResponse> {
+    try {
+      console.log('🔐 Login attempt for:', username);
+      
+      const response = await this.post('/api/auth/login', {
+        username,
+        password
+      });
+      
+      const { user, success, message, token } = response;
+      
+      if (success && user && token) {
+        await SecureStore.setItemAsync('token', token);
+        await AsyncStorage.setItem('username', user.username);
+        await AsyncStorage.setItem('role', user.role || 'Standart');
+        await AsyncStorage.setItem('userData', JSON.stringify(user));
+        
+        // Kişiselleştirilmiş hoş geldin mesajı
+        showAuthToast.loginSuccess(user.username);
+        
+        return {
+          success: true,
+          user,
+          token
+        };
+      }
+      
+      // Giriş başarısız
+      showAuthToast.loginError();
+      return {
+        success: false,
+        message: message || 'Login failed'
+      };
+    } catch (error: any) {
+      console.error('Login hatası:', error);
+      
+      // Hata türüne göre toast
+      if (error.response?.status === 401) {
+        showAuthToast.invalidCredentials();
+      } else if (error.response?.status >= 500) {
+        showApiToast.serverError();
+      } else if (!error.response) {
+        showNetworkToast.offline();
+      } else {
+        showAuthToast.loginError();
+      }
+      
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Bağlantı hatası!'
+      };
+    }
+  }
+
+  async logout(): Promise<ApiResponse> {
+    try {
+      await this.get('/api/auth/logout');
+      await this.clearAuthData();
+      
+      showAuthToast.logoutSuccess();
+      
+      return {
+        success: true,
+        message: 'Logout successful'
+      };
+    } catch (error: any) {
+      console.error('Logout API hatası:', error);
+      await this.clearAuthData();
+      
+      // Logout'ta hata olsa bile çıkış yapılır
+      showAuthToast.logoutSuccess();
+      
+      return {
+        success: true,
+        message: 'Logout completed'
+      };
+    }
+  }
+
+  // Analysis API'leri - dil destekli toast'lar
+  async startAnalysis(data: any[], analysisType: 'general' | 'anomaly' | 'forecast' | 'trends' = 'general', language?: string): Promise<any> {
+    try {
+      const currentLanguage = language || await this.getCurrentLanguage();
+      
+      // Analiz tipleri çevirisi
+      const analysisTypeNames = {
+        'general': 'Genel',
+        'anomaly': 'Anomali',
+        'forecast': 'Tahmin',
+        'trends': 'Trend'
+      };
+      
+      console.log('=== API SERVICE ANALIZ BAŞLATILIYOR ===');
+      console.log('Analiz başlatılıyor:', {
+        dataLength: data.length,
+        analysisType,
+        language: currentLanguage
+      });
+      
+      // Başlatma toast'ı
+      showAnalysisToast.starting(analysisTypeNames[analysisType]);
+      
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(data));
+      formData.append('analysis_type', analysisType);
+      formData.append('language', currentLanguage);
+      
+      const response = await this.api.post('/api/analysis/start', formData, {
+        headers: {
+          ...(await this.getHeaders()),
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      console.log('Analiz başlatma yanıtı:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('Analiz başlatma hatası:', error);
+      
+      // Analiz tipleri çevirisi (catch block'ta da tanımla)
+      const analysisTypeNames = {
+        'general': 'Genel',
+        'anomaly': 'Anomali',
+        'forecast': 'Tahmin',
+        'trends': 'Trend'
+      };
+      
+      // Analiz hata toast'ları
+      if (error.response?.data?.error_code === 'INSUFFICIENT_DATA') {
+        showAnalysisToast.insufficientData();
+      } else if (error.code === 'ECONNABORTED') {
+        showAnalysisToast.timeout();
+      } else {
+        showAnalysisToast.failed(analysisTypeNames[analysisType]);
+      }
+      
+      throw error;
+    }
+  }
+
+  // Analiz durumu kontrol etme
+  async getAnalysisStatus(jobId: string): Promise<any> {
+    try {
+      console.log(`Analiz durumu kontrol ediliyor: ${jobId}`);
+      
+      const response = await this.get(`/api/analysis/status/${jobId}`);
+      
+      console.log('Analiz durum yanıtı:', response);
+      return response;
+    } catch (error: any) {
+      console.error('Analiz durumu kontrol hatası:', error);
+      
+      // Status kontrol hatası için sessiz mod
+      const enhancedError = this.handleEnhancedError(error, {
+        silent: true // Status kontrolde toast gösterme
+      });
+      
+      throw enhancedError;
+    }
+  }
+
+  // Set Language - Web versiyonu ile aynı
+  async setLanguage(language: string): Promise<any> {
+    try {
+      const response = await this.post('/api/auth/set-language', {
+        language
+      });
+      
+      if (response.success) {
+        await AsyncStorage.setItem('i18nextLng', language);
+      }
+      
+      return response;
+    } catch (error: any) {
+      console.error('Dil değiştirme hatası:', error);
+      throw error;
+    }
+  }
+
+  // Token doğrulama
+  async validateToken(): Promise<any> {
+    try {
+      const token = await this.getToken();
+      
+      if (!token) {
+        return {
+          valid: false,
+          message: 'Token bulunamadı!'
+        };
+      }
+      
+      const response = await this.post('/api/auth/validate-token', {}, {
+        silent: true // Token validation'da toast gösterme
+      });
+      
+      return {
+        valid: true,
+        user: response.user,
+        message: 'Token geçerli'
+      };
+    } catch (error: any) {
+      console.error('Token doğrulama hatası:', error);
+      
+      // CSRF hatası özel durumu
+      if (error.response?.data?.message?.includes('CSRF')) {
+        console.log('🔒 CSRF token error detected, clearing auth data silently...');
+        await this.clearAuthData();
+        
+        return {
+          valid: false,
+          message: 'CSRF token geçersiz',
+          shouldRedirectToLogin: true
+        };
+      }
+      
+      // Diğer 401 hataları için toast göster
+      if (error.response?.status === 401) {
+        showAuthToast.sessionExpired();
+        await this.clearAuthData();
+      }
+      
+      return {
+        valid: false,
+        message: error.response?.data?.message || 'Token doğrulama hatası!'
+      };
+    }
+  }
+
+  // Diğer eksik fonksiyonlar
+
   // Örnek sorgular - Web versiyonu ile birebir aynı
   async getExamples(): Promise<any> {
     try {
@@ -488,7 +754,7 @@ class ApiService {
     } catch (error) {
       console.warn('Örnek sorgular alınamadı:', error);
       
-      // Fallback - local örnekler (web versiyonundaki gibi)
+      // Fallback - local örnekler
       const fallbackExamples = {
         'tr': [
           '2024 yılında en çok prim üreten 5 acente',
@@ -533,178 +799,18 @@ class ApiService {
         { 
           responseType: 'blob',
           headers: await this.getHeaders(),
-          timeout: 60000 // Excel için 1 dakika timeout
+          timeout: 60000
         }
       );
       
-      // React Native'de file download farklı - şimdilik başarı mesajı döndür
-      showSuccessToast('Excel dosyası hazırlandı. İndirme işlemi web versiyonunda desteklenmektedir.');
+      // React Native'de file download farklı
+      showApiToast.success('toast.api.excelReady');
       
       return { success: true };
     } catch (error: any) {
       console.error('Excel indirme hatası:', error);
       this.handleEnhancedError(error);
       throw error;
-    }
-  }
-
-  // Cache Clear - Web versiyonu ile aynı
-  async clearCache(): Promise<any> {
-    try {
-      const response = await this.post('/api/query/clear-cache');
-      showSuccessToast('Önbellek başarıyla temizlendi.');
-      return response;
-    } catch (error: any) {
-      console.error('Cache temizleme hatası:', error);
-      throw error;
-    }
-  }
-
-  // AUTH API'leri - Web versiyonu ile uyumlu
-  async login(username: string, password: string): Promise<ApiResponse> {
-    try {
-      console.log('Login fonksiyonu çağrıldı:', username);
-      console.log('API isteği başlatılıyor...');
-      console.log('Hedef URL:', `${this.baseURL}/api/auth/login`);
-      
-      const response = await this.post('/api/auth/login', {
-        username,
-        password
-      });
-      
-      console.log('API yanıtı:', response);
-      
-      const { user, success, message, token } = response;
-      
-      if (success && user && token) {
-        await SecureStore.setItemAsync('token', token);
-        await AsyncStorage.setItem('username', user.username);
-        await AsyncStorage.setItem('role', user.role || 'Standart');
-        await AsyncStorage.setItem('userData', JSON.stringify(user));
-        
-        return {
-          success: true,
-          user,
-          token
-        };
-      }
-      
-      return {
-        success: false,
-        message: message || 'Giriş başarısız!'
-      };
-    } catch (error: any) {
-      console.error('Login hatası:', error);
-      
-      if (error.response) {
-        return {
-          success: false,
-          message: error.response.data?.message || 'Sunucu hatası!'
-        };
-      }
-      
-      return {
-        success: false,
-        message: 'Bağlantı hatası! Lütfen internet bağlantınızı kontrol edin.'
-      };
-    }
-  }
-
-  async logout(): Promise<ApiResponse> {
-    try {
-      await this.get('/api/auth/logout');
-      await this.clearAuthData();
-      
-      return {
-        success: true,
-        message: 'Oturum başarıyla kapatıldı.'
-      };
-    } catch (error: any) {
-      console.error('Logout API hatası:', error);
-      await this.clearAuthData();
-      
-      return {
-        success: true,
-        message: 'Çıkış yaparken bir hata oluştu'
-      };
-    }
-  }
-
-  // Set Language - Web versiyonu ile aynı
-  async setLanguage(language: string): Promise<any> {
-    try {
-      const response = await this.post('/api/auth/set-language', {
-        language
-      });
-      
-      if (response.success) {
-        await AsyncStorage.setItem('i18nextLng', language);
-      }
-      
-      return response;
-    } catch (error: any) {
-      console.error('Dil değiştirme hatası:', error);
-      throw error;
-    }
-  }
-
-  // === ANALYSIS API'LERİ - Web versiyonu ile birebir aynı ===
-
-  // Veri analizi başlatma - Web versiyonu ile tam uyumlu
-  async startAnalysis(data: any[], analysisType: 'general' | 'anomaly' | 'forecast' | 'trends' = 'general', language?: string): Promise<any> {
-    try {
-      const currentLanguage = language || await this.getCurrentLanguage();
-      
-      console.log('=== API SERVICE ANALIZ BAŞLATILIYOR ===');
-      console.log('Analiz başlatılıyor:', {
-        dataLength: data.length,
-        analysisType,
-        language: currentLanguage
-      });
-      
-      const formData = new FormData();
-      formData.append('data', JSON.stringify(data));
-      formData.append('analysis_type', analysisType);
-      formData.append('language', currentLanguage);
-      
-      const response = await this.api.post('/api/analysis/start', formData, {
-        headers: {
-          ...(await this.getHeaders()),
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      console.log('Analiz başlatma yanıtı:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('Analiz başlatma hatası:', error);
-      this.handleEnhancedError(error, {
-        position: "top-center",
-        autoClose: 8000
-      });
-      throw error;
-    }
-  }
-
-  // Analiz durumu kontrol etme - Web versiyonu ile aynı
-  async getAnalysisStatus(jobId: string): Promise<any> {
-    try {
-      console.log(`Analiz durumu kontrol ediliyor: ${jobId}`);
-      
-      const response = await this.get(`/api/analysis/status/${jobId}`);
-      
-      console.log('Analiz durum yanıtı:', response);
-      return response;
-    } catch (error: any) {
-      console.error('Analiz durumu kontrol hatası:', error);
-      
-      // Gelişmiş hata yönetimi
-      const enhancedError = this.handleEnhancedError(error, {
-        position: "top-center",
-        autoClose: 6000
-      });
-      
-      throw enhancedError;
     }
   }
 
@@ -751,36 +857,25 @@ class ApiService {
     }
   }
 
-  // Token doğrulama
-  async validateToken(): Promise<any> {
+  // Recent Queries
+  async getRecentQueries(): Promise<any[]> {
     try {
-      const token = await this.getToken();
+      const response = await this.get('/api/query/recent');
+      return response.queries || [];
+    } catch (error) {
+      console.warn('Recent queries yüklenemedi');
       
-      if (!token) {
-        return {
-          valid: false,
-          message: 'Token bulunamadı!'
-        };
+      // Local storage'dan al
+      try {
+        const historyString = await AsyncStorage.getItem('queryHistory');
+        return historyString ? JSON.parse(historyString) : [];
+      } catch {
+        return [];
       }
-      
-      const response = await this.post('/api/auth/validate-token');
-      
-      return {
-        valid: true,
-        user: response.user,
-        message: 'Token geçerli'
-      };
-    } catch (error: any) {
-      console.error('Token doğrulama hatası:', error);
-      
-      return {
-        valid: false,
-        message: 'Token doğrulama hatası!'
-      };
     }
   }
 
-  // Mevcut kullanıcı bilgilerini getir
+  // Diğer fonksiyonlar aynı kalacak...
   async getCurrentUser(): Promise<any> {
     try {
       const username = await AsyncStorage.getItem('username');
@@ -801,7 +896,6 @@ class ApiService {
     }
   }
 
-  // Kimlik doğrulama durumunu kontrol et
   async isAuthenticated(): Promise<boolean> {
     try {
       const token = await this.getToken();
@@ -811,36 +905,17 @@ class ApiService {
     }
   }
 
-  // Recent Queries
-  async getRecentQueries(): Promise<any[]> {
-    try {
-      const response = await this.get('/api/query/recent');
-      return response.queries || [];
-    } catch (error) {
-      console.warn('Recent queries yüklenemedi');
-      
-      // Local storage'dan al
-      try {
-        const historyString = await AsyncStorage.getItem('queryHistory');
-        return historyString ? JSON.parse(historyString) : [];
-      } catch {
-        return [];
-      }
-    }
-  }
-
-  // Legacy compatibility için
+  // Legacy compatibility
   handleError(error: any) {
     console.warn('Deprecated: Use handleEnhancedError instead');
     return this.handleEnhancedError(error);
   }
 
-  // checkAnalysisStatus - backward compatibility
   async checkAnalysisStatus(jobId: string): Promise<any> {
     return this.getAnalysisStatus(jobId);
   }
 }
 
-// Singleton instance oluştur ve export et
+// Singleton instance
 const apiService = new ApiService();
 export default apiService;

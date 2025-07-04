@@ -118,7 +118,12 @@
     "hideSqlQuery": "Ocultar Consulta SQL",
     "showSqlQuery": "Mostrar Consulta SQL",
     "sqlQuery": "Consulta SQL",
-    "dataTable": "Tabla de Datos"
+    "dataTable": "Tabla de Datos",
+      "backToQuery": "Volver a Consulta",
+  "queryResults": "Resultados de Consulta",
+  "executionTime": "Tiempo de Ejecución",
+  "toggleChart": "Gráfico", 
+  "dataAnalyze": "Analizar"
   },
   "chart": {
     "title": "Gráfico de Datos",
@@ -142,7 +147,10 @@
     "scrollToSeeAll": "Desplácese para ver todos los datos",
     "scrollToSeeTrend": "Desplácese para ver la tendencia completa",
     "scrollForDetails": "Desplácese para ver detalles",
-    "totalRecordsShowing": "Mostrando un total de {{count}} registros"
+    "totalRecordsShowing": "Mostrando un total de {{count}} registros",
+      "of": "/",
+  "selectChart": "Seleccionar tipo de gráfico",
+  "viewData": "Ver Datos"
   },
   "analysis": {
     "general": "Análisis General",
@@ -168,6 +176,11 @@
     "startErrorMessage": "Ocurrió un error al iniciar el análisis",
     "selectType": "Seleccionar Tipo de Análisis",
     "selectTypeMessage": "¿Qué tipo de análisis le gustaría realizar?",
+      "quickAnalysis": "Análisis Rápido",
+  "subtitle": "Aplique análisis rápidos y completos a sus datos. Descubra patrones de datos con análisis impulsados por IA.",
+  "insufficientData": "Datos Insuficientes", 
+  "minDataRequired": "Se requieren al menos 5 filas de datos para este análisis.",
+  "generalError": "Error general de análisis ocurrido",
     "types": {
       "general": "Análisis General",
       "anomaly": "Detección de Anomalías",
@@ -219,7 +232,11 @@
     "changing": "Cambiando",
     "current": "Actual",
     "applying": "Aplicando",
-    "restartInfo": "La aplicación puede reiniciarse para el cambio de idioma"
+    "restartInfo": "La aplicación puede reiniciarse para el cambio de idioma",
+      "turkish": "Türkçe",
+  "english": "English", 
+  "german": "Deutsch",
+  "spanish": "Español"
   },
   "speechToText": {
     "start": "Comenzar a Hablar",
@@ -247,5 +264,70 @@
     "detailedAnalysis": "Agregue 'detallado' o 'comprensivo' para análisis detallados",
     "trendAnalysis": "Use 'tendencia' o 'cambio' para análisis de tendencias",
     "voiceQuery": "Presione el botón del micrófono y hable para consultas de voz"
+  },
+  "toast": {
+    "success": {
+      "title": "Éxito"
+    },
+    "error": {
+      "title": "Error"
+    },
+    "warning": {
+      "title": "Advertencia"
+    },
+    "info": {
+      "title": "Información"
+    },
+    "api": {
+      "loading": "Cargando...",
+      "success": "Operación exitosa",
+      "error": "Ocurrió un error",
+      "unauthorized": "Sesión expirada. Por favor inicie sesión nuevamente",
+      "forbidden": "No tiene permisos para esta operación",
+      "notFound": "Recurso no encontrado",
+      "serverError": "Error del servidor. Por favor intente más tarde",
+      "networkError": "Sin conexión a internet",
+      "timeout": "Conexión expirada",
+      "initializationFailed": "No se pudo establecer la conexión API",
+      "rateLimited": "Demasiadas solicitudes enviadas. Por favor espere un momento",
+      "systemBusy": "El sistema está ocupado. Por favor espere 1-2 minutos e inténtelo de nuevo",
+      "cacheCleared": "Caché limpiado exitosamente"
+    },
+    "network": {
+      "offline": "Sin conexión a internet",
+      "online": "Conexión a internet restaurada",
+      "slow": "La conexión a internet es lenta"
+    },
+    "analysis": {
+      "starting": "Iniciando análisis {type}...",
+      "completed": "¡Análisis {type} completado!",
+      "failed": "Análisis {type} falló",
+      "insufficientData": "Datos insuficientes para el análisis",
+      "timeout": "Análisis expirado"
+    },
+    "query": {
+      "success": "{count} resultados encontrados",
+      "noResults": "No se encontraron resultados",
+      "error": "Error al ejecutar la consulta",
+      "executing": "Ejecutando consulta...",
+      "timeout": "Consulta expirada"
+    },
+    "auth": {
+      "loginSuccess": "¡Bienvenido, {username}!",
+      "loginError": "Error de inicio de sesión",
+      "logoutSuccess": "Cierre de sesión exitoso",
+      "sessionExpired": "Sesión expirada",
+      "invalidCredentials": "Nombre de usuario o contraseña inválidos"
+    },
+    "speech": {
+      "listening": "Escuchando...",
+      "recognized": "¡Voz reconocida!",
+      "error": "Error de reconocimiento de voz",
+      "noSupport": "Su navegador no soporta reconocimiento de voz"
+    },
+    "language": {
+      "changed": "Idioma cambiado a {language}",
+      "changing": "Cambiando idioma..."
+    }
   }
 }

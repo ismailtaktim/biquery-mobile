@@ -118,7 +118,12 @@
     "hideSqlQuery": "SQL Sorguyu Gizle",
     "showSqlQuery": "SQL Sorgusunu Görüntüle",
     "sqlQuery": "SQL Sorgusu",
-    "dataTable": "Veri Tablosu"
+    "dataTable": "Veri Tablosu",
+      "backToQuery": "Sorguya Dön",
+  "queryResults": "Sorgu Sonuçları",
+  "executionTime": "Çalışma Süresi",
+  "toggleChart": "Grafik",
+  "dataAnalyze": "Analiz"
   },
   "chart": {
     "title": "Veri Grafiği",
@@ -142,7 +147,10 @@
     "scrollToSeeAll": "Kaydırarak tüm verileri görün",
     "scrollToSeeTrend": "Kaydırarak tüm trend'i görün",
     "scrollForDetails": "Detayları scroll ile görün",
-    "totalRecordsShowing": "Toplam {{count}} kayıt gösteriliyor"
+    "totalRecordsShowing": "Toplam {{count}} kayıt gösteriliyor",
+    "of": "/",
+    "selectChart": "Grafik türü seçin",
+    "viewData": "Veriyi Görüntüle"
   },
   "analysis": {
     "general": "Genel Analiz",
@@ -168,6 +176,11 @@
     "startErrorMessage": "Analiz başlatılırken bir hata oluştu",
     "selectType": "Analiz Türü Seçin",
     "selectTypeMessage": "Hangi tür analiz yapmak istiyorsunuz?",
+      "quickAnalysis": "Hızlı Analiz",
+  "subtitle": "Verilerinize hızlı ve kapsamlı analiz uygulayın. AI destekli analizler ile veri kalıplarını keşfedin.",
+  "insufficientData": "Yetersiz Veri",
+  "minDataRequired": "Bu analiz için en az 5 veri satırı gerekli.",
+  "generalError": "Genel analiz hatası oluştu",
     "types": {
       "general": "Genel Analiz",
       "anomaly": "Anomali Tespiti",
@@ -219,7 +232,11 @@
     "changing": "Değiştiriliyor",
     "current": "Mevcut",
     "applying": "Uygulanıyor",
-    "restartInfo": "Dil değişikliği için uygulama yeniden başlatılabilir"
+    "restartInfo": "Dil değişikliği için uygulama yeniden başlatılabilir",
+      "turkish": "Türkçe",
+  "english": "English",
+  "german": "Deutsch", 
+  "spanish": "Español"
   },
   "speechToText": {
     "start": "Konuşmaya Başla",
@@ -247,5 +264,70 @@
     "detailedAnalysis": "Detaylı analiz için 'ayrıntılı' veya 'kapsamlı' kelimelerini ekleyin",
     "trendAnalysis": "Trend analizi için 'trend' veya 'değişim' kelimelerini kullanın",
     "voiceQuery": "Sesli sorgu için mikrofon butonuna basın ve konuşun"
+  },
+  "toast": {
+    "success": {
+      "title": "Başarılı"
+    },
+    "error": {
+      "title": "Hata"
+    },
+    "warning": {
+      "title": "Uyarı"
+    },
+    "info": {
+      "title": "Bilgi"
+    },
+    "api": {
+      "loading": "Yükleniyor...",
+      "success": "İşlem başarılı",
+      "error": "Bir hata oluştu",
+      "unauthorized": "Oturum süresi doldu. Lütfen tekrar giriş yapın",
+      "forbidden": "Bu işlem için yetkiniz yok",
+      "notFound": "Kaynak bulunamadı",
+      "serverError": "Sunucu hatası. Lütfen daha sonra tekrar deneyin",
+      "networkError": "İnternet bağlantısı yok",
+      "timeout": "Bağlantı zaman aşımına uğradı",
+      "initializationFailed": "API bağlantısı kurulamadı",
+      "rateLimited": "Çok fazla istek gönderdiniz. Lütfen biraz bekleyin",
+      "systemBusy": "Sistem yoğun. Lütfen 1-2 dakika bekleyip tekrar deneyin",
+      "cacheCleared": "Önbellek başarıyla temizlendi"
+    },
+    "network": {
+      "offline": "İnternet bağlantısı yok",
+      "online": "İnternet bağlantısı geri geldi",
+      "slow": "İnternet bağlantısı yavaş"
+    },
+    "analysis": {
+      "starting": "{type} analizi başlatılıyor...",
+      "completed": "{type} analizi tamamlandı!",
+      "failed": "{type} analizi başarısız oldu",
+      "insufficientData": "Analiz için yeterli veri yok",
+      "timeout": "Analiz zaman aşımına uğradı"
+    },
+    "query": {
+      "success": "{count} sonuç bulundu",
+      "noResults": "Sonuç bulunamadı",
+      "error": "Sorgu çalıştırılırken hata oluştu",
+      "executing": "Sorgu çalıştırılıyor...",
+      "timeout": "Sorgu zaman aşımına uğradı"
+    },
+    "auth": {
+      "loginSuccess": "Hoş geldiniz, {username}!",
+      "loginError": "Giriş başarısız",
+      "logoutSuccess": "Çıkış başarılı",
+      "sessionExpired": "Oturum süresi doldu",
+      "invalidCredentials": "Kullanıcı adı veya şifre hatalı"
+    },
+    "speech": {
+      "listening": "Dinleniyor...",
+      "recognized": "Konuşma tanındı!",
+      "error": "Ses tanıma hatası",
+      "noSupport": "Tarayıcınız ses tanımayı desteklemiyor"
+    },
+    "language": {
+      "changed": "Dil {language} olarak değiştirildi",
+      "changing": "Dil değiştiriliyor..."
+    }
   }
 }

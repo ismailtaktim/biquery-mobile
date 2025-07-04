@@ -15,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import apiService from '../../services/apiService';
 import { useLanguage } from '../../context/LanguageContext'; // ✅ Proper language hook
+import { showSuccessToast } from '@/src/utils/toastUtils';
 
 const { width } = Dimensions.get('window');
 
@@ -202,7 +203,7 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
       // ✅ History Backend'de yönetiliyor, local storage kullanmıyoruz
       
       onQuerySubmit(query, results);
-      Alert.alert(t('common.success') || 'Başarılı', t('queryInput.querySuccess') || 'Sorgu başarılı!');
+ 
       
     } catch (error: any) {
       let errorMessage = error.message || (t('queryInput.queryError') || 'Sorgu çalıştırılırken bir hata oluştu');
@@ -299,7 +300,6 @@ const EnhancedQueryInput: React.FC<QueryInputProps> = ({ onQuerySubmit, onError 
               </TouchableOpacity>
             </View>
           )}
-
           <View style={styles.searchInputContainer}>
             <Ionicons name="search" size={20} color="#6B7280" style={styles.searchIcon} />
             <TextInput

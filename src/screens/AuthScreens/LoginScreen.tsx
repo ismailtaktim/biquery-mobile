@@ -1,4 +1,4 @@
-// src/screens/AuthScreens/LoginScreen.tsx - Enhanced with language support
+// src/screens/AuthScreens/LoginScreen.tsx - No language selector
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -19,7 +19,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { withLanguage } from '../../hoc/withLanguage';
-import LanguageButton from '../../components/common/LanguageButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -113,6 +112,17 @@ const LoginScreen: React.FC = () => {
     return examples[language as keyof typeof examples] || examples.tr;
   };
 
+  // Dil göstergesi (sadece görsel, tıklanamaz)
+  const getLanguageDisplay = () => {
+    const displays = {
+      tr: '🇹🇷 Türkçe',
+      en: '🇺🇸 English',
+      de: '🇩🇪 Deutsch',
+      es: '🇪🇸 Español'
+    };
+    return displays[language as keyof typeof displays] || displays.tr;
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -130,9 +140,9 @@ const LoginScreen: React.FC = () => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            {/* Language Selector */}
-            <View style={styles.languageContainer}>
-              <LanguageButton variant="compact" />
+            {/* Language Display (read-only) */}
+            <View style={styles.languageDisplay}>
+              <Text style={styles.languageText}>{getLanguageDisplay()}</Text>
             </View>
 
             {/* Header */}
@@ -244,6 +254,9 @@ const LoginScreen: React.FC = () => {
               <Text style={styles.footerText}>
                 {t('login.info.titleLine2')}
               </Text>
+              <Text style={styles.versionText}>
+                v1.0.0 • BiQuery Mobile
+              </Text>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -267,9 +280,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
   },
-  languageContainer: {
+  languageDisplay: {
     alignItems: 'flex-end',
     marginBottom: 20,
+  },
+  languageText: {
+    color: '#E2E8F0',
+    fontSize: 14,
+    fontWeight: '500',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   header: {
     alignItems: 'center',
@@ -406,6 +429,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     opacity: 0.8,
+    marginBottom: 4,
+  },
+  versionText: {
+    color: '#E2E8F0',
+    fontSize: 10,
+    textAlign: 'center',
+    opacity: 0.6,
   },
 });
 

@@ -118,7 +118,12 @@
     "hideSqlQuery": "Hide SQL Query",
     "showSqlQuery": "Show SQL Query",
     "sqlQuery": "SQL Query",
-    "dataTable": "Data Table"
+    "dataTable": "Data Table",
+      "backToQuery": "Back to Query",
+  "queryResults": "Query Results", 
+  "executionTime": "Execution Time",
+  "toggleChart": "Chart",
+  "dataAnalyze": "Analyze"
   },
   "chart": {
     "title": "Data Chart",
@@ -142,7 +147,10 @@
     "scrollToSeeAll": "Scroll to see all data",
     "scrollToSeeTrend": "Scroll to see the full trend",
     "scrollForDetails": "Scroll for details",
-    "totalRecordsShowing": "Showing total {{count}} records"
+    "totalRecordsShowing": "Showing total {{count}} records",
+      "of": "/",
+  "selectChart": "Select chart type",
+  "viewData": "View Data"
   },
   "analysis": {
     "general": "General Analysis",
@@ -168,6 +176,11 @@
     "startErrorMessage": "An error occurred while starting the analysis",
     "selectType": "Select Analysis Type",
     "selectTypeMessage": "What type of analysis would you like to perform?",
+      "quickAnalysis": "Quick Analysis",
+  "subtitle": "Apply quick and comprehensive analysis to your data. Discover data patterns with AI-powered analytics.",
+  "insufficientData": "Insufficient Data",
+  "minDataRequired": "At least 5 data rows are required for this analysis.",
+  "generalError": "General analysis error occurred",
     "types": {
       "general": "General Analysis",
       "anomaly": "Anomaly Detection",
@@ -219,7 +232,11 @@
     "changing": "Changing",
     "current": "Current",
     "applying": "Applying",
-    "restartInfo": "The app may restart for language change"
+    "restartInfo": "The app may restart for language change",
+      "turkish": "Türkçe",
+  "english": "English",
+  "german": "Deutsch",
+  "spanish": "Español" 
   },
   "speechToText": {
     "start": "Start Speaking",
@@ -247,5 +264,66 @@
     "detailedAnalysis": "Add 'detailed' or 'comprehensive' for detailed analysis",
     "trendAnalysis": "Use 'trend' or 'change' for trend analysis",
     "voiceQuery": "Press the microphone button and speak for voice queries"
+  },
+  "toast": {
+    "success": {
+      "title": "Success"
+    },
+    "error": {
+      "title": "Error"
+    },
+    "warning": {
+      "title": "Warning"
+    },
+    "info": {
+      "title": "Info"
+    },
+    "api": {
+      "loading": "Loading...",
+      "success": "Operation successful",
+      "error": "An error occurred",
+      "unauthorized": "Session expired. Please login again",
+      "forbidden": "You don't have permission for this operation",
+      "notFound": "Resource not found",
+      "serverError": "Server error. Please try again later",
+      "networkError": "No internet connection",
+      "timeout": "Connection timed out"
+    },
+    "network": {
+      "offline": "No internet connection",
+      "online": "Internet connection restored",
+      "slow": "Internet connection is slow"
+    },
+    "analysis": {
+      "starting": "Starting {type} analysis...",
+      "completed": "{type} analysis completed!",
+      "failed": "{type} analysis failed",
+      "insufficientData": "Insufficient data for analysis",
+      "timeout": "Analysis timed out"
+    },
+    "query": {
+      "success": "{count} results found",
+      "noResults": "No results found",
+      "error": "Error occurred while executing query",
+      "executing": "Executing query...",
+      "timeout": "Query timed out"
+    },
+    "auth": {
+      "loginSuccess": "Welcome, {username}!",
+      "loginError": "Login failed",
+      "logoutSuccess": "Logout successful",
+      "sessionExpired": "Session expired",
+      "invalidCredentials": "Invalid username or password"
+    },
+    "speech": {
+      "listening": "Listening...",
+      "recognized": "Speech recognized!",
+      "error": "Speech recognition error",
+      "noSupport": "Your browser doesn't support speech recognition"
+    },
+    "language": {
+      "changed": "Language changed to {language}",
+      "changing": "Changing language..."
+    }
   }
 }

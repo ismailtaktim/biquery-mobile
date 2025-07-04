@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token && username) {
         console.log('🔑 Token found for user:', username);
         
-        // TOKEN VALİDASYONU EKLE - ÖNEMLİ KISIM!
+        // TOKEN VALİDASYONU - CSRF hatası için özel handle
         try {
           console.log('🔍 Validating stored token...');
           const validation = await apiService.validateToken();
@@ -62,12 +62,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
             setUser(userInfo);
           } else {
-            console.log('❌ Token expired/invalid, clearing data');
+            console.log('❌ Token expired/invalid:', validation.message);
+            
+            // CSRF hatası özel durumu - sessiz logout
+            if (validation.isCsrfError || validation.shouldRedirectToLogin || validation.message?.includes('CSRF')) {
+              console.log('🔒 CSRF token issue, silent logout...');
+              await clearUserDataSilently();
+            } else {
+              await clearUserData();
+            }
+          }
+        } catch (tokenError: any) {
+          console.log('❌ Token validation failed:', tokenError);
+          
+          // CSRF hatası kontrolü - hem response.data hem message'da
+          const errorMessage = tokenError.response?.data?.message || tokenError.message || '';
+          
+          if (errorMessage.includes('CSRF') || errorMessage.includes('csrf')) {
+            console.log('🔒 CSRF error during validation, silent logout...');
+            await clearUserDataSilently();
+          } else {
             await clearUserData();
           }
-        } catch (tokenError) {
-          console.log('❌ Token validation failed:', tokenError);
-          await clearUserData();
         }
       } else {
         console.log('❌ No user/token found in storage');
@@ -75,13 +91,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (error) {
       console.error('🚨 Auth state check error:', error);
-      await clearUserData();
+      await clearUserDataSilently(); // Genel hatalar için sessiz temizlik
     } finally {
       setIsLoading(false);
       console.log('✅ Auth state check completed');
     }
   };
 
+  // Normal user data temizleme (toast ile)
   const clearUserData = async () => {
     try {
       await SecureStore.deleteItemAsync('token');
@@ -89,9 +106,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('role');
       setUser(null);
-      console.log('🗑️ User data cleared');
+      console.log('🗑️ User data cleared (with notifications)');
     } catch (error) {
       console.log('Clear user data error:', error);
+    }
+  };
+
+  // Sessiz user data temizleme (CSRF hataları için)
+  const clearUserDataSilently = async () => {
+    try {
+      await SecureStore.deleteItemAsync('token');
+      await AsyncStorage.removeItem('userData');
+      await AsyncStorage.removeItem('username');
+      await AsyncStorage.removeItem('role');
+      setUser(null);
+      console.log('🗑️ User data cleared silently (CSRF/startup issue)');
+    } catch (error) {
+      console.log('Clear user data silently error:', error);
     }
   };
 
@@ -165,16 +196,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const validation = await apiService.validateToken();
       
       if (!validation.valid) {
-        console.log('❌ Token invalid, logging out');
-        await clearUserData();
+        console.log('❌ Token invalid:', validation.message);
+        
+        // CSRF hatası için sessiz temizlik
+        if (validation.isCsrfError || validation.shouldRedirectToLogin || validation.message?.includes('CSRF')) {
+          await clearUserDataSilently();
+        } else {
+          await clearUserData();
+        }
+        
         return false;
       }
       
       console.log('✅ Token valid');
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('🚨 Token validation error:', error);
-      await clearUserData();
+      
+      // CSRF hatası kontrolü - hem response.data hem message'da
+      const errorMessage = error.response?.data?.message || error.message || '';
+      
+      if (errorMessage.includes('CSRF') || errorMessage.includes('csrf')) {
+        await clearUserDataSilently();
+      } else {
+        await clearUserData();
+      }
+      
       return false;
     }
   };
