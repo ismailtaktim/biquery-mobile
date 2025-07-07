@@ -1,329 +1,356 @@
 {
   "common": {
-    "loading": "Loading...",
-    "search": "Search",
-    "clear": "Clear",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "view": "View",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "close": "Close",
+    "loading": "Cargando...",
+    "search": "Buscar",
+    "clear": "Limpiar",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
     "ok": "OK",
-    "yes": "Yes",
+    "yes": "Sí",
     "no": "No",
-    "warning": "Warning",
+    "warning": "Advertencia",
     "error": "Error",
-    "success": "Success",
-    "info": "Info",
-    "apply": "Apply"
+    "success": "Éxito",
+    "info": "Información",
+    "apply": "Aplicar",
+    "confirm": "Confirmar",
+    "help": "Ayuda"
   },
   "auth": {
-    "login": "Login",
-    "logout": "Logout",
-    "username": "Username",
-    "password": "Password",
-    "loginButton": "Login",
-    "loginError": "Login failed",
-    "loginSuccess": "Login successful",
-    "welcome": "Welcome"
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "loginButton": "Iniciar Sesión",
+    "loginError": "Error de inicio de sesión",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "welcome": "Bienvenido"
   },
   "login": {
-    "title": "Welcome to BiQuery",
-    "username": "Username",
-    "password": "Password",
-    "loginButton": "Login",
+    "title": "Bienvenido a BiQuery",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "loginButton": "Iniciar Sesión",
     "info": {
-      "titleLine2": "Natural Language Data Analysis"
+      "titleLine2": "Análisis de Datos en Lenguaje Natural"
     },
     "demo": {
-      "title": "Demo Account"
+      "title": "Cuenta Demo"
     },
     "examples": {
-      "query1": "Sales report for the last 3 months",
-      "query2": "Most successful agents",
-      "query3": "Regional performance analysis"
+      "query1": "Informe de ventas de los últimos 3 meses",
+      "query2": "Agentes más exitosos",
+      "query3": "Análisis de rendimiento regional"
     }
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome",
-    "summary": "Summary",
-    "analytics": "Analytics",
-    "reports": "Reports",
+    "subtitle": "Explora y analiza tus datos",
+    "welcome": "Bienvenido",
+    "summary": "Resumen",
+    "analytics": "Analítica",
+    "reports": "Informes",
     "examples": {
-      "title": "Example Queries"
+      "title": "Consultas de Ejemplo"
     },
     "stats": {
-      "totalAgents": "Total Agents",
-      "totalProducts": "Total Products",
-      "totalPremium": "Total Premium",
-      "lossRatio": "Loss Ratio"
+      "title": "Estadísticas",
+      "totalAgents": "Total de Agentes",
+      "totalProducts": "Total de Productos",
+      "totalPremium": "Prima Total",
+      "lossRatio": "Ratio de Siniestros",
+      "cacheUsage": "Uso de Caché"
     },
     "exampleQueries": {
-      "query1": "Top 5 agents with highest premium production in 2024",
-      "query2": "Draw monthly premium trend for Motor products in last 6 months",
-      "query3": "Show total policies in Istanbul"
+      "query1": "Los 5 agentes con mayor producción de primas en 2024",
+      "query2": "Dibujar tendencia mensual de primas para productos de Motor en los últimos 6 meses",
+      "query3": "Mostrar total de pólizas en Estambul"
     },
-    "examplePlaceholder": "Top 5 agents with highest premium production in 2024...",
+    "examplePlaceholder": "Los 5 agentes con mayor producción de primas en 2024...",
     "tips": {
-      "title": "Performance Tips",
-      "narrowDateRange": "Narrow date range (e.g., last 3 months)",
-      "fewerEntities": "Try querying fewer agents/products",
-      "limitResults": "Limit results (e.g., top 10 agents)"
+      "title": "Consejos de Rendimiento",
+      "narrowDateRange": "Reducir rango de fechas (ej: últimos 3 meses)",
+      "fewerEntities": "Consultar menos agentes/productos",
+      "limitResults": "Limitar resultados (ej: top 10 agentes)",
+      "preferTables": "Preferir vista de tabla"
+    },
+    "mobile": {
+      "helpMenu": "Menú de Ayuda",
+      "dashboardHelpers": "Ayudantes del Dashboard",
+      "statistics": "Estadísticas",
+      "examples": "Ejemplos",
+      "tips": "Consejos"
     }
   },
   "queryInput": {
-    "title": "Query Input",
-    "subtitle": "Write your query in natural language",
-    "placeholder": "Write your question in natural language... (e.g., 'Sales report for the last 3 months')",
-    "queryButton": "Query",
-    "analyzeButton": "Analyze",
-    "clearButton": "Clear",
-    "clearCacheButton": "Clear Cache",
-    "loadingText": "Processing query...",
-    "voiceSearch": "Voice Search",
-    "aiSettings": "AI Settings",
-    "showTips": "Show Tips",
-    "smartSuggestions": "Smart Suggestions",
-    "rememberHistory": "Remember History",
-    "didYouMean": "Did you mean:",
-    "yesCorrect": "Yes, Correct",
-    "timeoutWarning": "This query may take long. Please wait...",
-    "aiEnabled": "AI suggestions enabled",
-    "aiDisabled": "AI suggestions disabled",
-    "emptyQuery": "Please enter a query.",
-    "querySuccess": "Query successful!",
-    "queryError": "An error occurred while executing the query",
-    "tokenExpired": "Session expired. Please login again.",
-    "processingQuery": "AI is analyzing your query...",
-    "suggestions": "Suggestions",
-    "examples": "Example Queries"
+    "title": "Explore Sus Datos",
+    "subtitle": "Pregunte en lenguaje natural, obtenga análisis instantáneo",
+    "placeholder": "Escriba su pregunta en lenguaje natural... (ej: 'Informe de ventas de los últimos 3 meses')",
+    "queryButton": "Consultar",
+    "analyzeButton": "Analizar",
+    "clearButton": "Limpiar",
+    "clearCacheButton": "Limpiar Caché",
+    "loadingText": "Procesando consulta...",
+    "voiceSearch": "Búsqueda por Voz",
+    "aiSettings": "Configuración de IA",
+    "showTips": "Mostrar Consejos",
+    "smartSuggestions": "Sugerencias Inteligentes",
+    "rememberHistory": "Recordar Historial",
+    "didYouMean": "¿Quiso decir:",
+    "yesCorrect": "Sí, Corregir",
+    "timeoutWarning": "Esta consulta puede tardar mucho. Por favor espere...",
+    "aiEnabled": "Sugerencias de IA habilitadas",
+    "aiDisabled": "Sugerencias de IA deshabilitadas",
+    "emptyQuery": "Por favor ingrese una consulta.",
+    "querySuccess": "¡Consulta exitosa!",
+    "queryError": "Ocurrió un error al ejecutar la consulta",
+    "tokenExpired": "Sesión expirada. Por favor inicie sesión nuevamente.",
+    "processingQuery": "La IA está analizando su consulta...",
+    "suggestions": "Sugerencias",
+    "examples": "Consultas de Ejemplo"
   },
-  "query": {
-    "results": "Results",
-    "shareText": "Query",
-    "result": "Result",
-    "records": "records",
-    "columns": "columns",
-    "table": "Table",
-    "chart": "Chart",
-    "newQuery": "New Query",
-    "noDataFound": "No Data Found",
-    "queryExecutedNoResults": "Your query executed but no results were found.",
-    "hideSqlQuery": "Hide SQL Query",
-    "showSqlQuery": "Show SQL Query",
-    "sqlQuery": "SQL Query",
-    "dataTable": "Data Table",
-      "backToQuery": "Back to Query",
-  "queryResults": "Query Results", 
-  "executionTime": "Execution Time",
-  "toggleChart": "Chart",
-  "dataAnalyze": "Analyze"
-  },
-  "chart": {
-    "title": "Data Chart",
-    "barChart": "Bar Chart",
-    "lineChart": "Line Chart",
-    "pieChart": "Pie Chart",
-    "listView": "List View",
-    "value": "Value",
-    "total": "Total",
-    "page": "Page",
-    "records": "records",
-    "points": "points",
-    "categories": "categories",
-    "xAxis": "X Axis (Label)",
-    "yAxis": "Y Axis (Value)",
-    "dataLimit": "Data Count to Show",
-    "colorKey": "Color Key",
-    "selectData": "Please select data",
-    "selectAxisSettings": "Select columns from X and Y axis settings",
-    "noDataToVisualize": "No data to visualize",
-    "scrollToSeeAll": "Scroll to see all data",
-    "scrollToSeeTrend": "Scroll to see the full trend",
-    "scrollForDetails": "Scroll for details",
-    "totalRecordsShowing": "Showing total {{count}} records",
-      "of": "/",
-  "selectChart": "Select chart type",
-  "viewData": "View Data"
-  },
-  "analysis": {
-    "general": "General Analysis",
-    "anomaly": "Anomaly Analysis",
-    "forecast": "Forecast Analysis",
-    "trends": "Trend Analysis",
-    "dataAnalysis": "Data Analysis",
-    "results": "Analysis Results",
-    "insight": "Insight",
-    "recommendation": "Recommendation",
-    "recommendations": "Recommendations",
-    "result": "Result",
-    "checkStatus": "Check Status",
-    "errorTitle": "Analysis Error",
-    "noResultData": "No result data found",
-    "noResults": "No analysis results found",
-    "noDescription": "No description found",
-    "analyze": "Analyze",
-    "starting": "Starting Analysis",
-    "isStarting": "is starting",
-    "startError": "Analysis could not be started. Please try again.",
-    "error": "Analysis Error",
-    "startErrorMessage": "An error occurred while starting the analysis",
-    "selectType": "Select Analysis Type",
-    "selectTypeMessage": "What type of analysis would you like to perform?",
-      "quickAnalysis": "Quick Analysis",
-  "subtitle": "Apply quick and comprehensive analysis to your data. Discover data patterns with AI-powered analytics.",
-  "insufficientData": "Insufficient Data",
-  "minDataRequired": "At least 5 data rows are required for this analysis.",
-  "generalError": "General analysis error occurred",
-    "types": {
-      "general": "General Analysis",
-      "anomaly": "Anomaly Detection",
-      "forecast": "Forecast Analysis",
-      "trends": "Trend Analysis"
-    },
-    "status": {
-      "starting": "Starting analysis...",
-      "processing": "Processing data...",
-      "analyzing": "Analyzing data...",
-      "preparing": "Preparing results...",
-      "finalizing": "Final checks...",
-      "completed": "Analysis completed",
-      "failed": "Analysis failed",
-      "fromCache": "Loaded from cache",
-      "timeout": "Timeout",
-      "label": "Status",
-      "unknown": "Unknown"
-    },
-    "statusBadge": {
-      "running": "Running",
-      "completed": "Completed",
-      "failed": "Failed",
-      "cached": "From Cache",
-      "pending": "Pending"
-    },
-    "errors": {
-      "timeout": "Analysis timed out",
-      "unknown": "Unknown error",
-      "notFound": "Analysis not found",
-      "statusCheck": "Status check error: "
-    },
-    "hints": {
-      "inProgress": "Analysis continues in the background...",
-      "almostDone": "Analysis is almost complete..."
-    },
-    "info": {
-      "title": "Analysis Information",
-      "processingTime": "Processing Time",
-      "cacheUsed": "Cache Used",
-      "originalLanguage": "Original Language",
-      "notSpecified": "Not specified"
-    }
-  },
-  "language": {
-    "selectTitle": "Select Language",
-    "changeSuccess": "Language changed successfully",
-    "changeInProgress": "Language change in progress",
-    "changing": "Changing",
-    "current": "Current",
-    "applying": "Applying",
-    "restartInfo": "The app may restart for language change",
-      "turkish": "Türkçe",
-  "english": "English",
-  "german": "Deutsch",
-  "spanish": "Español" 
+  "speech": {
+    "listening": "Escuchando... 🎤",
+    "recognized": "¡Voz reconocida! ✅",
+    "error": "Error de reconocimiento de voz ❌",
+    "noSpeech": "No se detectó voz, inténtelo de nuevo",
+    "permissionDenied": "Permiso de micrófono requerido", 
+    "networkError": "Conexión a internet requerida",
+    "notSupported": "Reconocimiento de voz no compatible en este dispositivo",
+    "starting": "Iniciando reconocimiento de voz...",
+    "stopped": "Reconocimiento de voz detenido"
   },
   "speechToText": {
-    "start": "Start Speaking",
-    "stop": "Stop Speaking",
-    "listening": "Listening...",
-    "processing": "Processing...",
-    "error": "Speech recognition error",
-    "noSupport": "Your browser does not support speech recognition",
-    "recognized": "Speech recognized!"
+    "start": "Comenzar a Hablar",
+    "stop": "Dejar de Hablar",
+    "listening": "Escuchando...",
+    "processing": "Procesando...",
+    "error": "Error de reconocimiento de voz",
+    "noSupport": "Su navegador no soporta reconocimiento de voz",
+    "recognized": "¡Voz reconocida!"
   },
   "navigation": {
     "dashboard": "Dashboard",
-    "query": "Query",
-    "agents": "Agents",
-    "products": "Products",
+    "query": "Consulta",
+    "agents": "Agentes",
+    "products": "Productos",
     "regional": "Regional",
-    "comparisons": "Comparisons",
-    "reports": "Reports"
+    "comparisons": "Comparaciones",
+    "reports": "Informes"
   },
-  "tips": {
-    "maximumMinimum": "Use 'highest' or 'lowest' to find maximum/minimum values",
-    "timeRange": "Use expressions like 'last 3 months' or '2023 year' for specific time ranges",
-    "comparison": "Use 'compare' or 'versus' for comparisons",
-    "grouping": "Use 'by category' or 'by region' for grouping",
-    "detailedAnalysis": "Add 'detailed' or 'comprehensive' for detailed analysis",
-    "trendAnalysis": "Use 'trend' or 'change' for trend analysis",
-    "voiceQuery": "Press the microphone button and speak for voice queries"
-  },
-  "toast": {
-    "success": {
-      "title": "Success"
+  "analysis": {
+    "general": "Análisis General",
+    "anomaly": "Análisis de Anomalías",
+    "forecast": "Análisis de Pronóstico",
+    "trends": "Análisis de Tendencias",
+    "dataAnalysis": "Análisis de Datos",
+    "results": "Resultados del Análisis",
+    "insight": "Perspectiva",
+    "recommendation": "Recomendación",
+    "recommendations": "Recomendaciones",
+    "result": "Resultado",
+    "checkStatus": "Verificar Estado",
+    "errorTitle": "Error de Análisis",
+    "noResultData": "No se encontraron datos de resultado",
+    "noResults": "No se encontraron resultados de análisis",
+    "noDescription": "No se encontró descripción",
+    "quickAnalysis": "Análisis Rápido",
+    "subtitle": "Aplique análisis rápidos y completos a sus datos. Descubra patrones de datos con análisis impulsados por IA.",
+    "insufficientData": "Datos Insuficientes", 
+    "minDataRequired": "Se requieren al menos 5 filas de datos para este análisis.",
+    "startError": "No se pudo iniciar el análisis",
+    "generalError": "Error general de análisis ocurrido",
+    "starting": "Iniciando análisis...",
+    "status": {
+      "starting": "Iniciando análisis...",
+      "processing": "Procesando datos...",
+      "analyzing": "Analizando datos...",
+      "preparing": "Preparando resultados...",
+      "finalizing": "Verificaciones finales...",
+      "completed": "Análisis completado",
+      "failed": "Análisis fallido",
+      "fromCache": "Cargado desde caché",
+      "timeout": "Tiempo agotado",
+      "label": "Estado",
+      "unknown": "Desconocido"
     },
-    "error": {
-      "title": "Error"
+    "statusBadge": {
+      "running": "Ejecutando",
+      "completed": "Completado",
+      "failed": "Fallido",
+      "cached": "Desde Caché",
+      "pending": "Pendiente"
     },
-    "warning": {
-      "title": "Warning"
+    "errors": {
+      "timeout": "Tiempo de análisis agotado",
+      "unknown": "Error desconocido",
+      "notFound": "Análisis no encontrado",
+      "statusCheck": "Error de verificación de estado: "
+    },
+    "hints": {
+      "inProgress": "El análisis continúa en segundo plano...",
+      "almostDone": "El análisis está casi completo..."
     },
     "info": {
-      "title": "Info"
+      "title": "Información del Análisis",
+      "processingTime": "Tiempo de Procesamiento",
+      "cacheUsed": "Caché Utilizado",
+      "originalLanguage": "Idioma Original",
+      "notSpecified": "No especificado"
+    }
+  },
+  "query": {
+    "backToQuery": "Volver a Consulta",
+    "newQuery": "Nueva Consulta",
+    "queryResults": "Resultados de Consulta",
+    "executionTime": "Tiempo de Ejecución",
+    "toggleChart": "Gráfico", 
+    "dataAnalyze": "Analizar"
+  },
+  "chart": {
+    "of": "/",
+    "selectChart": "Seleccionar tipo de gráfico",
+    "viewData": "Ver Datos"
+  },
+  "language": {
+    "selectTitle": "Seleccionar Idioma",
+    "turkish": "Türkçe",
+    "english": "English", 
+    "german": "Deutsch",
+    "spanish": "Español"
+  },
+  "toast": {
+    "welcome": {
+      "mobile": "¡Bienvenido a BiQuery Mobile! 📱",
+      "back": "¡Bienvenido de vuelta! 👋"
+    },
+    "dashboard": {
+      "welcome": "Dashboard cargado, ¡puedes comenzar a consultar! 🚀"
+    },
+    "cache": {
+      "reset": "Caché limpiado 🔄"
+    },
+    "tips": {
+      "keepQuerying": "💡 Consejo: Sigue explorando datos con diferentes consultas",
+      "tryAnalysis": "🔍 Consejo: Intenta analizar los resultados de tus consultas",
+      "useFilters": "⚡ Consejo: Usa filtros para resultados más rápidos",
+      "saveQueries": "💾 Consejo: Guarda tus consultas más utilizadas"
+    },
+    "system": {
+      "healthy": "✅ Sistema saludable (Tiempo de respuesta: {responseTime}ms)",
+      "slow": "⚠️ Sistema funcionando lento (Tiempo de respuesta: {responseTime}ms)",
+      "unhealthy": "❌ No se puede verificar el estado del sistema"
+    },
+    "performance": {
+      "narrowDateRange": "⚡ Consejo de Rendimiento: Reduce el rango de fechas",
+      "fewerEntities": "⚡ Consejo de Rendimiento: Selecciona menos entidades",
+      "limitResults": "⚡ Consejo de Rendimiento: Limita tus resultados",
+      "preferTables": "⚡ Consejo de Rendimiento: Prefiere vista de tabla"
+    },
+    "activity": {
+      "tryNewQuery": "🎯 ¿Te gustaría probar una nueva consulta?",
+      "checkResults": "📊 Revisa los resultados de tus consultas recientes",
+      "exploreData": "🔍 Continúa explorando tus datos"
     },
     "api": {
-      "loading": "Loading...",
-      "success": "Operation successful",
-      "error": "An error occurred",
-      "unauthorized": "Session expired. Please login again",
-      "forbidden": "You don't have permission for this operation",
-      "notFound": "Resource not found",
-      "serverError": "Server error. Please try again later",
-      "networkError": "No internet connection",
-      "timeout": "Connection timed out"
-    },
-    "network": {
-      "offline": "No internet connection",
-      "online": "Internet connection restored",
-      "slow": "Internet connection is slow"
-    },
-    "analysis": {
-      "starting": "Starting {type} analysis...",
-      "completed": "{type} analysis completed!",
-      "failed": "{type} analysis failed",
-      "insufficientData": "Insufficient data for analysis",
-      "timeout": "Analysis timed out"
-    },
-    "query": {
-      "success": "{count} results found",
-      "noResults": "No results found",
-      "error": "Error occurred while executing query",
-      "executing": "Executing query...",
-      "timeout": "Query timed out"
+      "success": "Operación exitosa",
+      "error": "Error de API ocurrido",
+      "unauthorized": "Sesión expirada, inicie sesión nuevamente",
+      "forbidden": "No tiene permisos para esta operación",
+      "notFound": "Recurso solicitado no encontrado",
+      "serverError": "Error del servidor ocurrido",
+      "rateLimited": "Demasiadas solicitudes, espere por favor",
+      "timeout": "Solicitud agotó tiempo de espera",
+      "networkError": "Error de conexión a internet"
     },
     "auth": {
-      "loginSuccess": "Welcome, {username}!",
-      "loginError": "Login failed",
-      "logoutSuccess": "Logout successful",
-      "sessionExpired": "Session expired",
-      "invalidCredentials": "Invalid username or password"
+      "loginSuccess": "¡Bienvenido{username}!",
+      "loginError": "Inicio de sesión falló",
+      "logoutSuccess": "Sesión cerrada exitosamente",
+      "invalidCredentials": "Nombre de usuario o contraseña inválidos",
+      "tokenExpired": "Sesión expirada",
+      "sessionExpired": "Sesión expirada, inicie sesión nuevamente"
     },
-    "speech": {
-      "listening": "Listening...",
-      "recognized": "Speech recognized!",
-      "error": "Speech recognition error",
-      "noSupport": "Your browser doesn't support speech recognition"
+    "analysis": {
+      "starting": "Iniciando análisis {type}...",
+      "completed": "Análisis {type} completado",
+      "failed": "Análisis {type} falló",
+      "timeout": "Análisis agotó tiempo de espera",
+      "insufficientData": "Datos insuficientes para análisis"
+    },
+    "query": {
+      "success": "{count} resultados encontrados",
+      "executing": "Ejecutando consulta...",
+      "noResults": "No se encontraron resultados",
+      "error": "Error de consulta ocurrido",
+      "timeout": "Consulta agotó tiempo de espera"
+    },
+    "network": {
+      "offline": "Sin conexión a internet",
+      "online": "Conexión a internet establecida",
+      "timeout": "Conexión agotó tiempo de espera"
     },
     "language": {
-      "changed": "Language changed to {language}",
-      "changing": "Changing language..."
+      "changed": "Idioma cambiado a {language}"
+    },
+    "notifications": {
+      "settingsUpdated": "Configuración de notificaciones actualizada",
+      "allEnabled": "Todas las notificaciones habilitadas 🔔",
+      "allDisabled": "Todas las notificaciones deshabilitadas 🔕",
+      "enabled": "Notificaciones de {type} habilitadas ✅",
+      "disabled": "Notificaciones de {type} deshabilitadas ❌",
+      "toggleError": "No se pudo cambiar la configuración, inténtalo de nuevo"
     }
+  },
+  "settings": {
+    "notifications": {
+      "title": "Configuración de Notificaciones",
+      "subtitle": "Elige qué notificaciones quieres recibir",
+      "enableAll": "Habilitar Todo",
+      "disableAll": "Deshabilitar Todo",
+      "confirmTitle": "¿Estás seguro?",
+      "enableAllConfirm": "¿Estás seguro de que quieres habilitar todas las notificaciones?",
+      "disableAllConfirm": "¿Estás seguro de que quieres deshabilitar todas las notificaciones?",
+      "types": {
+        "cacheUpdate": "Actualizaciones de Caché",
+        "successReminder": "Recordatorios de Éxito",
+        "systemStatus": "Estado del Sistema",
+        "performanceTips": "Consejos de Rendimiento",
+        "activityReminder": "Recordatorios de Actividad"
+      },
+      "descriptions": {
+        "cacheUpdate": "Notificaciones de actualización del estado del caché del sistema",
+        "successReminder": "Mensajes de motivación y consejos",
+        "systemStatus": "Notificaciones de estado de salud de API y sistema",
+        "performanceTips": "Sugerencias de mejora del rendimiento de consultas",
+        "activityReminder": "Recordatorios de uso y notificaciones de sugerencias"
+      },
+      "interval": {
+        "label": "Frecuencia",
+        "seconds": "{count} segundos",
+        "minutes": "{count} minutos"
+      },
+      "info": {
+        "title": "ℹ️ Información",
+        "description": "Estas configuraciones solo tienen efecto cuando la aplicación está activa. Las notificaciones se detienen automáticamente cuando la aplicación se ejecuta en segundo plano."
+      }
+    }
+  },
+  "tips": {
+    "maximumMinimum": "Use 'mayor' o 'menor' para encontrar valores máximos/mínimos",
+    "timeRange": "Use expresiones como 'últimos 3 meses' o 'año 2023' para rangos de tiempo específicos",
+    "comparison": "Use 'comparar' o 'versus' para comparaciones",
+    "grouping": "Use 'por categoría' o 'por región' para agrupaciones",
+    "detailedAnalysis": "Agregue 'detallado' o 'comprensivo' para análisis detallados",
+    "trendAnalysis": "Use 'tendencia' o 'cambio' para análisis de tendencias",
+    "voiceQuery": "Presione el botón del micrófono y hable para consultas de voz"
   }
 }

@@ -20,7 +20,8 @@
     "error": "Hata",
     "success": "Başarılı",
     "info": "Bilgi",
-    "apply": "Uygula"
+    "confirm": "Onayla",
+    "help": "Yardım"
   },
   "auth": {
     "login": "Giriş Yap",
@@ -51,6 +52,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "subtitle": "Verilerinizi keşfedin ve analiz edin",
     "welcome": "Hoş Geldiniz",
     "summary": "Özet",
     "analytics": "Analitik",
@@ -59,10 +61,12 @@
       "title": "Örnek Sorgular"
     },
     "stats": {
+      "title": "İstatistikler",
       "totalAgents": "Toplam Acente",
       "totalProducts": "Toplam Ürün",
       "totalPremium": "Toplam Prim",
-      "lossRatio": "Hasar Oranı"
+      "lossRatio": "Hasar Oranı",
+      "cacheUsage": "Önbellek Kullanımı"
     },
     "exampleQueries": {
       "query1": "2024 yılında en çok prim üreten 5 acente",
@@ -74,12 +78,20 @@
       "title": "Performans İpuçları",
       "narrowDateRange": "Tarih aralığını daraltın (ör: son 3 ay)",
       "fewerEntities": "Az sayıda acente/ürün sorgulamayı deneyin",
-      "limitResults": "Sonuçları sınırlandırın (ör: ilk 10 acente)"
+      "limitResults": "Sonuçları sınırlandırın (ör: ilk 10 acente)",
+      "preferTables": "Tablo görünümünü tercih edin"
+    },
+    "mobile": {
+      "helpMenu": "Yardım Menüsü",
+      "dashboardHelpers": "Dashboard Yardımcıları",
+      "statistics": "İstatistikler",
+      "examples": "Örnekler",
+      "tips": "İpuçları"
     }
   },
   "queryInput": {
-    "title": "Sorgu Girişi",
-    "subtitle": "Sorgunuzu doğal dilde yazın",
+    "title": "Verilerinizi Keşfedin",
+    "subtitle": "Doğal dilde sorun, anında analiz alın",
     "placeholder": "Doğal dilde sorunuzu yazın... (örn: 'Son 3 aydaki satış raporu')",
     "queryButton": "Sorgula",
     "analyzeButton": "Analiz Et",
@@ -104,53 +116,34 @@
     "suggestions": "Öneriler",
     "examples": "Örnek Sorgular"
   },
-  "query": {
-    "results": "Sonuçlar",
-    "shareText": "Sorgu",
-    "result": "Sonuç",
-    "records": "kayıt",
-    "columns": "kolon",
-    "table": "Tablo",
-    "chart": "Grafik",
-    "newQuery": "Yeni Sorgu",
-    "noDataFound": "Veri Bulunamadı",
-    "queryExecutedNoResults": "Sorgunuz çalıştı ancak sonuç bulunamadı.",
-    "hideSqlQuery": "SQL Sorguyu Gizle",
-    "showSqlQuery": "SQL Sorgusunu Görüntüle",
-    "sqlQuery": "SQL Sorgusu",
-    "dataTable": "Veri Tablosu",
-      "backToQuery": "Sorguya Dön",
-  "queryResults": "Sorgu Sonuçları",
-  "executionTime": "Çalışma Süresi",
-  "toggleChart": "Grafik",
-  "dataAnalyze": "Analiz"
+  "speech": {
+    "listening": "Dinliyorum... 🎤",
+    "recognized": "Ses tanındı! ✅", 
+    "error": "Ses tanıma hatası ❌",
+    "noSpeech": "Ses algılanamadı, tekrar deneyin",
+    "permissionDenied": "Mikrofon izni gerekli",
+    "networkError": "İnternet bağlantısı gerekli",
+    "notSupported": "Ses tanıma bu cihazda desteklenmiyor",
+    "starting": "Ses tanıma başlatılıyor...",
+    "stopped": "Ses tanıma durduruldu"
   },
-  "chart": {
-    "title": "Veri Grafiği",
-    "barChart": "Sütun Grafik",
-    "lineChart": "Çizgi Grafik",
-    "pieChart": "Pasta Grafik",
-    "listView": "Liste Görünümü",
-    "value": "Değer",
-    "total": "Toplam",
-    "page": "Sayfa",
-    "records": "kayıt",
-    "points": "nokta",
-    "categories": "kategori",
-    "xAxis": "X Ekseni (Etiket)",
-    "yAxis": "Y Ekseni (Değer)",
-    "dataLimit": "Gösterilecek Veri Sayısı",
-    "colorKey": "Renk Anahtarı",
-    "selectData": "Veri seçimi yapınız",
-    "selectAxisSettings": "X ve Y ekseni ayarlarından kolonları seçin",
-    "noDataToVisualize": "Görselleştirmek için veri yok",
-    "scrollToSeeAll": "Kaydırarak tüm verileri görün",
-    "scrollToSeeTrend": "Kaydırarak tüm trend'i görün",
-    "scrollForDetails": "Detayları scroll ile görün",
-    "totalRecordsShowing": "Toplam {{count}} kayıt gösteriliyor",
-    "of": "/",
-    "selectChart": "Grafik türü seçin",
-    "viewData": "Veriyi Görüntüle"
+  "speechToText": {
+    "start": "Konuşmaya Başla",
+    "stop": "Konuşmayı Durdur",
+    "listening": "Dinleniyor...",
+    "processing": "İşleniyor...",
+    "error": "Ses tanıma hatası",
+    "noSupport": "Tarayıcınız ses tanımayı desteklemiyor",
+    "recognized": "Konuşma tanındı!"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "query": "Sorgula",
+    "agents": "Acenteler",
+    "products": "Ürünler",
+    "regional": "Bölgesel",
+    "comparisons": "Karşılaştır",
+    "reports": "Raporlar"
   },
   "analysis": {
     "general": "Genel Analiz",
@@ -168,25 +161,13 @@
     "noResultData": "Sonuç verisi bulunamadı",
     "noResults": "Analiz sonucu bulunamadı",
     "noDescription": "Açıklama bulunamadı",
-    "analyze": "Analiz",
-    "starting": "Analiz Başlatılıyor",
-    "isStarting": "başlatılıyor",
-    "startError": "Analiz başlatılamadı. Lütfen tekrar deneyin.",
-    "error": "Analiz Hatası",
-    "startErrorMessage": "Analiz başlatılırken bir hata oluştu",
-    "selectType": "Analiz Türü Seçin",
-    "selectTypeMessage": "Hangi tür analiz yapmak istiyorsunuz?",
-      "quickAnalysis": "Hızlı Analiz",
-  "subtitle": "Verilerinize hızlı ve kapsamlı analiz uygulayın. AI destekli analizler ile veri kalıplarını keşfedin.",
-  "insufficientData": "Yetersiz Veri",
-  "minDataRequired": "Bu analiz için en az 5 veri satırı gerekli.",
-  "generalError": "Genel analiz hatası oluştu",
-    "types": {
-      "general": "Genel Analiz",
-      "anomaly": "Anomali Tespiti",
-      "forecast": "Tahmin Analizi",
-      "trends": "Trend Analizi"
-    },
+    "quickAnalysis": "Hızlı Analiz",
+    "subtitle": "Verilerinize hızlı ve kapsamlı analiz uygulayın. AI destekli analizler ile veri kalıplarını keşfedin.",
+    "insufficientData": "Yetersiz Veri",
+    "minDataRequired": "Bu analiz için en az 5 veri satırı gerekli.",
+    "startError": "Analiz başlatılamadı",
+    "generalError": "Genel analiz hatası oluştu",
+    "starting": "Analiz başlatılıyor...",
     "status": {
       "starting": "Analiz başlatılıyor...",
       "processing": "Veriler işleniyor...",
@@ -225,36 +206,142 @@
       "notSpecified": "Belirtilmemiş"
     }
   },
+  "query": {
+    "backToQuery": "Sorguya Dön",
+    "newQuery": "Yeni Sorgu", 
+    "queryResults": "Sorgu Sonuçları",
+    "executionTime": "Çalışma Süresi",
+    "toggleChart": "Grafik",
+    "dataAnalyze": "Analiz"
+  },
+  "chart": {
+    "of": "/",
+    "selectChart": "Grafik türü seçin",
+    "viewData": "Veriyi Görüntüle"
+  },
   "language": {
     "selectTitle": "Dil Seçin",
-    "changeSuccess": "Dil başarıyla değiştirildi",
-    "changeInProgress": "Dil değişikliği devam ediyor",
-    "changing": "Değiştiriliyor",
-    "current": "Mevcut",
-    "applying": "Uygulanıyor",
-    "restartInfo": "Dil değişikliği için uygulama yeniden başlatılabilir",
-      "turkish": "Türkçe",
-  "english": "English",
-  "german": "Deutsch", 
-  "spanish": "Español"
+    "turkish": "Türkçe",
+    "english": "English",
+    "german": "Deutsch", 
+    "spanish": "Español"
   },
-  "speechToText": {
-    "start": "Konuşmaya Başla",
-    "stop": "Konuşmayı Durdur",
-    "listening": "Dinleniyor...",
-    "processing": "İşleniyor...",
-    "error": "Ses tanıma hatası",
-    "noSupport": "Tarayıcınız ses tanımayı desteklemiyor",
-    "recognized": "Konuşma tanındı!"
+  "toast": {
+    "welcome": {
+      "mobile": "BiQuery Mobile'a hoş geldiniz! 📱",
+      "back": "Tekrar hoş geldiniz! 👋"
+    },
+    "dashboard": {
+      "welcome": "Dashboard yüklendi, sorgulamaya başlayabilirsiniz! 🚀"
+    },
+    "cache": {
+      "reset": "Önbellek temizlendi 🔄"
+    },
+    "tips": {
+      "keepQuerying": "💡 İpucu: Farklı sorgular deneyerek veri keşfini sürdürün",
+      "tryAnalysis": "🔍 İpucu: Sorgu sonuçlarınızı analiz etmeyi deneyin",
+      "useFilters": "⚡ İpucu: Daha hızlı sonuçlar için filtreler kullanın",
+      "saveQueries": "💾 İpucu: Sık kullandığınız sorguları kaydedin"
+    },
+    "system": {
+      "healthy": "✅ Sistem sağlıklı (Yanıt süresi: {responseTime}ms)",
+      "slow": "⚠️ Sistem yavaş çalışıyor (Yanıt süresi: {responseTime}ms)",
+      "unhealthy": "❌ Sistem durumu kontrol edilemiyor"
+    },
+    "performance": {
+      "narrowDateRange": "⚡ Performans İpucu: Tarih aralığını daraltın",
+      "fewerEntities": "⚡ Performans İpucu: Daha az varlık seçin",
+      "limitResults": "⚡ Performans İpucu: Sonuçları sınırlayın",
+      "preferTables": "⚡ Performans İpucu: Tablo görünümünü tercih edin"
+    },
+    "activity": {
+      "tryNewQuery": "🎯 Yeni bir sorgu denemek ister misiniz?",
+      "checkResults": "📊 Son sorgu sonuçlarınızı kontrol edin",
+      "exploreData": "🔍 Verilerinizi keşfetmeye devam edin"
+    },
+    "api": {
+      "success": "İşlem başarılı",
+      "error": "API hatası oluştu",
+      "unauthorized": "Oturum süresi doldu, tekrar giriş yapın",
+      "forbidden": "Bu işlem için yetkiniz yok",
+      "notFound": "İstenen kaynak bulunamadı",
+      "serverError": "Sunucu hatası oluştu",
+      "rateLimited": "Çok fazla istek, biraz bekleyin",
+      "timeout": "İstek zaman aşımına uğradı",
+      "networkError": "İnternet bağlantısı hatası"
+    },
+    "auth": {
+      "loginSuccess": "Hoş geldiniz{username}!",
+      "loginError": "Giriş yapılamadı",
+      "logoutSuccess": "Çıkış yapıldı",
+      "invalidCredentials": "Kullanıcı adı veya şifre hatalı",
+      "tokenExpired": "Oturum süresi doldu",
+      "sessionExpired": "Oturum süresi doldu, tekrar giriş yapın"
+    },
+    "analysis": {
+      "starting": "{type} analizi başlatılıyor...",
+      "completed": "{type} analizi tamamlandı",
+      "failed": "{type} analizi başarısız oldu",
+      "timeout": "Analiz zaman aşımına uğradı",
+      "insufficientData": "Analiz için yeterli veri yok"
+    },
+    "query": {
+      "success": "{count} sonuç bulundu",
+      "executing": "Sorgu çalıştırılıyor...",
+      "noResults": "Sonuç bulunamadı",
+      "error": "Sorgu hatası oluştu",
+      "timeout": "Sorgu zaman aşımına uğradı"
+    },
+    "network": {
+      "offline": "İnternet bağlantısı yok",
+      "online": "İnternet bağlantısı kuruldu",
+      "timeout": "Bağlantı zaman aşımına uğradı"
+    },
+    "language": {
+      "changed": "Dil {language} olarak değiştirildi"
+    },
+    "notifications": {
+      "settingsUpdated": "Bildirim ayarları güncellendi",
+      "allEnabled": "Tüm bildirimler açıldı 🔔",
+      "allDisabled": "Tüm bildirimler kapatıldı 🔕",
+      "enabled": "{type} bildirimleri açıldı ✅",
+      "disabled": "{type} bildirimleri kapatıldı ❌",
+      "toggleError": "Ayar değiştirilemedi, tekrar deneyin"
+    }
   },
-  "navigation": {
-    "dashboard": "Dashboard",
-    "query": "Sorgula",
-    "agents": "Acenteler",
-    "products": "Ürünler",
-    "regional": "Bölgesel",
-    "comparisons": "Karşılaştır",
-    "reports": "Raporlar"
+  "settings": {
+    "notifications": {
+      "title": "Bildirim Ayarları",
+      "subtitle": "Hangi bildirimleri almak istediğinizi seçin",
+      "enableAll": "Tümünü Aç",
+      "disableAll": "Tümünü Kapat",
+      "confirmTitle": "Emin misiniz?",
+      "enableAllConfirm": "Tüm bildirimleri açmak istediğinizden emin misiniz?",
+      "disableAllConfirm": "Tüm bildirimleri kapatmak istediğinizden emin misiniz?",
+      "types": {
+        "cacheUpdate": "Önbellek Güncellemeleri",
+        "successReminder": "Başarı Hatırlatıcıları",
+        "systemStatus": "Sistem Durumu",
+        "performanceTips": "Performans İpuçları",
+        "activityReminder": "Aktivite Hatırlatıcıları"
+      },
+      "descriptions": {
+        "cacheUpdate": "Sistem önbellek durumu güncelleme bildirimleri",
+        "successReminder": "Motivasyon ve ipucu mesajları",
+        "systemStatus": "API ve sistem sağlığı durum bildirimleri",
+        "performanceTips": "Sorgu performansını artırma önerileri",
+        "activityReminder": "Kullanım hatırlatıcıları ve öneri bildirimleri"
+      },
+      "interval": {
+        "label": "Sıklık",
+        "seconds": "{count} saniye",
+        "minutes": "{count} dakika"
+      },
+      "info": {
+        "title": "ℹ️ Bilgi",
+        "description": "Bu ayarlar yalnızca uygulama açıkken etkilidir. Uygulama arka planda çalışırken bildirimler otomatik olarak durdurulur."
+      }
+    }
   },
   "tips": {
     "maximumMinimum": "En yüksek/en düşük değerleri bulmak için 'en yüksek' veya 'en düşük' kelimelerini kullanın",
@@ -264,70 +351,5 @@
     "detailedAnalysis": "Detaylı analiz için 'ayrıntılı' veya 'kapsamlı' kelimelerini ekleyin",
     "trendAnalysis": "Trend analizi için 'trend' veya 'değişim' kelimelerini kullanın",
     "voiceQuery": "Sesli sorgu için mikrofon butonuna basın ve konuşun"
-  },
-  "toast": {
-    "success": {
-      "title": "Başarılı"
-    },
-    "error": {
-      "title": "Hata"
-    },
-    "warning": {
-      "title": "Uyarı"
-    },
-    "info": {
-      "title": "Bilgi"
-    },
-    "api": {
-      "loading": "Yükleniyor...",
-      "success": "İşlem başarılı",
-      "error": "Bir hata oluştu",
-      "unauthorized": "Oturum süresi doldu. Lütfen tekrar giriş yapın",
-      "forbidden": "Bu işlem için yetkiniz yok",
-      "notFound": "Kaynak bulunamadı",
-      "serverError": "Sunucu hatası. Lütfen daha sonra tekrar deneyin",
-      "networkError": "İnternet bağlantısı yok",
-      "timeout": "Bağlantı zaman aşımına uğradı",
-      "initializationFailed": "API bağlantısı kurulamadı",
-      "rateLimited": "Çok fazla istek gönderdiniz. Lütfen biraz bekleyin",
-      "systemBusy": "Sistem yoğun. Lütfen 1-2 dakika bekleyip tekrar deneyin",
-      "cacheCleared": "Önbellek başarıyla temizlendi"
-    },
-    "network": {
-      "offline": "İnternet bağlantısı yok",
-      "online": "İnternet bağlantısı geri geldi",
-      "slow": "İnternet bağlantısı yavaş"
-    },
-    "analysis": {
-      "starting": "{type} analizi başlatılıyor...",
-      "completed": "{type} analizi tamamlandı!",
-      "failed": "{type} analizi başarısız oldu",
-      "insufficientData": "Analiz için yeterli veri yok",
-      "timeout": "Analiz zaman aşımına uğradı"
-    },
-    "query": {
-      "success": "{count} sonuç bulundu",
-      "noResults": "Sonuç bulunamadı",
-      "error": "Sorgu çalıştırılırken hata oluştu",
-      "executing": "Sorgu çalıştırılıyor...",
-      "timeout": "Sorgu zaman aşımına uğradı"
-    },
-    "auth": {
-      "loginSuccess": "Hoş geldiniz, {username}!",
-      "loginError": "Giriş başarısız",
-      "logoutSuccess": "Çıkış başarılı",
-      "sessionExpired": "Oturum süresi doldu",
-      "invalidCredentials": "Kullanıcı adı veya şifre hatalı"
-    },
-    "speech": {
-      "listening": "Dinleniyor...",
-      "recognized": "Konuşma tanındı!",
-      "error": "Ses tanıma hatası",
-      "noSupport": "Tarayıcınız ses tanımayı desteklemiyor"
-    },
-    "language": {
-      "changed": "Dil {language} olarak değiştirildi",
-      "changing": "Dil değiştiriliyor..."
-    }
   }
 }
