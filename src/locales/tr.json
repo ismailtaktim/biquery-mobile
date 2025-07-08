@@ -410,7 +410,8 @@
     "serverError": "Sunucu hatası oluştu",
     "rateLimited": "Çok fazla istek",
     "timeout": "İstek zaman aşımına uğradı",
-    "networkError": "İnternet bağlantısı hatası"
+    "networkError": "İnternet bağlantısı hatası",
+    "cacheCleared":"Önbellek temizlendi"
   },
   "auth": {
     "loginSuccess": "Hoş geldiniz{{username}}!",
