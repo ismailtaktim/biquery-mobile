@@ -4,24 +4,24 @@ import {
   Text,
   StyleSheet,
   Switch,
-  ScrollView,
-  TouchableOpacity,
-  Alert
+  ScrollView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { periodicNotificationService } from '../../utils/PeriodicNotificationService';
-import { showSuccessToast, showInfoToast } from '../../utils/toastUtils';
 import { i18n } from '../../utils/i18n';
 
-interface NotificationSetting {
+interface AppSetting {
   id: string;
-  name: string;
+  title: string;
+  description: string;
   enabled: boolean;
-  interval: number;
+  icon: string;
+  color: string;
 }
 
 const NotificationSettingsScreen = ({ navigation }: any) => {
-  const [settings, setSettings] = useState<NotificationSetting[]>([]);
+  const [settings, setSettings] = useState<AppSetting[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,8 +30,27 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
 
   const loadSettings = async () => {
     try {
-      const notificationSettings = periodicNotificationService.getNotificationSettings();
-      setSettings(notificationSettings);
+      // Sadece 2 ayar: İpuçları ve Öneriler
+      const appSettings: AppSetting[] = [
+        {
+          id: 'notifications',
+          title: i18n.t('settings.features.notifications.title'),
+          description: i18n.t('settings.features.notifications.description'),
+          enabled: periodicNotificationService.isNotificationEnabled('systemStatus'), // Bir tanesini kontrol et
+          icon: 'bulb-outline',
+          color: '#F59E0B'
+        },
+        {
+          id: 'suggestions',
+          title: i18n.t('settings.features.suggestions.title'),
+          description: i18n.t('settings.features.suggestions.description'),
+          enabled: true, // Default açık olsun
+          icon: 'sparkles-outline',
+          color: '#8B5CF6'
+        }
+      ];
+
+      setSettings(appSettings);
     } catch (error) {
       console.error('Settings loading error:', error);
     } finally {
@@ -50,13 +69,17 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
         )
       );
 
-      // Service'i güncelle
-      await periodicNotificationService.toggleNotification(settingId, newValue);
-      
-      // Başarı mesajı
-      const actionText = newValue ? 'açıldı ✅' : 'kapatıldı ❌';
-      const typeName = i18n.t(`settings.notifications.types.${settingId}`);
-      showSuccessToast(`${typeName} bildirimleri ${actionText}`);
+      // Ayara göre işlem yap
+      switch (settingId) {
+        case 'notifications':
+          await periodicNotificationService.toggleAllNotifications(newValue);
+          break;
+          
+        case 'suggestions':
+          // Suggestions toggle logic burada olacak
+          // await suggestionService.toggle(newValue);
+          break;
+      }
 
     } catch (error) {
       console.error('Toggle error:', error);
@@ -70,60 +93,8 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
         )
       );
       
-      showInfoToast('Ayar değiştirilemedi, tekrar deneyin');
+      console.error('Toggle error:', error);
     }
-  };
-
-  const handleToggleAll = () => {
-    const allEnabled = settings.every(setting => setting.enabled);
-    const newState = !allEnabled;
-
-    Alert.alert(
-      i18n.t('settings.notifications.confirmTitle'),
-      newState 
-        ? i18n.t('settings.notifications.enableAllConfirm')
-        : i18n.t('settings.notifications.disableAllConfirm'),
-      [
-        {
-          text: i18n.t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: i18n.t('common.confirm'),
-          onPress: async () => {
-            try {
-              // UI'yi hemen güncelle
-              setSettings(prevSettings =>
-                prevSettings.map(setting => ({ ...setting, enabled: newState }))
-              );
-
-              // Service'i güncelle
-              await periodicNotificationService.toggleAllNotifications(newState);
-
-            } catch (error) {
-              console.error('Toggle all error:', error);
-              // Hata durumunda ayarları yeniden yükle
-              loadSettings();
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const formatInterval = (interval: number): string => {
-    const seconds = interval / 1000;
-    const minutes = seconds / 60;
-
-    if (seconds < 60) {
-      return i18n.t('settings.notifications.interval.seconds', { count: seconds });
-    } else {
-      return i18n.t('settings.notifications.interval.minutes', { count: minutes });
-    }
-  };
-
-  const getNotificationDescription = (settingId: string): string => {
-    return i18n.t(`settings.notifications.descriptions.${settingId}`);
   };
 
   if (loading) {
@@ -138,43 +109,32 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>{i18n.t('settings.notifications.title')}</Text>
-          <Text style={styles.subtitle}>{i18n.t('settings.notifications.subtitle')}</Text>
+          <Text style={styles.title}>{i18n.t('settings.title')}</Text>
+          <Text style={styles.subtitle}>{i18n.t('settings.subtitle')}</Text>
         </View>
 
-        {/* Toggle All Button */}
-        <TouchableOpacity style={styles.toggleAllButton} onPress={handleToggleAll}>
-          <Text style={styles.toggleAllText}>
-            {settings.every(s => s.enabled) 
-              ? i18n.t('settings.notifications.disableAll')
-              : i18n.t('settings.notifications.enableAll')
-            }
-          </Text>
-        </TouchableOpacity>
-
-        {/* Notification Settings List */}
-        <View style={styles.settingsList}>
+        {/* Features List */}
+        <View style={styles.featuresList}>
           {settings.map((setting) => (
-            <View key={setting.id} style={styles.settingItem}>
-              <View style={styles.settingInfo}>
-                <Text style={styles.settingName}>
-                  {i18n.t(`settings.notifications.types.${setting.id}`)}
-                </Text>
-                <Text style={styles.settingDescription}>
-                  {getNotificationDescription(setting.id)}
-                </Text>
-                <Text style={styles.settingInterval}>
-                  {i18n.t('settings.notifications.interval.label')}: {formatInterval(setting.interval)}
-                </Text>
+            <View key={setting.id} style={styles.featureItem}>
+              <View style={[styles.featureIcon, { backgroundColor: `${setting.color}20` }]}>
+                <Ionicons name={setting.icon as any} size={24} color={setting.color} />
               </View>
+              
+              <View style={styles.featureInfo}>
+                <Text style={styles.featureTitle}>{setting.title}</Text>
+                <Text style={styles.featureDescription}>{setting.description}</Text>
+              </View>
+              
               <Switch
                 value={setting.enabled}
                 onValueChange={(value) => handleToggle(setting.id, value)}
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={setting.enabled ? '#f5dd4b' : '#f4f3f4'}
+                trackColor={{ false: '#E5E7EB', true: `${setting.color}40` }}
+                thumbColor={setting.enabled ? setting.color : '#9CA3AF'}
+                style={styles.switch}
               />
             </View>
           ))}
@@ -182,8 +142,17 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
 
         {/* Info Section */}
         <View style={styles.infoSection}>
-          <Text style={styles.infoTitle}>{i18n.t('settings.notifications.info.title')}</Text>
-          <Text style={styles.infoText}>{i18n.t('settings.notifications.info.description')}</Text>
+          <View style={styles.infoHeader}>
+            <Ionicons name="information-circle-outline" size={20} color="#3B82F6" />
+            <Text style={styles.infoTitle}>{i18n.t('settings.info.title')}</Text>
+          </View>
+          <Text style={styles.infoText}>{i18n.t('settings.info.description')}</Text>
+        </View>
+
+        {/* App Info */}
+        <View style={styles.appInfo}>
+          <Text style={styles.appVersion}>BiQuery Mobile v1.0.0</Text>
+          <Text style={styles.appBuild}>{i18n.t('settings.app.lastUpdate')}: {new Date().toLocaleDateString()}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -193,7 +162,7 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#F9FAFB',
   },
   loadingContainer: {
     flex: 1,
@@ -202,89 +171,111 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: '#666',
+    color: '#6B7280',
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 24,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: '#E5E7EB',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#111827',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
-    lineHeight: 22,
+    color: '#6B7280',
+    lineHeight: 24,
   },
-  toggleAllButton: {
-    margin: 20,
-    padding: 15,
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  toggleAllText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  settingsList: {
-    backgroundColor: '#fff',
-    marginHorizontal: 20,
-    borderRadius: 8,
+  featuresList: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 16,
+    marginHorizontal: 16,
+    borderRadius: 12,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  settingItem: {
+  featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#F3F4F6',
   },
-  settingInfo: {
+  featureIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  featureInfo: {
     flex: 1,
     marginRight: 16,
   },
-  settingName: {
-    fontSize: 16,
+  featureTitle: {
+    fontSize: 17,
     fontWeight: '600',
-    color: '#333',
+    color: '#111827',
     marginBottom: 4,
   },
-  settingDescription: {
+  featureDescription: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-    lineHeight: 18,
+    color: '#6B7280',
+    lineHeight: 20,
   },
-  settingInterval: {
-    fontSize: 12,
-    color: '#999',
+  switch: {
+    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
   },
   infoSection: {
-    margin: 20,
+    backgroundColor: '#EBF4FF',
+    margin: 16,
     padding: 16,
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3B82F6',
+  },
+  infoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   infoTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
+    color: '#1E40AF',
+    marginLeft: 8,
   },
   infoText: {
     fontSize: 14,
-    color: '#666',
+    color: '#1E40AF',
     lineHeight: 20,
+  },
+  appInfo: {
+    alignItems: 'center',
+    padding: 24,
+    paddingBottom: 40,
+  },
+  appVersion: {
+    fontSize: 14,
+    color: '#9CA3AF',
+    fontWeight: '500',
+  },
+  appBuild: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginTop: 4,
   },
 });
 
