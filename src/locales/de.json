@@ -88,6 +88,8 @@
     "confirm": "Bestätigen"
   },
   "auth": {
+    "logoutConfirm": "Sind Sie sicher, dass Sie sich abmelden möchten?",
+"logoutError": "Fehler beim Abmelden aufgetreten",
     "login": "Anmelden",
     "logout": "Abmelden",
     "username": "Benutzername",
@@ -352,7 +354,11 @@
   },
   "toast": {
     "success": {
-      "title": "Erfolgreich"
+      "title": "Erfolgreich",
+          "reminder1": "💡 Tipp: Setzen Sie die Datenexploration fort, indem Sie verschiedene Abfragen ausprobieren",
+    "reminder2": "🚀 Großartig! Setzen Sie mit der Datenanalyse fort",
+    "reminder3": "✨ Schön! Entdecken Sie neue Erkenntnisse",
+    "reminder4": "🎉 Weiter so! Erkunden Sie mehr Daten"
     },
     "error": {
       "title": "Fehler"
@@ -381,12 +387,6 @@
       "tip2": "🎯 Tipp: Weniger Spalten für bessere Leistung wählen",
       "tip3": "📊 Tipp: LIMIT für große Datensätze verwenden",
       "tip4": "🔧 Tipp: Indizierte Spalten für Filterung bevorzugen"
-    },
-    "success": {
-      "reminder1": "💡 Tipp: Setzen Sie die Datenexploration fort, indem Sie verschiedene Abfragen ausprobieren",
-      "reminder2": "🚀 Großartig! Setzen Sie mit der Datenanalyse fort",
-      "reminder3": "✨ Schön! Entdecken Sie neue Erkenntnisse",
-      "reminder4": "🎉 Weiter so! Erkunden Sie mehr Daten"
     },
     "activity": {
       "reminder1": "🎯 Möchten Sie eine neue Abfrage versuchen?",

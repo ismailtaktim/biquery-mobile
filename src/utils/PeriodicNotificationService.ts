@@ -4,7 +4,8 @@ import {
   showInfoToast, 
   showSuccessToast, 
   showWarningToast, 
-  showErrorToast
+  showApiToast,
+  showNetworkToast 
 } from './toastUtils';
 import { i18n } from './i18n';
 import apiService from '../services/apiService';
@@ -21,49 +22,48 @@ class PeriodicNotificationService {
   private isAppActive = true;
   private isInitialized = false;
   
-  // Web Dashboard'daki gibi bildirim konfigürasyonları (Web'deki intervals gibi)
+  // Default konfigürasyonlar (başlangıçta enabled: true)
   private configs: { [key: string]: NotificationConfig } = {
-    // Contextual tips (Web'deki contextualTips gibi)
-    contextualTips: { 
-      enabled: true, 
-      interval: 60000, // 1 dakika (Web'deki 30 saniye mobile için 1 dakika)
-      key: 'contextual_tips' 
+    // Cache kullanım güncelleme
+    cacheUpdate: { 
+      enabled: true, // Başlangıçta açık
+      interval: 5000, // 5 saniye
+      key: 'cache_last_update' 
     },
     
-    // Educational tips (Web'deki educationalTips gibi)
-    educationalTips: { 
-      enabled: true, 
-      interval: 120000, // 2 dakika 
-      key: 'educational_tips' 
+    // Başarılı işlem bildirimleri
+    successReminder: { 
+      enabled: true, // Başlangıçta açık
+      interval: 60000, // 1 dakika
+      key: 'success_reminder' 
     },
     
-    // Performance tips (Web'deki performance feedback gibi)
+    // Sistem durumu bildirimleri
+    systemStatus: { 
+      enabled: true, // Başlangıçta açık
+      interval: 120000, // 2 dakika
+      key: 'system_status' 
+    },
+    
+    // Performans ipuçları
     performanceTips: { 
-      enabled: true, 
+      enabled: true, // Başlangıçta açık
       interval: 180000, // 3 dakika
       key: 'performance_tips' 
     },
     
-    // System status (Web'deki health check gibi)
-    systemStatus: { 
-      enabled: true, 
-      interval: 240000, // 4 dakika
-      key: 'system_status' 
-    },
-    
-    // Activity reminders (Web'deki user engagement gibi)
+    // Kullanıcı aktivite hatırlatıcıları
     activityReminder: { 
-      enabled: true, 
+      enabled: true, // Başlangıçta açık
       interval: 300000, // 5 dakika
       key: 'activity_reminder' 
     }
   };
 
-  // Web'deki dashboard verilerine benzer user stats
-  private userStats = {
-    totalQueries: 0,
-    lastQueryTime: null as number | null,
-    favoriteTerms: [] as string[],
+  private stats = {
+    cacheUsage: 0,
+    lastQueryTime: 0,
+    queryCount: 0,
     lastActivityTime: Date.now()
   };
 
@@ -75,24 +75,68 @@ class PeriodicNotificationService {
 
     console.log('📱 Initializing periodic notification service...');
     
-    // App state değişikliklerini dinle (Web'deki useEffect gibi)
+    // App state değişikliklerini dinle
     this.setupAppStateListener();
     
-    // Saved configs'i yükle
+    // Saved configs'i yükle (önemli: bu önce olmalı)
     await this.loadConfigs();
     
-    // User stats'i yükle
-    await this.loadUserStats();
+    // NotificationSettingsScreen ayarlarını kontrol et
+    await this.loadNotificationSettings();
     
-    // Periyodik bildirimleri başlat
+    // Sadece açık olan bildirimleri başlat
     this.startPeriodicNotifications();
     
     this.isInitialized = true;
-    
-    // Web'deki gibi hoş geldin mesajı
-    setTimeout(() => {
-      showSuccessToast(i18n.t('toast.welcome.mobile'));
-    }, 2000);
+    console.log('📱 Notification service initialized successfully');
+  }
+
+  // NotificationSettingsScreen'den gelen ayarları yükle
+  private async loadNotificationSettings() {
+    try {
+      const notificationSettings = await AsyncStorage.getItem('notification_settings');
+      if (notificationSettings) {
+        const settings = JSON.parse(notificationSettings);
+        
+        console.log('📱 Loading notification settings:', settings);
+        
+        // NotificationSettingsScreen'deki toggle durumlarını al
+        if (settings.notifications !== undefined) {
+          // İpuçları (notifications toggle'ı)
+          const notificationsEnabled = settings.notifications;
+          this.configs.performanceTips.enabled = notificationsEnabled;
+          this.configs.systemStatus.enabled = notificationsEnabled;
+          this.configs.cacheUpdate.enabled = notificationsEnabled;
+        }
+        
+        if (settings.suggestions !== undefined) {
+          // Öneriler (suggestions toggle'ı)
+          const suggestionsEnabled = settings.suggestions;
+          this.configs.successReminder.enabled = suggestionsEnabled;
+          this.configs.activityReminder.enabled = suggestionsEnabled;
+        }
+        
+        console.log('📱 Updated configs based on settings:', this.configs);
+      } else {
+        console.log('📱 No notification settings found, keeping defaults (notifications: ON, suggestions: ON)');
+        // İlk kez açılıyorsa default olarak hepsi açık (zaten configs'te enabled: true)
+        // Ayarları kaydet
+        const defaultSettings = {
+          notifications: true,  // İpuçları AÇIK
+          suggestions: true     // Öneriler AÇIK
+        };
+        
+        await AsyncStorage.setItem('notification_settings', JSON.stringify(defaultSettings));
+        console.log('📱 Created default settings (all enabled):', defaultSettings);
+      }
+    } catch (error) {
+      console.error('📱 Error loading notification settings:', error);
+    }
+  }
+
+  // Herhangi bir bildirim açık mı kontrol et
+  private hasAnyEnabledNotifications(): boolean {
+    return Object.values(this.configs).some(config => config.enabled);
   }
 
   private setupAppStateListener() {
@@ -112,18 +156,21 @@ class PeriodicNotificationService {
   private async onAppBecomeActive() {
     console.log('📱 App became active');
     
-    // Son aktiviteden 30+ dakika geçtiyse hoş geldin mesajı (Web'deki session management gibi)
+    // Ayarları yeniden yükle (kullanıcı ayarları değiştirmiş olabilir)
+    await this.loadNotificationSettings();
+    
+    // Son aktiviteden 30+ dakika geçtiyse hoş geldin mesajı
     const lastActivity = await AsyncStorage.getItem('last_activity_time');
     const now = Date.now();
     
     if (lastActivity) {
       const timeDiff = now - parseInt(lastActivity);
-      if (timeDiff > 1800000) { // 30 dakika
+      if (timeDiff > 1800000 && this.hasAnyEnabledNotifications()) { // 30 dakika
         showInfoToast(i18n.t('toast.welcome.back'));
       }
     }
     
-    // Periyodik bildirimleri yeniden başlat
+    // Periyodik bildirimleri yeniden başlat (sadece açık olanları)
     this.startPeriodicNotifications();
     
     // Activity time'ı güncelle
@@ -132,6 +179,7 @@ class PeriodicNotificationService {
 
   private onAppGoBackground() {
     console.log('📱 App went to background');
+    
     // Tüm interval'leri durdur (battery optimization)
     this.stopAllNotifications();
   }
@@ -142,20 +190,10 @@ class PeriodicNotificationService {
       if (savedConfigs) {
         const parsed = JSON.parse(savedConfigs);
         this.configs = { ...this.configs, ...parsed };
+        console.log('📱 Loaded saved configs:', this.configs);
       }
     } catch (error) {
       console.error('Config loading error:', error);
-    }
-  }
-
-  private async loadUserStats() {
-    try {
-      const savedStats = await AsyncStorage.getItem('user_stats');
-      if (savedStats) {
-        this.userStats = { ...this.userStats, ...JSON.parse(savedStats) };
-      }
-    } catch (error) {
-      console.error('User stats loading error:', error);
     }
   }
 
@@ -167,40 +205,44 @@ class PeriodicNotificationService {
     }
   }
 
-  private async saveUserStats() {
-    try {
-      await AsyncStorage.setItem('user_stats', JSON.stringify(this.userStats));
-    } catch (error) {
-      console.error('User stats saving error:', error);
-    }
-  }
-
   private startPeriodicNotifications() {
-    if (!this.isAppActive) return;
+    if (!this.isAppActive) {
+      console.log('📱 App not active, skipping notifications');
+      return;
+    }
 
-    console.log('📱 Starting periodic notifications...');
+    // İpuçları (notifications) kapalıysa TÜM periyodik bildirimleri durdur
+    const notificationsEnabled = this.configs.performanceTips.enabled || this.configs.systemStatus.enabled || this.configs.cacheUpdate.enabled;
+    
+    if (!notificationsEnabled) {
+      console.log('📱 İpuçları disabled, stopping ALL periodic notifications (including suggestions)');
+      return;
+    }
 
-    // Contextual Tips (Web'deki contextual tips sistemi gibi)
-    this.scheduleNotification('contextualTips', () => {
-      this.showContextualTips();
+    // Sadece açık olan bildirimleri say
+    const enabledNotifications = Object.entries(this.configs)
+      .filter(([_, config]) => config.enabled)
+      .map(([key, _]) => key);
+
+    console.log('📱 Starting periodic notifications for:', enabledNotifications);
+
+    // Sadece açık olan bildirimleri başlat
+    this.scheduleNotification('cacheUpdate', () => {
+      this.updateCacheUsage();
     });
 
-    // Educational Tips (Web'deki educational tips gibi)
-    this.scheduleNotification('educationalTips', () => {
-      this.showEducationalTips();
+    this.scheduleNotification('successReminder', () => {
+      this.showSuccessReminder();
     });
 
-    // Performance Tips (Web'deki performance feedback gibi)
-    this.scheduleNotification('performanceTips', () => {
-      this.showPerformanceTips();
-    });
-
-    // System Status (Web'deki health monitoring gibi)
     this.scheduleNotification('systemStatus', () => {
       this.showSystemStatus();
     });
 
-    // Activity Reminder (Web'deki user engagement gibi)
+    this.scheduleNotification('performanceTips', () => {
+      this.showPerformanceTip();
+    });
+
     this.scheduleNotification('activityReminder', () => {
       this.showActivityReminder();
     });
@@ -208,7 +250,12 @@ class PeriodicNotificationService {
 
   private scheduleNotification(configKey: string, callback: () => void) {
     const config = this.configs[configKey];
-    if (!config || !config.enabled) return;
+    if (!config || !config.enabled) {
+      console.log(`📱 Skipping ${configKey} notification (disabled)`);
+      return;
+    }
+
+    console.log(`📱 Scheduling ${configKey} notification every ${config.interval}ms`);
 
     // Önceki interval'i temizle
     if (this.intervals[configKey]) {
@@ -219,80 +266,47 @@ class PeriodicNotificationService {
     this.intervals[configKey] = setInterval(callback, config.interval);
   }
 
-  // Web'deki contextual tips sistemi gibi - bağlamsal ipuçları
-  private showContextualTips() {
-    const contextualTips = [];
-    
-    // Saat bazlı ipuçları (Web'deki time-based tips gibi)
-    const hour = new Date().getHours();
-    if (hour >= 9 && hour < 12) {
-      contextualTips.push(i18n.t('contextualTips.morning'));
-    } else if (hour >= 12 && hour < 17) {
-      contextualTips.push(i18n.t('contextualTips.afternoon'));
-    } else if (hour >= 17) {
-      contextualTips.push(i18n.t('contextualTips.evening'));
+  private updateCacheUsage() {
+    // Sadece enabled ise çalıştır
+    if (!this.configs.cacheUpdate.enabled) {
+      console.log('📱 Cache update disabled, skipping');
+      return;
     }
     
-    // Sorgu geçmişine göre ipuçları (Web'deki history-based suggestions gibi)
-    if (this.userStats.totalQueries > 0) {
-      const favoriteTerms = this.userStats.favoriteTerms;
-      if (favoriteTerms.includes('acente') || favoriteTerms.includes('agent')) {
-        contextualTips.push(i18n.t('historyTips.agent'));
-      } else if (favoriteTerms.includes('prim') || favoriteTerms.includes('premium')) {
-        contextualTips.push(i18n.t('historyTips.premium'));
-      }
-    }
-    
-    // Performans ipuçları (Web'deki dashboard.tips gibi)
-    contextualTips.push(i18n.t('dashboard.tips.narrowDateRange'));
-    contextualTips.push(i18n.t('dashboard.tips.fewerEntities'));
-    contextualTips.push(i18n.t('dashboard.tips.limitResults'));
-    contextualTips.push(i18n.t('dashboard.tips.preferTables'));
-    
-    // Random bir ipucu seç ve göster
-    if (contextualTips.length > 0) {
-      const randomTip = contextualTips[Math.floor(Math.random() * contextualTips.length)];
-      showInfoToast(randomTip);
+    this.stats.cacheUsage = this.stats.cacheUsage + Math.random() * 5;
+    if (this.stats.cacheUsage > 100) {
+      this.stats.cacheUsage = 0;
+      showInfoToast(i18n.t('toast.cache.reset'));
     }
   }
 
-  // Web'deki educational tips sistemi gibi - öğretici ipuçları
-  private showEducationalTips() {
-    const educationalTips = [
-      i18n.t('tips.maximumMinimum'),
-      i18n.t('tips.timeRange'),
-      i18n.t('tips.comparison'),
-      i18n.t('tips.grouping'),
-      i18n.t('dashboard.help.visualizationTip'),
-      i18n.t('tips.detailedAnalysis'),
-      i18n.t('tips.trendAnalysis'),
-      i18n.t('tips.voiceQuery')
+  private showSuccessReminder() {
+    // Sadece enabled ise çalıştır
+    if (!this.configs.successReminder.enabled) {
+      console.log('📱 Success reminder disabled, skipping');
+      return;
+    }
+    
+    const tips = [
+      'toast.success.reminder1',
+      'toast.success.reminder2', 
+      'toast.success.reminder3',
+      'toast.success.reminder4'
     ];
     
-    const randomTip = educationalTips[Math.floor(Math.random() * educationalTips.length)];
-    showInfoToast(randomTip);
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    showInfoToast(i18n.t(randomTip));
   }
 
-  // Web'deki performance feedback sistemi gibi
-  private showPerformanceTips() {
-    // Performance tips (Web'deki contextual performance suggestions gibi)
-    const performanceTips = [
-      i18n.t('toast.performance.tip1'),
-      i18n.t('toast.performance.tip2'),
-      i18n.t('toast.performance.tip3'),
-      i18n.t('toast.performance.tip4')
-    ];
-    
-    const randomTip = performanceTips[Math.floor(Math.random() * performanceTips.length)];
-    showInfoToast(randomTip);
-  }
-
-  // Web'deki system health monitoring gibi
   private async showSystemStatus() {
+    // Sadece enabled ise çalıştır
+    if (!this.configs.systemStatus.enabled) {
+      console.log('📱 System status disabled, skipping');
+      return;
+    }
+    
     try {
       const startTime = Date.now();
-      
-      // Basit health check (Web'deki API health monitoring gibi)
       const isHealthy = await this.checkApiHealth();
       
       if (isHealthy) {
@@ -304,37 +318,61 @@ class PeriodicNotificationService {
           showWarningToast(i18n.t('toast.system.slow', { responseTime: responseTime.toString() }));
         }
       } else {
-        showErrorToast(i18n.t('toast.system.unhealthy'));
+        showWarningToast(i18n.t('toast.system.unhealthy'));
       }
     } catch (error) {
-      showErrorToast(i18n.t('toast.api.error'));
+      showWarningToast(i18n.t('toast.system.unhealthy'));
     }
   }
 
-  // Web'deki user engagement sistemi gibi
+  private showPerformanceTip() {
+    // Sadece enabled ise çalıştır
+    if (!this.configs.performanceTips.enabled) {
+      console.log('📱 Performance tips disabled, skipping');
+      return;
+    }
+    
+    const tips = [
+      'toast.performance.tip1',
+      'toast.performance.tip2', 
+      'toast.performance.tip3',
+      'toast.performance.tip4'
+    ];
+    
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    showInfoToast(i18n.t(randomTip));
+  }
+
   private showActivityReminder() {
+    // Sadece enabled ise çalıştır
+    if (!this.configs.activityReminder.enabled) {
+      console.log('📱 Activity reminder disabled, skipping');
+      return;
+    }
+    
     const reminders = [
-      i18n.t('toast.activity.reminder1'),
-      i18n.t('toast.activity.reminder2'),
-      i18n.t('toast.activity.reminder3'),
-      i18n.t('toast.activity.reminder4')
+      'toast.activity.reminder1',
+      'toast.activity.reminder2',
+      'toast.activity.reminder3'
     ];
     
     const randomReminder = reminders[Math.floor(Math.random() * reminders.length)];
-    showInfoToast(randomReminder);
+    showInfoToast(i18n.t(randomReminder));
   }
 
   private async checkApiHealth(): Promise<boolean> {
     try {
-      // Web'deki health check endpoint'i gibi
-      return true; // Mock olarak true döndür
+      // Mock health check
+      return true;
     } catch (error) {
       return false;
     }
   }
 
-  // Web'deki settings management gibi
+  // NotificationSettingsScreen'den çağrılacak
   async toggleNotification(type: string, enabled: boolean) {
+    console.log(`📱 Toggle notification ${type}: ${enabled}`);
+    
     if (this.configs[type]) {
       this.configs[type].enabled = enabled;
       await this.saveConfigs();
@@ -349,71 +387,92 @@ class PeriodicNotificationService {
           delete this.intervals[type];
         }
       }
-      
-      showInfoToast(i18n.t('toast.notifications.settingsUpdated'));
     }
   }
 
+  // NotificationSettingsScreen'deki "İpuçları" toggle'ı
   async toggleAllNotifications(enabled: boolean) {
-    const promises = Object.keys(this.configs).map(type => 
-      this.toggleNotification(type, enabled)
-    );
+    console.log(`📱 toggleAllNotifications called with: ${enabled}`);
     
-    await Promise.all(promises);
+    // İpuçları kategorisindeki tüm bildirimleri aç/kapat
+    this.configs.performanceTips.enabled = enabled;
+    this.configs.systemStatus.enabled = enabled;
+    this.configs.cacheUpdate.enabled = enabled;
     
-    if (enabled) {
-      showSuccessToast(i18n.t('toast.notifications.allEnabled'));
-    } else {
-      showInfoToast(i18n.t('toast.notifications.allDisabled'));
-    }
+    console.log('📱 Updated notification configs:', {
+      performanceTips: this.configs.performanceTips.enabled,
+      systemStatus: this.configs.systemStatus.enabled,
+      cacheUpdate: this.configs.cacheUpdate.enabled
+    });
+    
+    // AsyncStorage'a kaydet (NotificationSettingsScreen ile senkron)
+    const currentSettings = await AsyncStorage.getItem('notification_settings');
+    const settings = currentSettings ? JSON.parse(currentSettings) : {};
+    
+    settings.notifications = enabled;
+    
+    await AsyncStorage.setItem('notification_settings', JSON.stringify(settings));
+    console.log('📱 Saved notification settings to AsyncStorage:', settings);
+    
+    // Ayarları yeniden yükle ve servisi güncelle
+    await this.reloadAndRestartService();
   }
 
-  // Web'deki callback mapping sistemi gibi
+  // NotificationSettingsScreen'deki "Öneriler" toggle'ı
+  async toggleSuggestions(enabled: boolean) {
+    console.log(`📱 toggleSuggestions called with: ${enabled}`);
+    
+    // Öneriler kategorisindeki tüm bildirimleri aç/kapat
+    this.configs.successReminder.enabled = enabled;
+    this.configs.activityReminder.enabled = enabled;
+    
+    console.log('📱 Updated suggestion configs:', {
+      successReminder: this.configs.successReminder.enabled,
+      activityReminder: this.configs.activityReminder.enabled
+    });
+    
+    // AsyncStorage'a kaydet (NotificationSettingsScreen ile senkron)
+    const currentSettings = await AsyncStorage.getItem('notification_settings');
+    const settings = currentSettings ? JSON.parse(currentSettings) : {};
+    
+    settings.suggestions = enabled;
+    
+    await AsyncStorage.setItem('notification_settings', JSON.stringify(settings));
+    console.log('📱 Saved suggestion settings to AsyncStorage:', settings);
+    
+    // Ayarları yeniden yükle ve servisi güncelle
+    await this.reloadAndRestartService();
+  }
+
+  // Ayarları yeniden yükle ve servisi güncelle
+  private async reloadAndRestartService() {
+    console.log('📱 Reloading service with new settings...');
+    
+    // Tüm interval'leri durdur
+    this.stopAllNotifications();
+    
+    // Ayarları yeniden yükle
+    await this.loadNotificationSettings();
+    
+    // Servisi yeniden başlat (sadece açık olanlarla)
+    this.startPeriodicNotifications();
+  }
+
   private getCallbackForType(type: string): () => void {
     switch (type) {
-      case 'contextualTips':
-        return () => this.showContextualTips();
-      case 'educationalTips':
-        return () => this.showEducationalTips();
-      case 'performanceTips':
-        return () => this.showPerformanceTips();
+      case 'cacheUpdate':
+        return () => this.updateCacheUsage();
+      case 'successReminder':
+        return () => this.showSuccessReminder();
       case 'systemStatus':
         return () => this.showSystemStatus();
+      case 'performanceTips':
+        return () => this.showPerformanceTip();
       case 'activityReminder':
         return () => this.showActivityReminder();
       default:
         return () => {};
     }
-  }
-
-  // Web'deki user stats tracking gibi
-  updateQueryStats(resultCount: number, queryText?: string) {
-    this.userStats.totalQueries += 1;
-    this.userStats.lastActivityTime = Date.now();
-    this.userStats.lastQueryTime = Date.now();
-    
-    // Query analizi (Web'deki favorite terms tracking gibi)
-    if (queryText) {
-      const words = queryText.toLowerCase().split(' ');
-      words.forEach(word => {
-        if (word.length > 3 && !this.userStats.favoriteTerms.includes(word)) {
-          this.userStats.favoriteTerms.push(word);
-        }
-      });
-      
-      // En fazla 20 terimi sakla
-      if (this.userStats.favoriteTerms.length > 20) {
-        this.userStats.favoriteTerms = this.userStats.favoriteTerms.slice(-20);
-      }
-    }
-    
-    this.saveUserStats();
-    console.log('📱 Query stats updated:', { resultCount, totalQueries: this.userStats.totalQueries });
-  }
-
-  updateLanguage(language: string) {
-    console.log('📱 Updating notification service language:', language);
-    // Web'deki dil değişikliği handling'i gibi
   }
 
   getNotificationSettings() {
@@ -427,6 +486,16 @@ class PeriodicNotificationService {
 
   isNotificationEnabled(type: string): boolean {
     return this.configs[type]?.enabled || false;
+  }
+
+  // İpuçları grubu açık mı?
+  isNotificationsEnabled(): boolean {
+    return this.configs.performanceTips.enabled || this.configs.systemStatus.enabled || this.configs.cacheUpdate.enabled;
+  }
+
+  // Öneriler grubu açık mı?
+  isSuggestionsEnabled(): boolean {
+    return this.configs.successReminder.enabled || this.configs.activityReminder.enabled;
   }
 
   stopAllNotifications() {
@@ -449,10 +518,20 @@ class PeriodicNotificationService {
       isAppActive: this.isAppActive,
       activeIntervals: Object.keys(this.intervals).length,
       configs: this.configs,
-      userStats: this.userStats
+      stats: this.stats,
+      hasEnabledNotifications: this.hasAnyEnabledNotifications()
     };
+  }
+
+  updateLanguage(language: string) {
+    console.log('📱 Updating notification service language:', language);
+  }
+
+  updateQueryStats(resultCount: number) {
+    this.stats.queryCount += 1;
+    this.stats.lastActivityTime = Date.now();
+    console.log('📱 Query stats updated:', { resultCount, totalQueries: this.stats.queryCount });
   }
 }
 
-// Singleton instance
 export const periodicNotificationService = new PeriodicNotificationService();

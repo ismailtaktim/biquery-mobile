@@ -88,6 +88,8 @@
     "confirm": "Onayla"
   },
   "auth": {
+"logoutConfirm": "Çıkış yapmak istediğinizden emin misiniz?",
+"logoutError": "Çıkış yapılırken hata oluştu",
     "login": "Giriş Yap",
     "logout": "Çıkış Yap",
     "username": "Kullanıcı Adı",
@@ -351,102 +353,100 @@
     "saveQueries": "🎉 Böyle devam! Daha fazla veri keşfedin"
   },
   "toast": {
-    "success": {
-      "title": "Başarılı"
-    },
-    "error": {
-      "title": "Hata"
-    },
-    "warning": {
-      "title": "Uyarı"
-    },
-    "info": {
-      "title": "Bilgi"
-    },
-    "welcome": {
-      "mobile": "Dashboard yüklendi, sorgulamaya başlayabilirsiniz! 🚀",
-      "back": "Tekrar hoş geldiniz! 👋"
-    },
-    "system": {
-      "healthy": "Sistem sağlıklı (Yanıt süresi: {{responseTime}}ms) ✅",
-      "slow": "Sistem yavaş çalışıyor (Yanıt süresi: {{responseTime}}ms) ⚠️",
-      "unhealthy": "Sistem durumu kontrol edilemiyor ❌"
-    },
-    "performance": {
-      "narrowDateRange": "⚡ Performans İpucu: Daha hızlı sonuçlar için tarih aralığını daraltın",
-      "fewerEntities": "🎯 İpucu: Daha iyi performans için daha az sütun seçin",
-      "limitResults": "📊 İpucu: Büyük veri setleri için LIMIT kullanın",
-      "preferTables": "🔧 İpucu: Filtreleme için indeksli sütunları tercih edin",
-      "tip1": "⚡ Performans İpucu: Daha hızlı sonuçlar için tarih aralığını daraltın",
-      "tip2": "🎯 İpucu: Daha iyi performans için daha az sütun seçin",
-      "tip3": "📊 İpucu: Büyük veri setleri için LIMIT kullanın",
-      "tip4": "🔧 İpucu: Filtreleme için indeksli sütunları tercih edin"
-    },
-    "success": {
-      "reminder1": "💡 İpucu: Farklı sorgular deneyerek veri keşfini sürdürün",
-      "reminder2": "🚀 Harika! Veri analizine devam edin",
-      "reminder3": "✨ Güzel! Yeni çıkarımlar keşfedin",
-      "reminder4": "🎉 Böyle devam! Daha fazla veri keşfedin"
-    },
-    "activity": {
-      "reminder1": "🎯 Yeni bir sorgu denemek ister misiniz?",
-      "reminder2": "📊 Daha fazla veri analizi yapmaya hazır mısınız?",
-      "reminder3": "🔍 Yeni veri keşfine zamanı geldi!",
-      "reminder4": "💼 Hadi daha fazla çıkarım bulalım!",
-      "tryNewQuery": "🎯 Yeni bir sorgu denemek ister misiniz?",
-      "checkResults": "📊 Daha fazla veri analizi yapmaya hazır mısınız?",
-      "exploreData": "🔍 Yeni veri keşfine zamanı geldi!"
-    },
-    "cache": {
-      "updated": "Önbellek güncellendi",
-      "reset": "Önbellek sıfırlandı"
-    },
-    "api": {
-      "success": "İşlem başarılı",
-      "error": "API hatası oluştu",
-      "unauthorized": "Oturum süresi doldu",
-      "forbidden": "Bu işlem için yetkiniz yok",
-      "notFound": "İstenen kaynak bulunamadı",
-      "serverError": "Sunucu hatası oluştu",
-      "rateLimited": "Çok fazla istek",
-      "timeout": "İstek zaman aşımına uğradı",
-      "networkError": "İnternet bağlantısı hatası"
-    },
-    "auth": {
-      "loginSuccess": "Hoş geldiniz{{username}}!",
-      "loginError": "Giriş yapılamadı",
-      "logoutSuccess": "Çıkış yapıldı",
-      "invalidCredentials": "Kullanıcı adı veya şifre hatalı",
-      "tokenExpired": "Oturum süresi doldu",
-      "sessionExpired": "Oturum süresi doldu, tekrar giriş yapın"
-    },
-    "analysis": {
-      "starting": "{{analysisType}} analizi başlatılıyor...",
-      "completed": "{{analysisType}} analizi tamamlandı ✅",
-      "failed": "{{analysisType}} analizi başarısız ❌",
-      "timeout": "Analiz zaman aşımına uğradı",
-      "insufficientData": "Analiz için yeterli veri yok"
-    },
-    "query": {
-      "success": "Sorgu başarılı ({{count}} sonuç) ✅",
-      "executing": "Sorgu çalıştırılıyor... ⏳",
-      "noResults": "Sonuç bulunamadı 📭",
-      "timeout": "Sorgu zaman aşımına uğradı ⏰"
-    },
-    "network": {
-      "offline": "İnternet bağlantısı yok 📶",
-      "online": "İnternet bağlantısı geri geldi ✅",
-      "timeout": "Ağ zaman aşımı ⏰"
-    },
-    "language": {
-      "changed": "Dil {{language}} olarak değiştirildi 🌐"
-    },
-    "notifications": {
-      "settingsUpdated": "Bildirim ayarları güncellendi",
-      "allEnabled": "Tüm bildirimler etkinleştirildi ✅",
-      "allDisabled": "Tüm bildirimler devre dışı bırakıldı ❌"
-    }
+  "success": {
+    "title": "Başarılı",
+    "reminder1": "💡 İpucu: Farklı sorgular deneyerek veri keşfini sürdürün",
+    "reminder2": "🚀 Harika! Veri analizine devam edin",
+    "reminder3": "✨ Güzel! Yeni çıkarımlar keşfedin", 
+    "reminder4": "🎉 Böyle devam! Daha fazla veri keşfedin"
   },
+  "error": {
+    "title": "Hata"
+  },
+  "warning": {
+    "title": "Uyarı"
+  },
+  "info": {
+    "title": "Bilgi"
+  },
+  "welcome": {
+    "mobile": "Dashboard yüklendi, sorgulamaya başlayabilirsiniz! 🚀",
+    "back": "Tekrar hoş geldiniz! 👋"
+  },
+  "system": {
+    "healthy": "Sistem sağlıklı (Yanıt süresi: {{responseTime}}ms) ✅",
+    "slow": "Sistem yavaş çalışıyor (Yanıt süresi: {{responseTime}}ms) ⚠️",
+    "unhealthy": "Sistem durumu kontrol edilemiyor ❌"
+  },
+  "performance": {
+    "narrowDateRange": "⚡ Performans İpucu: Daha hızlı sonuçlar için tarih aralığını daraltın",
+    "fewerEntities": "🎯 İpucu: Daha iyi performans için daha az sütun seçin",
+    "limitResults": "📊 İpucu: Büyük veri setleri için LIMIT kullanın",
+    "preferTables": "🔧 İpucu: Filtreleme için indeksli sütunları tercih edin",
+    "tip1": "⚡ Performans İpucu: Daha hızlı sonuçlar için tarih aralığını daraltın",
+    "tip2": "🎯 İpucu: Daha iyi performans için daha az sütun seçin",
+    "tip3": "📊 İpucu: Büyük veri setleri için LIMIT kullanın",
+    "tip4": "🔧 İpucu: Filtreleme için indeksli sütunları tercih edin"
+  },
+  "activity": {
+    "reminder1": "💡 İpucu: Farklı sorgular deneyerek veri keşfini sürdürün",
+    "reminder2": "🚀 Harika! Veri analizine devam edin",
+    "reminder3": "✨ Güzel! Yeni çıkarımlar keşfedin",
+    "reminder4": "🎉 Böyle devam! Daha fazla veri keşfedin",    
+    "tryNewQuery": "🎯 Yeni bir sorgu denemek ister misiniz?",
+    "checkResults": "📊 Daha fazla veri analizi yapmaya hazır mısınız?",
+    "exploreData": "🔍 Yeni veri keşfine zamanı geldi!"
+  },
+  "cache": {
+    "updated": "Önbellek güncellendi",
+    "reset": "Önbellek sıfırlandı"
+  },
+  "api": {
+    "success": "İşlem başarılı",
+    "error": "API hatası oluştu",
+    "unauthorized": "Oturum süresi doldu",
+    "forbidden": "Bu işlem için yetkiniz yok",
+    "notFound": "İstenen kaynak bulunamadı",
+    "serverError": "Sunucu hatası oluştu",
+    "rateLimited": "Çok fazla istek",
+    "timeout": "İstek zaman aşımına uğradı",
+    "networkError": "İnternet bağlantısı hatası"
+  },
+  "auth": {
+    "loginSuccess": "Hoş geldiniz{{username}}!",
+    "loginError": "Giriş yapılamadı",
+    "logoutSuccess": "Çıkış yapıldı",
+    "invalidCredentials": "Kullanıcı adı veya şifre hatalı",
+    "tokenExpired": "Oturum süresi doldu",
+    "sessionExpired": "Oturum süresi doldu, tekrar giriş yapın"
+  },
+  "analysis": {
+    "starting": "{{analysisType}} analizi başlatılıyor...",
+    "completed": "{{analysisType}} analizi tamamlandı ✅",
+    "failed": "{{analysisType}} analizi başarısız ❌",
+    "timeout": "Analiz zaman aşımına uğradı",
+    "insufficientData": "Analiz için yeterli veri yok"
+  },
+  "query": {
+    "success": "Sorgu başarılı ({{count}} sonuç) ✅",
+    "executing": "Sorgu çalıştırılıyor... ⏳",
+    "noResults": "Sonuç bulunamadı 📭",
+    "timeout": "Sorgu zaman aşımına uğradı ⏰"
+  },
+  "network": {
+    "offline": "İnternet bağlantısı yok 📶",
+    "online": "İnternet bağlantısı geri geldi ✅",
+    "timeout": "Ağ zaman aşımı ⏰"
+  },
+  "language": {
+    "changed": "Dil {{language}} olarak değiştirildi 🌐"
+  },
+  "notifications": {
+    "settingsUpdated": "Bildirim ayarları güncellendi",
+    "allEnabled": "Tüm bildirimler etkinleştirildi ✅",
+    "allDisabled": "Tüm bildirimler devre dışı bırakıldı ❌"
+  }
+},
   "notifications": {
     "settings": {
       "title": "Bildirim Ayarları",

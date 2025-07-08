@@ -55,20 +55,6 @@ const LoginScreen: React.FC = () => {
     try {
       setIsSubmitting(true);
       const success = await login(username.trim(), password);
-      
-      if (success) {
-        Alert.alert(
-          t('common.success'),
-          t('auth.loginSuccess'),
-          [{ text: t('common.ok') }]
-        );
-      } else {
-        Alert.alert(
-          t('common.error'),
-          t('auth.loginError'),
-          [{ text: t('common.ok') }]
-        );
-      }
     } catch (error: any) {
       Alert.alert(
         t('common.error'),

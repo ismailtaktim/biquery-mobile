@@ -11,16 +11,17 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import EnhancedQueryInput from '../../components/query/EnhancedQueryInput';
 import QueryResults from '../../components/query/QueryResults';
 import AnalysisResultModal from '../../components/analytics/AnalysisResultModal';
 import LanguageButton from '../../components/common/LanguageButton';
 import { useLanguage } from '../../context/LanguageContext';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../context/AuthContext';
 import apiService from '../../services/apiService';
 import { periodicNotificationService } from '../../utils/PeriodicNotificationService';
 import { showSuccessToast } from '../../utils/toastUtils';
-import { i18n } from '../../utils/i18n';
 
 interface QueryData {
   query: string;
@@ -29,10 +30,11 @@ interface QueryData {
 
 const DashboardScreen: React.FC = () => {
   const { t, currentLanguage } = useLanguage();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
+  const { logout } = useAuth();
   const [currentQuery, setCurrentQuery] = useState<QueryData | null>(null);
   const [showQueryInput, setShowQueryInput] = useState(false);
-  const [queryStats, setQueryStats] = useState({ totalQueries: 0, resultCount: 0 });
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   
   // Analysis states
   const [analysisModalVisible, setAnalysisModalVisible] = useState(false);
@@ -46,26 +48,55 @@ const DashboardScreen: React.FC = () => {
     language: currentLanguage
   });
 
-  // Notification service'i başlat ve dil değişikliklerini dinle
+  // PeriodicNotificationService'i Dashboard'da başlat (sadece ayarlar açıksa)
   useEffect(() => {
-    // Welcome toast göster
-    showSuccessToast(i18n.t('toast.welcome.mobile'));
+    console.log('📱 Dashboard mounted, checking notification settings...');
     
-    // Notification service'i başlat
-    periodicNotificationService.init();
-    periodicNotificationService.updateLanguage(currentLanguage);
-
+    const initNotificationService = async () => {
+      // Önce ayarları kontrol et
+      try {
+        const savedSettings = await AsyncStorage.getItem('notification_settings');
+        let shouldStartService = false;
+        
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          shouldStartService = settings.notifications || settings.suggestions;
+          console.log('📱 Settings found:', settings, 'Should start service:', shouldStartService);
+        } else {
+          // İlk kez açılıyorsa default olarak açık
+          shouldStartService = true;
+          console.log('📱 No settings found, starting with defaults');
+        }
+        
+        if (shouldStartService) {
+          console.log('📱 Starting notification service...');
+          // Welcome toast göster
+          showSuccessToast(t('toast.welcome.mobile'));
+          
+          // Notification service'i başlat
+          await periodicNotificationService.init();
+          periodicNotificationService.updateLanguage(currentLanguage);
+        } else {
+          console.log('📱 All notifications disabled, not starting service');
+        }
+      } catch (error) {
+        console.error('📱 Error checking notification settings:', error);
+      }
+    };
+    
+    initNotificationService();
+    
     // App state değişikliklerini dinle
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      console.log('📱 App state changed:', nextAppState);
       if (nextAppState === 'active') {
         periodicNotificationService.updateLanguage(currentLanguage);
       }
     };
 
     const subscription = AppState.addEventListener('change', handleAppStateChange);
-
+    
     return () => {
+      console.log('📱 Dashboard unmounting, cleaning up notification service...');
       subscription?.remove();
       periodicNotificationService.destroy();
     };
@@ -76,6 +107,13 @@ const DashboardScreen: React.FC = () => {
     periodicNotificationService.updateLanguage(currentLanguage);
   }, [currentLanguage]);
 
+  // Profile menu'yu kapatmak için
+  useEffect(() => {
+    const closeProfileMenu = () => setShowProfileMenu(false);
+    // Touch outside to close menu logic buraya eklenebilir
+    return () => {};
+  }, []);
+
   const handleQuerySubmit = (query: string, results: any) => {
     console.log('📊 Dashboard - Query results received:', {
       query,
@@ -83,22 +121,14 @@ const DashboardScreen: React.FC = () => {
       columns: results.columns?.length
     });
 
-    const newStats = {
-      totalQueries: queryStats.totalQueries + 1,
-      resultCount: results.data?.length || 0
-    };
-    
-    setQueryStats(newStats);
-    console.log('📱 Query stats updated:', newStats);
-    
-    // Notification service'e query istatistiklerini güncelle
-    periodicNotificationService.updateQueryStats(newStats.resultCount, query);
-
     setCurrentQuery({
       query,
       results
     });
     setShowQueryInput(false);
+
+    // Notification service'e query istatistiklerini güncelle
+    periodicNotificationService.updateQueryStats(results.data?.length || 0);
   };
 
   const handleQueryError = (error: string) => {
@@ -119,7 +149,37 @@ const DashboardScreen: React.FC = () => {
 
   const openNotificationSettings = () => {
     console.log('🔔 Opening notification settings');
-    navigation.navigate('NotificationSettings');
+    navigation.navigate('NotificationSettings' as never);
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      t('auth.logout'), // "Çıkış Yap" / "Logout" / "Abmelden" / "Cerrar Sesión"
+      t('auth.logoutConfirm'), // "Çıkış yapmak istediğinizden emin misiniz?"
+      [
+        {
+          text: t('common.cancel'), // "İptal" / "Cancel" / "Abbrechen" / "Cancelar"
+          style: 'cancel',
+        },
+        {
+          text: t('auth.logout'), // "Çıkış Yap"
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              console.log('🚪 User confirmed logout');
+              await logout();
+              console.log('✅ Logout completed');
+            } catch (error) {
+              console.error('❌ Logout error:', error);
+              Alert.alert(
+                t('common.error'),
+                t('auth.logoutError') // "Çıkış yapılırken hata oluştu"
+              );
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Analysis functions with language support
@@ -254,8 +314,6 @@ const DashboardScreen: React.FC = () => {
           <Text style={styles.headerSubtitle}>{t('dashboard.title')}</Text>
         </View>
         <View style={styles.headerActions}>
-          <LanguageButton />
-          
           {/* Notification Settings Button */}
           <TouchableOpacity 
             style={styles.notificationButton}
@@ -263,12 +321,40 @@ const DashboardScreen: React.FC = () => {
           >
             <Ionicons name="notifications-outline" size={24} color="#3b82f6" />
           </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.profileButton}>
-            <Ionicons name="person-circle-outline" size={32} color="#3b82f6" />
-          </TouchableOpacity>
+          <LanguageButton />
+          <View style={styles.profileContainer}>
+            <TouchableOpacity 
+              style={styles.profileButton}
+              onPress={() => setShowProfileMenu(!showProfileMenu)}
+            >
+              <Ionicons name="person-circle-outline" size={32} color="#3b82f6" />
+            </TouchableOpacity>
+            
+            {showProfileMenu && (
+              <View style={styles.profileDropdown}>
+                <TouchableOpacity 
+                  style={styles.logoutButton}
+                  onPress={handleLogout}
+                >
+                  <Ionicons name="log-out-outline" size={16} color="#EF4444" />
+                  <Text style={styles.logoutText}>{t('auth.logout')}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
       </View>
+
+      <TouchableOpacity 
+        style={[
+          styles.overlay, 
+          { display: showProfileMenu ? 'flex' : 'none' }
+        ]}
+        onPress={() => setShowProfileMenu(false)}
+        activeOpacity={1}
+      >
+        <View />
+      </TouchableOpacity>
 
       <ScrollView style={styles.content}>
         {/* Stats Cards */}
@@ -472,10 +558,49 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   notificationButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#EBF4FF',
+  },
+  profileContainer: {
+    position: 'relative',
   },
   profileButton: {
     padding: 4,
+  },
+  profileDropdown: {
+    position: 'absolute',
+    top: '100%',
+    right: 0,
+    marginTop: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    minWidth: 120,
+    zIndex: 1000,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    gap: 8,
+  },
+  logoutText: {
+    fontSize: 14,
+    color: '#EF4444',
+    fontWeight: '500',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 999,
   },
   queryHeader: {
     flexDirection: 'row',

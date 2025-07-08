@@ -88,6 +88,8 @@
     "confirm": "Confirm"
   },
   "auth": {
+    "logoutConfirm": "Are you sure you want to logout?",
+"logoutError": "Error occurred while logging out",
     "login": "Login",
     "logout": "Logout",
     "username": "Username",
@@ -352,7 +354,11 @@
   },
   "toast": {
     "success": {
-      "title": "Success"
+      "title": "Success",
+    "reminder1": "💡 Tip: Continue data exploration by trying different queries",
+    "reminder2": "🚀 Great! Continue with data analysis",
+    "reminder3": "✨ Nice! Discover new insights",
+    "reminder4": "🎉 Keep it up! Explore more data"
     },
     "error": {
       "title": "Error"
@@ -381,12 +387,6 @@
       "tip2": "🎯 Tip: Select fewer columns for better performance",
       "tip3": "📊 Tip: Use LIMIT for large datasets",
       "tip4": "🔧 Tip: Prefer indexed columns for filtering"
-    },
-    "success": {
-      "reminder1": "💡 Tip: Continue data exploration by trying different queries",
-      "reminder2": "🚀 Great! Continue with data analysis",
-      "reminder3": "✨ Nice! Discover new insights",
-      "reminder4": "🎉 Keep it up! Explore more data"
     },
     "activity": {
       "reminder1": "🎯 Would you like to try a new query?",

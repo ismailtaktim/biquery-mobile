@@ -88,6 +88,8 @@
     "confirm": "Confirmar"
   },
   "auth": {
+    "logoutConfirm": "¿Está seguro de que desea cerrar sesión?",
+"logoutError": "Se produjo un error al cerrar sesión",
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión",
     "username": "Nombre de Usuario",
@@ -352,7 +354,11 @@
   },
   "toast": {
     "success": {
-      "title": "Éxito"
+      "title": "Éxito",
+          "reminder1": "💡 Consejo: Continue la exploración de datos probando diferentes consultas",
+    "reminder2": "🚀 ¡Excelente! Continue con el análisis de datos",
+    "reminder3": "✨ ¡Bien! Descubra nuevas perspectivas",
+    "reminder4": "🎉 ¡Siga así! Explore más datos"
     },
     "error": {
       "title": "Error"
@@ -381,12 +387,6 @@
       "tip2": "🎯 Consejo: Seleccione menos columnas para mejor rendimiento",
       "tip3": "📊 Consejo: Use LIMIT para conjuntos de datos grandes",
       "tip4": "🔧 Consejo: Prefiera columnas indexadas para filtrado"
-    },
-    "success": {
-      "reminder1": "💡 Consejo: Continue la exploración de datos probando diferentes consultas",
-      "reminder2": "🚀 ¡Excelente! Continue con el análisis de datos",
-      "reminder3": "✨ ¡Bien! Descubra nuevas perspectivas",
-      "reminder4": "🎉 ¡Siga así! Explore más datos"
     },
     "activity": {
       "reminder1": "🎯 ¿Le gustaría probar una nueva consulta?",

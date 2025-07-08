@@ -4,25 +4,39 @@ import {
   Text,
   StyleSheet,
   Switch,
-  ScrollView
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from '../../context/LanguageContext';
 import { periodicNotificationService } from '../../utils/PeriodicNotificationService';
-import { i18n } from '../../utils/i18n';
 
-interface AppSetting {
+interface FeatureToggle {
   id: string;
-  title: string;
-  description: string;
-  enabled: boolean;
   icon: string;
   color: string;
 }
 
-const NotificationSettingsScreen = ({ navigation }: any) => {
-  const [settings, setSettings] = useState<AppSetting[]>([]);
+const NotificationSettingsScreen: React.FC = () => {
+  const { t } = useTranslation();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true); // Başlangıçta açık
+  const [suggestionsEnabled, setSuggestionsEnabled] = useState(true); // Başlangıçta açık
   const [loading, setLoading] = useState(true);
+
+  const features: FeatureToggle[] = [
+    {
+      id: 'notifications',
+      icon: 'notifications-outline',
+      color: '#3B82F6'
+    },
+    {
+      id: 'suggestions',
+      icon: 'sparkles-outline',
+      color: '#8B5CF6'
+    }
+  ];
 
   useEffect(() => {
     loadSettings();
@@ -30,139 +44,196 @@ const NotificationSettingsScreen = ({ navigation }: any) => {
 
   const loadSettings = async () => {
     try {
-      // Sadece 2 ayar: İpuçları ve Öneriler
-      const appSettings: AppSetting[] = [
-        {
-          id: 'notifications',
-          title: i18n.t('settings.features.notifications.title'),
-          description: i18n.t('settings.features.notifications.description'),
-          enabled: periodicNotificationService.isNotificationEnabled('systemStatus'), // Bir tanesini kontrol et
-          icon: 'bulb-outline',
-          color: '#F59E0B'
-        },
-        {
-          id: 'suggestions',
-          title: i18n.t('settings.features.suggestions.title'),
-          description: i18n.t('settings.features.suggestions.description'),
-          enabled: true, // Default açık olsun
-          icon: 'sparkles-outline',
-          color: '#8B5CF6'
-        }
-      ];
-
-      setSettings(appSettings);
+      console.log('📱 Loading notification settings...');
+      
+      // AsyncStorage'dan ayarları yükle
+      const savedSettings = await AsyncStorage.getItem('notification_settings');
+      if (savedSettings) {
+        const settings = JSON.parse(savedSettings);
+        console.log('📱 Loaded settings from storage:', settings);
+        
+        setNotificationsEnabled(settings.notifications !== undefined ? settings.notifications : true);
+        setSuggestionsEnabled(settings.suggestions !== undefined ? settings.suggestions : true);
+      } else {
+        console.log('📱 No saved settings found, creating defaults (notifications: ON, suggestions: ON)');
+        // İlk kez açılıyorsa default olarak AÇIK
+        setNotificationsEnabled(true);  // İpuçları AÇIK
+        setSuggestionsEnabled(true);    // Öneriler AÇIK
+        
+        // AsyncStorage'a default ayarları kaydet
+        await saveSettings(true, true);
+      }
     } catch (error) {
-      console.error('Settings loading error:', error);
+      console.error('📱 Error loading settings:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggle = async (settingId: string, newValue: boolean) => {
+  const saveSettings = async (notifications: boolean, suggestions: boolean) => {
     try {
-      // UI'yi hemen güncelle (optimistic update)
-      setSettings(prevSettings =>
-        prevSettings.map(setting =>
-          setting.id === settingId
-            ? { ...setting, enabled: newValue }
-            : setting
-        )
-      );
+      const settings = {
+        notifications,
+        suggestions
+      };
+      
+      await AsyncStorage.setItem('notification_settings', JSON.stringify(settings));
+      console.log('📱 Settings saved:', settings);
+    } catch (error) {
+      console.error('📱 Error saving settings:', error);
+    }
+  };
 
-      // Ayara göre işlem yap
-      switch (settingId) {
-        case 'notifications':
-          await periodicNotificationService.toggleAllNotifications(newValue);
-          break;
-          
-        case 'suggestions':
-          // Suggestions toggle logic burada olacak
-          // await suggestionService.toggle(newValue);
-          break;
+  const handleToggle = async (featureId: string, newValue: boolean) => {
+    try {
+      console.log(`📱 Toggle ${featureId}: ${newValue}`);
+
+      if (featureId === 'notifications') {
+        setNotificationsEnabled(newValue);
+        
+        // PeriodicNotificationService'i güncelle - İPUÇLARI
+        await periodicNotificationService.toggleAllNotifications(newValue);
+        
+        // AsyncStorage'a kaydet
+        await saveSettings(newValue, suggestionsEnabled);
+        
+      } else if (featureId === 'suggestions') {
+        setSuggestionsEnabled(newValue);
+        
+        // PeriodicNotificationService'i güncelle - ÖNERİLER  
+        await periodicNotificationService.toggleSuggestions(newValue);
+        
+        // AsyncStorage'a kaydet
+        await saveSettings(notificationsEnabled, newValue);
       }
-
+      
+      console.log(`📱 ${featureId} toggle completed: ${newValue}`);
+      
     } catch (error) {
       console.error('Toggle error:', error);
       
       // Hata durumunda UI'yi geri al
-      setSettings(prevSettings =>
-        prevSettings.map(setting =>
-          setting.id === settingId
-            ? { ...setting, enabled: !newValue }
-            : setting
-        )
-      );
-      
-      console.error('Toggle error:', error);
+      if (featureId === 'notifications') {
+        setNotificationsEnabled(!newValue);
+      } else if (featureId === 'suggestions') {
+        setSuggestionsEnabled(!newValue);
+      }
+    }
+  };
+
+  const getFeatureValue = (featureId: string): boolean => {
+    switch (featureId) {
+      case 'notifications':
+        return notificationsEnabled;
+      case 'suggestions':
+        return suggestionsEnabled;
+      default:
+        return false;
     }
   };
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>{i18n.t('common.loading')}</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+      
+      <ScrollView style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>{i18n.t('settings.title')}</Text>
-          <Text style={styles.subtitle}>{i18n.t('settings.subtitle')}</Text>
+          <Text style={styles.title}>{t('settings.title')}</Text>
+          <Text style={styles.subtitle}>{t('settings.subtitle')}</Text>
         </View>
 
-        {/* Features List */}
-        <View style={styles.featuresList}>
-          {settings.map((setting) => (
-            <View key={setting.id} style={styles.featureItem}>
-              <View style={[styles.featureIcon, { backgroundColor: `${setting.color}20` }]}>
-                <Ionicons name={setting.icon as any} size={24} color={setting.color} />
+        {/* Feature Toggles */}
+        <View style={styles.featuresContainer}>
+          {features.map((feature) => {
+            const isEnabled = getFeatureValue(feature.id);
+            
+            return (
+              <View key={feature.id} style={styles.featureCard}>
+                <View style={styles.featureHeader}>
+                  <View style={[styles.featureIcon, { backgroundColor: `${feature.color}15` }]}>
+                    <Ionicons name={feature.icon as any} size={24} color={feature.color} />
+                  </View>
+                  <View style={styles.featureInfo}>
+                    <Text style={styles.featureTitle}>
+                      {t(`settings.features.${feature.id}.title`)}
+                    </Text>
+                    <Text style={styles.featureDescription}>
+                      {t(`settings.features.${feature.id}.description`)}
+                    </Text>
+                  </View>
+                  <Switch
+                    value={isEnabled}
+                    onValueChange={(value) => handleToggle(feature.id, value)}
+                    trackColor={{ false: '#D1D5DB', true: `${feature.color}40` }}
+                    thumbColor={isEnabled ? feature.color : '#9CA3AF'}
+                    ios_backgroundColor="#D1D5DB"
+                  />
+                </View>
               </View>
-              
-              <View style={styles.featureInfo}>
-                <Text style={styles.featureTitle}>{setting.title}</Text>
-                <Text style={styles.featureDescription}>{setting.description}</Text>
-              </View>
-              
-              <Switch
-                value={setting.enabled}
-                onValueChange={(value) => handleToggle(setting.id, value)}
-                trackColor={{ false: '#E5E7EB', true: `${setting.color}40` }}
-                thumbColor={setting.enabled ? setting.color : '#9CA3AF'}
-                style={styles.switch}
-              />
-            </View>
-          ))}
+            );
+          })}
         </View>
 
-        {/* Info Section */}
-        <View style={styles.infoSection}>
-          <View style={styles.infoHeader}>
-            <Ionicons name="information-circle-outline" size={20} color="#3B82F6" />
-            <Text style={styles.infoTitle}>{i18n.t('settings.info.title')}</Text>
+        {/* Status Info */}
+        <View style={styles.statusContainer}>
+          <View style={styles.statusHeader}>
+            <Ionicons name="information-circle-outline" size={20} color="#6B7280" />
+            <Text style={styles.statusTitle}>{t('settings.info.title')}</Text>
           </View>
-          <Text style={styles.infoText}>{i18n.t('settings.info.description')}</Text>
+          <Text style={styles.statusDescription}>
+            {t('settings.info.description')}
+          </Text>
+          
+          {/* Status Details */}
+          <View style={styles.statusDetails}>
+            <View style={styles.statusItem}>
+              <View style={[styles.statusDot, { 
+                backgroundColor: notificationsEnabled ? '#10B981' : '#6B7280' 
+              }]} />
+              <Text style={styles.statusText}>
+                İpuçları: {notificationsEnabled ? 'Açık' : 'Kapalı'}
+              </Text>
+            </View>
+            
+            <View style={styles.statusItem}>
+              <View style={[styles.statusDot, { 
+                backgroundColor: suggestionsEnabled ? '#8B5CF6' : '#6B7280' 
+              }]} />
+              <Text style={styles.statusText}>
+                Öneriler: {suggestionsEnabled ? 'Açık' : 'Kapalı'}
+              </Text>
+            </View>
+          </View>
         </View>
 
         {/* App Info */}
-        <View style={styles.appInfo}>
-          <Text style={styles.appVersion}>BiQuery Mobile v1.0.0</Text>
-          <Text style={styles.appBuild}>{i18n.t('settings.app.lastUpdate')}: {new Date().toLocaleDateString()}</Text>
+        <View style={styles.appInfoContainer}>
+          <Text style={styles.appInfoTitle}>Uygulama Bilgileri</Text>
+          <View style={styles.appInfoItem}>
+            <Text style={styles.appInfoLabel}>{t('settings.app.lastUpdate')}</Text>
+            <Text style={styles.appInfoValue}>2025-01-08</Text>
+          </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
   },
   loadingContainer: {
     flex: 1,
@@ -173,7 +244,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6B7280',
   },
-  scrollView: {
+  content: {
     flex: 1,
   },
   header: {
@@ -193,39 +264,37 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     lineHeight: 24,
   },
-  featuresList: {
-    backgroundColor: '#FFFFFF',
-    marginTop: 16,
-    marginHorizontal: 16,
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+  featuresContainer: {
+    padding: 20,
+    gap: 16,
   },
-  featureItem: {
+  featureCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  featureHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
   },
   featureIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
+    borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 16,
   },
   featureInfo: {
     flex: 1,
-    marginRight: 16,
   },
   featureTitle: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '600',
     color: '#111827',
     marginBottom: 4,
@@ -235,47 +304,77 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     lineHeight: 20,
   },
-  switch: {
-    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-  },
-  infoSection: {
-    backgroundColor: '#EBF4FF',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
+  statusContainer: {
+    margin: 20,
+    padding: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     borderLeftWidth: 4,
     borderLeftColor: '#3B82F6',
   },
-  infoHeader: {
+  statusHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  infoTitle: {
+  statusTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1E40AF',
+    color: '#374151',
     marginLeft: 8,
   },
-  infoText: {
+  statusDescription: {
     fontSize: 14,
-    color: '#1E40AF',
+    color: '#6B7280',
     lineHeight: 20,
+    marginBottom: 16,
   },
-  appInfo: {
+  statusDetails: {
+    gap: 8,
+  },
+  statusItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 24,
-    paddingBottom: 40,
   },
-  appVersion: {
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 12,
+  },
+  statusText: {
     fontSize: 14,
-    color: '#9CA3AF',
-    fontWeight: '500',
+    color: '#374151',
   },
-  appBuild: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    marginTop: 4,
+  appInfoContainer: {
+    margin: 20,
+    marginTop: 0,
+    padding: 20,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  appInfoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 16,
+  },
+  appInfoItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  appInfoLabel: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  appInfoValue: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
   },
 });
 

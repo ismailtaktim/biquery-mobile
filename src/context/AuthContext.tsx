@@ -45,60 +45,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const username = await AsyncStorage.getItem('username');
       const role = await AsyncStorage.getItem('role');
       
-      if (token && username) {
-        console.log('🔑 Token found for user:', username);
-        
-        // TOKEN VALİDASYONU - CSRF hatası için özel handle
-        try {
-          console.log('🔍 Validating stored token...');
-          const validation = await apiService.validateToken();
-          
-          if (validation.valid) {
-            console.log('✅ Token is valid, auto-login successful');
-            const userInfo: User = {
-              username,
-              role: role || 'Standart',
-              hasToken: true
-            };
-            setUser(userInfo);
-          } else {
-            console.log('❌ Token expired/invalid:', validation.message);
-            
-            // CSRF hatası özel durumu - sessiz logout
-            if (validation.isCsrfError || validation.shouldRedirectToLogin || validation.message?.includes('CSRF')) {
-              console.log('🔒 CSRF token issue, silent logout...');
-              await clearUserDataSilently();
-            } else {
-              await clearUserData();
-            }
-          }
-        } catch (tokenError: any) {
-          console.log('❌ Token validation failed:', tokenError);
-          
-          // CSRF hatası kontrolü - hem response.data hem message'da
-          const errorMessage = tokenError.response?.data?.message || tokenError.message || '';
-          
-          if (errorMessage.includes('CSRF') || errorMessage.includes('csrf')) {
-            console.log('🔒 CSRF error during validation, silent logout...');
-            await clearUserDataSilently();
-          } else {
-            await clearUserData();
-          }
-        }
-      } else {
-        console.log('❌ No user/token found in storage');
+      // Token ve username yoksa direkt login'e yönlendir
+      if (!token || !username) {
+        console.log('❌ No token or username found, redirecting to login');
         setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('🔑 Token found for user:', username);
+      
+      // Token varsa validation yap
+      try {
+        console.log('🔍 Validating stored token...');
+        const validation = await apiService.validateToken();
+        
+        if (validation.valid) {
+          console.log('✅ Token is valid, auto-login successful');
+          const userInfo: User = {
+            username,
+            role: role || 'Standart',
+            hasToken: true
+          };
+          setUser(userInfo);
+        } else {
+          console.log('❌ Token expired/invalid, clearing data');
+          await clearUserData();
+        }
+      } catch (tokenError) {
+        console.log('❌ Token validation failed:', tokenError);
+        // Token validation hatası durumunda sessizce temizle
+        await clearUserDataSilently();
       }
     } catch (error) {
       console.error('🚨 Auth state check error:', error);
-      await clearUserDataSilently(); // Genel hatalar için sessiz temizlik
+      // Genel hata durumunda sessizce temizle
+      await clearUserDataSilently();
     } finally {
       setIsLoading(false);
       console.log('✅ Auth state check completed');
     }
   };
 
-  // Normal user data temizleme (toast ile)
   const clearUserData = async () => {
     try {
       await SecureStore.deleteItemAsync('token');
@@ -106,13 +94,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('role');
       setUser(null);
-      console.log('🗑️ User data cleared (with notifications)');
+      console.log('🗑️ User data cleared');
     } catch (error) {
       console.log('Clear user data error:', error);
     }
   };
 
-  // Sessiz user data temizleme (CSRF hataları için)
+  // Sessiz temizleme (hata logları olmadan)
   const clearUserDataSilently = async () => {
     try {
       await SecureStore.deleteItemAsync('token');
@@ -120,9 +108,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await AsyncStorage.removeItem('username');
       await AsyncStorage.removeItem('role');
       setUser(null);
-      console.log('🗑️ User data cleared silently (CSRF/startup issue)');
+      console.log('🗑️ User data cleared (silent)');
     } catch (error) {
-      console.log('Clear user data silently error:', error);
+      // Sessiz hatalar
     }
   };
 
@@ -167,14 +155,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       console.log('🚪 Logging out...');
       
-      try {
-        await apiService.logout();
-      } catch (error) {
-        console.warn('API logout failed, but continuing with local logout');
+      // API logout'u optional yap - hata olsa bile devam et
+      const token = await SecureStore.getItemAsync('token');
+      if (token) {
+        try {
+          await apiService.logout();
+          console.log('✅ API logout successful');
+        } catch (error) {
+          console.log('⚠️ API logout failed, continuing with local logout:', error);
+        }
       }
       
       await new Promise(resolve => setTimeout(resolve, 100));
       
+      // Local data'yı temizle
       await SecureStore.deleteItemAsync('token');
       await AsyncStorage.removeItem('userData');
       await AsyncStorage.removeItem('username');
@@ -193,35 +187,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const validateToken = async (): Promise<boolean> => {
     try {
       console.log('🔍 Manual token validation...');
+      
+      // Önce token varlığını kontrol et
+      const token = await SecureStore.getItemAsync('token');
+      if (!token) {
+        console.log('❌ No token found for validation');
+        await clearUserDataSilently();
+        return false;
+      }
+
       const validation = await apiService.validateToken();
       
       if (!validation.valid) {
-        console.log('❌ Token invalid:', validation.message);
-        
-        // CSRF hatası için sessiz temizlik
-        if (validation.isCsrfError || validation.shouldRedirectToLogin || validation.message?.includes('CSRF')) {
-          await clearUserDataSilently();
-        } else {
-          await clearUserData();
-        }
-        
+        console.log('❌ Token invalid, logging out');
+        await clearUserData();
         return false;
       }
       
       console.log('✅ Token valid');
       return true;
-    } catch (error: any) {
-      console.error('🚨 Token validation error:', error);
-      
-      // CSRF hatası kontrolü - hem response.data hem message'da
-      const errorMessage = error.response?.data?.message || error.message || '';
-      
-      if (errorMessage.includes('CSRF') || errorMessage.includes('csrf')) {
-        await clearUserDataSilently();
-      } else {
-        await clearUserData();
-      }
-      
+    } catch (error) {
+      console.log('❌ Token validation error, clearing data:', error);
+      await clearUserDataSilently();
       return false;
     }
   };
